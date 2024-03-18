@@ -37,8 +37,7 @@ Once the front-end successfully initiates the payment request, if a positive res
 
 ### 3.4 QR Pay(Merchant-presented)
 
-Upon displaying the payment QR code, the front-end routinely checks with the merchant's order verification interface to ascertain the order's status.
-As a standard, this checking happens every 2 seconds and lasts for a total of 60 seconds. Merchants can customize these settings to fit their operational demands.
+Upon displaying the payment QR code, the front-end routinely checks with the merchant's order verification interface to ascertain the order's status. As a standard, this checking happens every 2 seconds and lasts for a total of 60 seconds. Merchants can customize these settings to fit their operational demands.
 
 - If the verification process acknowledges a successful payment within this period, the user is presented with the "Payment Success" page.
 - If not, the checking process is halted, and the user is alerted that the transaction has timed out.
@@ -58,31 +57,31 @@ As a standard, this checking happens every 2 seconds and lasts for a total of 60
 
 Merchants' back-end systems should process the asynchronous payment result notifications from CodePay accurately and swiftly. They should then relay the outcome back to CodePay per the interface guidelines. For detailed instructions, refer to:
 
-1、<a href = "/APIRule">API specification</a>.
+1、<a href="/APIRule">API specification</a>.
 
-2、<a href = "/callbackNotificationNotes">Notes</a>.
+2、<a href="/callbackNotificationNotes">Notes</a>.
 
 ### 4.2 Regular Polling For Order Verification
 
-Should there be an extended delay in receiving payment notifications, the merchant's back-end must periodically initiate the <a href = "./CloudAPI#tag/Public-Payment-API/paths/~1api~1entry~1orderquery/post" target="_blank">CodePay Query Order API</a> to verify order statuses.
+Should there be an extended delay in receiving payment notifications, the merchant's back-end must periodically initiate the <a href="./CloudAPI#tag/Public-Payment-API/paths/~1api~1entry~1orderquery/post" target="_blank">CodePay Query Order API</a> to verify order statuses.
 
 Option 1:
 
-Using the order placement time (or the first unsuccessful call time post a successful payment notification or error report) as a reference, trigger the <a href = "./CloudAPI#tag/Public-Payment-API/paths/~1api~1entry~1orderquery/post" target="_blank">CodePay Query Order API </a> at intervals of 5 seconds, 30 seconds, 1 minute, 3 minutes, 5 minutes, 10 minutes, and 30 minutes. If the final query doesn't confirm successful payment, cease subsequent queries and invoke the <a href = "./CloudAPI/#tag/Public-Payment-API/paths/~1api~1entry~1orderrevoker/post" target="_blank">CodePay Revocation API </a> to close the order. (Merchants can tailor the polling frequency and count based on their operations)
+Using the order placement time (or the first unsuccessful call time post a successful payment notification or error report) as a reference, trigger the <a href="./CloudAPI#tag/Public-Payment-API/paths/~1api~1entry~1orderquery/post" target="_blank">CodePay Query Order API </a> at intervals of 5 seconds, 30 seconds, 1 minute, 3 minutes, 5 minutes, 10 minutes, and 30 minutes. If the final query doesn't confirm successful payment, cease subsequent queries and invoke the <a href="./CloudAPI/#tag/Public-Payment-API/paths/~1api~1entry~1orderrevoker/post" target="_blank">CodePay Revocation API </a> to close the order. (Merchants can tailor the polling frequency and count based on their operations)
 
 Option 2:
 
-Initiate a timed task every 30 seconds to identify orders from the last 10 minutes that remain unpaid. Use the <a href = "./CloudAPI#tag/Public-Payment-API/paths/~1api~1entry~1orderquery/post" target="_blank">CodePay Query Order API</a> to validate their status. Keep track of how often an order is checked; if after 10 checks the status remains unpaid, halt further queries and utilize the <a href = "./CloudAPI/#tag/Public-Payment-API/paths/~1api~1entry~1orderrevoker/post" target="_blank">CodePay Revocation API</a> to cancel the order. (Polling intervals and counts are adjustable as per merchant preferences)
+Initiate a timed task every 30 seconds to identify orders from the last 10 minutes that remain unpaid. Use the <a href="./CloudAPI#tag/Public-Payment-API/paths/~1api~1entry~1orderquery/post" target="_blank">CodePay Query Order API</a> to validate their status. Keep track of how often an order is checked; if after 10 checks the status remains unpaid, halt further queries and utilize the <a href="./CloudAPI/#tag/Public-Payment-API/paths/~1api~1entry~1orderrevoker/post" target="_blank">CodePay Revocation API</a> to cancel the order. (Polling intervals and counts are adjustable as per merchant preferences)
 
 ### 4.3 D+N Day Reconciliation Processing
 
-4.3.1 Post 2:00 pm on D+N days, merchants can either request the <a href = "" target="_blank">CodePay Bill Download API</a> or manually download the D-Day transaction report from the CodePay merchant platform. Next, compare the statement's order details line by line with the merchant's system records.
+4.3.1 Post 2:00 pm on D+N days, merchants can either request the <a href="" target="_blank">CodePay Bill Download API</a> or manually download the D-Day transaction report from the CodePay merchant platform. Next, compare the statement's order details line by line with the merchant's system records.
 
-:::tip
+::::tip
+
 The D+N statement's availability may vary due to upstream payment channel constraints. Typically, the reconciliation timeframe doesn't exceed two days. For specific timings, please contact us.
-:::tip
 
-4.3.2 Order Verification Scenarios:
+:::tip 4.3.2 Order Verification Scenarios:
 
 (1) Orders align and all statuses indicate Payment Successful: This signifies successful reconciliation.
 
@@ -90,4 +89,4 @@ The D+N statement's availability may vary due to upstream payment channel constr
 
 (3) Order mismatch, with the merchant's system lacking the statement's specific order records: This anomaly demands a system check by the merchant for data discrepancies.
 
-(4) Order mismatch, where successful orders in the merchant's system aren't found in the statement: This inconsistency indicates potential flaws in the merchant's order processing logic that warrant an investigation.
+(4) Order mismatch, where successful orders in the merchant's system aren't found in the statement: This inconsistency indicates potential flaws in the merchant's order processing logic that warrant an investigation. ::: ::::

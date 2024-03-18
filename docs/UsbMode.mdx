@@ -1,22 +1,24 @@
-import ImageZoom from "@site/src/components/ImageZoom";
-import WorkflowCImg from "@site/static/img/WorkflowC.png";
-import USBSettingAImg from "@site/static/img/USBSetting-A.jpg";
-import USBSettingBImg from "@site/static/img/USBSetting-B.jpg";
-import USBSettingCImg from "@site/static/img/USBSetting-C.jpg";
-import QualcomDriverImg from "@site/static/img/QualcomDriver.png";
-import USBProductExperienceImg from "@site/static/img/USBProductExperience.jpg";
+import ImageZoom from '@site/src/components/ImageZoom';
+import WorkflowCImg from '@site/static/img/WorkflowC.png';
+import USBSettingAImg from '@site/static/img/USBSetting-A.jpg';
+import USBSettingBImg from '@site/static/img/USBSetting-B.jpg';
+import USBSettingCImg from '@site/static/img/USBSetting-C.jpg';
+import QualcomDriverImg from '@site/static/img/QualcomDriver.png';
+import USBProductExperienceImg from '@site/static/img/USBProductExperience.jpg';
 
 # USB mode integration
 
-## Introduction
+## Introduction&#x20;
+
+# /
 
 **POS application** need to push order to the payment terminal in real time. They can be connected by USB cable. **POS application** send serial communication commands to **CodePay Register** ECRHub service to process payment request.
 
-:::tip
-In USB cable mode, the ECR integration solution can only supports windows OS(7 version above)
-:::tip
+::::tip
 
-The following is the process diagram:
+In USB cable mode, the ECR integration solution can only supports windows OS(7 version above)
+
+:::tip The following is the process diagram:
 
 <ImageZoom src={WorkflowCImg} />
 
@@ -37,7 +39,7 @@ Before starting the integration, you need to make some preparations, the most im
 - Register for application development and obtain an application development app\_ ID
 - Activate payment terminal, canned key (if bank card payment is required)
 
-Please refer to the <a href = "/GatewayOverview" target = "_blank">Payment gateway integration guide</a>.
+Please refer to the <a href="/GatewayOverview" target="_blank">Payment gateway integration guide</a>.
 
 ### 2. Connect POS to terminal
 
@@ -49,15 +51,22 @@ Please install the application "**CodePay Register**" on the Payment terminal, s
 
 <div style={{ display: "flex" }}>
   <ImageZoom src={USBSettingAImg} width={180} height={320} />
-  <ImageZoom width={50} height={320} />
-  <ImageZoom src={USBSettingBImg} width={180} height={320} />
-  <ImageZoom width={50} height={320} />
+
+{' '}
+<ImageZoom width={50} height={320} />
+
+{' '}
+<ImageZoom src={USBSettingBImg} width={180} height={320} />
+
+{' '}
+<ImageZoom width={50} height={320} />
+
   <ImageZoom src={USBSettingCImg} width={180} height={320} />
 </div>
 
 ### 4. Qualcomm USB driver install
 
-In your POS device operating system, if you have not yet installed the Qualcomm USB driver, please <a href = "https://wise-paycloud.oss-eu-west-1.aliyuncs.com/test/codepayResource/qud.win.1.1_installer_10065.1.zip?OSSAccessKeyId=LTAI5tDS7q4RHauowRMYsUPz&Expires=1796441922&Signature=fgH95eIngQDSUCyfmp%2B8BD4G9iE%3D" target = "_blank">click here</a> to download the installation package. After installation, check whether the installation is successful by using the following method
+In your POS device operating system, if you have not yet installed the Qualcomm USB driver, please <a href="https://wise-paycloud.oss-eu-west-1.aliyuncs.com/test/codepayResource/qud.win.1.1_installer_10065.1.zip?OSSAccessKeyId=LTAI5tDS7q4RHauowRMYsUPz&Expires=1796441922&Signature=fgH95eIngQDSUCyfmp%2B8BD4G9iE%3D" target="_blank">click here</a> to download the installation package. After installation, check whether the installation is successful by using the following method
 
 On Windows PC, please open 'Device Manager' and check whether 'Android GPS 9020(virtual port)' exists.
 
@@ -69,28 +78,13 @@ On Windows PC, please open 'Device Manager' and check whether 'Android GPS 9020(
 
 We provide a <a href="/CodePayRegisterSDK" target="_blank">Rapid integration with Register-SDK under local network</a>. Currently, the SDK supports the following two programming languages
 
-- <a href="/ClientJavaSdk" target="_blank">
-    Java
-  </a>
-- <a href="/ClientAndroidSdk" target="_blank">
-    Android
-  </a>
-
-We recommend developers to use Register-SDK which secondary packages the communication protocol layer. SDK can help developers quickly complete application payment integration. In addition, we also provide <a href = "https://github.com/paycloud-open/ecrhub-client-demo-java" target="_blank">sample code</a>
-, and you can obtain their source code and latest version information through our GitHub.
+We recommend developers to use Register-SDK which secondary packages the communication protocol layer. SDK can help developers quickly complete application payment integration. In addition, we also provide <a href="https://github.com/paycloud-open/ecrhub-client-demo-java" target="_blank">sample code</a> , and you can obtain their source code and latest version information through our GitHub.
 
 #### 2. Integration with APIs
 
 If the above SDK cannot meet your needs, or if you need deeper control over product details, you can refer to our API specifications and write your own code.
 
 Next reading
-
-- <a href="/SerialCommunicationProtocol" target="_blank">
-    Serial communication protocol
-  </a>
-- <a href="/SerialAPIList" target="_blank">
-    API list
-  </a>
 
 ## Product experience
 
@@ -100,7 +94,15 @@ The following example demonstrates the complete process of customers selecting a
 
 To obtain detailed code for this example, please visit our Github website project homepage
 
-- <a href="https://github.com/codepay-us/codepay-register-cross-terminal-integration-demo-java" target="_blank">Source code</a>
+- <a
+    href="https://github.com/codepay-us/codepay-register-cross-terminal-integration-demo-java"
+    target="_blank">
+    Source code
+  </a>
 
-- <a href="https://github.com/codepay-us/codepay-register-cross-terminal-integration-demo-java/releases/tag/v1.0.0" target="_blank">Executable program</a>
-  
+- <a
+    href="https://github.com/codepay-us/codepay-register-cross-terminal-integration-demo-java/releases/tag/v1.0.0"
+    target="_blank">
+    Executable program
+  </a>
+  ::: ::::

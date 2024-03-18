@@ -1,12 +1,12 @@
-import ImageZoom from "@site/src/components/ImageZoom";
-import SerialMessageStructureImg from "@site/static/img/SerialMessageStructure.png";
-import SerialSequenceImg from "@site/static/img/SerialSequence.png";
-import HandshakeMessageImg from "@site/static/img/HandshakeMessage.png";
-import HeartBeatMessageImg from "@site/static/img/HeartBeatMessage.png";
-import ACKMessageImg from "@site/static/img/ACKMessage.png";
-import TransactionMessageImg from "@site/static/img/TransactionMessage.png";
-import DataSerializationImg from "@site/static/img/DataSerialization.png";
-import WorkflowImg from "@site/static/img/Workflow.png";
+import ImageZoom from '@site/src/components/ImageZoom';
+import SerialMessageStructureImg from '@site/static/img/SerialMessageStructure.png';
+import SerialSequenceImg from '@site/static/img/SerialSequence.png';
+import HandshakeMessageImg from '@site/static/img/HandshakeMessage.png';
+import HeartBeatMessageImg from '@site/static/img/HeartBeatMessage.png';
+import ACKMessageImg from '@site/static/img/ACKMessage.png';
+import TransactionMessageImg from '@site/static/img/TransactionMessage.png';
+import DataSerializationImg from '@site/static/img/DataSerialization.png';
+import WorkflowImg from '@site/static/img/Workflow.png';
 
 # Serial communication protocol
 
@@ -22,19 +22,21 @@ In USB mode, serial communication protocol is used between POS and Payment termi
 
 <ImageZoom src={SerialMessageStructureImg} />
 
-| Offset | Field               | Byte Length | Description                                                                                                                                                                                                   |
-|--------|---------------------|-------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| 0x00   | STX                 | 2           | Start text, fixed value: 0x55AA                                                                                                                                                                               |
-| 0x02   | Message type        | 1           | 0x00: normal package 0x01: handshake command 0x02: handshake confirmation command                                                                                                                             |
-| 0x03   | ACK                 | 1           | If the field is 0, it means that the field is invalid; non-0, it represents the id of the last received data packet that passed the verification                                                              |
-| 0x04   | Message ID          | 1           | There is no valid data in the message, the value is 0; the initial value can be 1, and each time a new data packet is sent, it will automatically + 1, greater than 255, and reset to the initial value of 1; |
-| 0x05   | Message Data length | 2           | Represents the sum of the lengths of message data segments, with high bytes first;                                                                                                                            |
-| 0x07   | Message Data        | n           | Valid data, the upper business layer is responsible for parsing the specific Action category;                                                                                                                 |
-| 0x08+n | CRC                 | 1           | Checksum, Byte-by-byte XOR result for data from “message type” to “message data”                                                                                                                              |
-| 0x09+n | ETX                 | 2           | End text, fixed value: 0xCC33                                                                                                                                                                                 |
+| Offset | Field | Byte Length | Description |
+| --- | --- | --- | --- |
+| 0x00 | STX | 2 | Start text, fixed value: 0x55AA |
+| 0x02 | Message type | 1 | 0x00: normal package 0x01: handshake command 0x02: handshake confirmation command |
+| 0x03 | ACK | 1 | If the field is 0, it means that the field is invalid; non-0, it represents the id of the last received data packet that passed the verification |
+| 0x04 | Message ID | 1 | There is no valid data in the message, the value is 0; the initial value can be 1, and each time a new data packet is sent, it will automatically + 1, greater than 255, and reset to the initial value of 1; |
+| 0x05 | Message Data length | 2 | Represents the sum of the lengths of message data segments, with high bytes first; |
+| 0x07 | Message Data | n | Valid data, the upper business layer is responsible for parsing the specific Action category; |
+| 0x08+n | CRC | 1 | Checksum, Byte-by-byte XOR result for data from “message type” to “message data” |
+| 0x09+n | ETX | 2 | End text, fixed value: 0xCC33 |
 
-:::note
+::::note
+
 The Message max-length is 1024 Bytes
+
 :::note
 
 ## Communication sequence
@@ -52,11 +54,13 @@ POS sends an empty packet to Payment Terminal, the packet type is 1, the ack fie
 Sample message (HEX)
 
 Handshake Message:
+
 ```
 55AA010000000001CC33
 ```
 
 Handshake Confirmation Message:
+
 ```
 55AA020000000002CC33
 ```
@@ -101,4 +105,4 @@ The new data packet at the top of the stack, after sending it, mark it as sent, 
 
 ### Field Format
 
-POS application and CodePay Register communicate in JSON format
+POS application and CodePay Register communicate in JSON format ::: ::::

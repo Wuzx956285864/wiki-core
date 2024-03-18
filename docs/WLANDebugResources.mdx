@@ -1,5 +1,5 @@
-import ImageZoom from "@site/src/components/ImageZoom";
-import PieSocket from "@site/static/img/PieSocket.png";
+import ImageZoom from '@site/src/components/ImageZoom';
+import PieSocket from '@site/static/img/PieSocket.png';
 
 # Debug resources
 
@@ -8,109 +8,117 @@ import PieSocket from "@site/static/img/PieSocket.png";
 ### 1. Submit transaction
 
 **Request**
+
 ```json
 {
-        "app_id": "your app id",
-        "biz_data": {
-                "confirm_on_terminal": true,
-                "expires": 0,
-                "merchant_order_no": "12320231220110257",
-                "order_amount": "10",
-                "trans_type": "1"
-        },
-        "request_id": "111111",
-        "topic": "ecrhub.pay.order",
-        "timestamp": "1698302992263"
+  "app_id": "your app id",
+  "biz_data": {
+    "confirm_on_terminal": true,
+    "expires": 0,
+    "merchant_order_no": "12320231220110257",
+    "order_amount": "10",
+    "trans_type": "1"
+  },
+  "request_id": "111111",
+  "topic": "ecrhub.pay.order",
+  "timestamp": "1698302992263"
 }
 ```
 
 **Response**
+
 ```json
 {
-        "app_id": "your app id",
-        "biz_data": {
-                "merchant_order_no": "12320231220110257",
-                "order_amount": "10",
-                "trans_status": "2",
-                "price_currency": "USD",
-                "trans_no": "5021000010210602000003",
-                "pay_scenario": "SWIPE_CARD",
-                "trans_type": "1"
-        },
-        "response_code": "000",
-        "response_msg": "",
-        "request_id": "111111",
-        "topic": "ecrhub.pay.order"
+  "app_id": "your app id",
+  "biz_data": {
+    "merchant_order_no": "12320231220110257",
+    "order_amount": "10",
+    "trans_status": "2",
+    "price_currency": "USD",
+    "trans_no": "5021000010210602000003",
+    "pay_scenario": "SWIPE_CARD",
+    "trans_type": "1"
+  },
+  "response_code": "000",
+  "response_msg": "",
+  "request_id": "111111",
+  "topic": "ecrhub.pay.order"
 }
 ```
 
 ### 2. Query transaction
 
 **Request**
+
 ```json
 {
-        "app_id": "your app id",
-        "biz_data": {
-                "merchant_order_no": "12320231220110257"
-        },
-        "request_id": "111111",
-        "topic": "ecrhub.pay.query",
-        "timestamp": "1698302992264"
+  "app_id": "your app id",
+  "biz_data": {
+    "merchant_order_no": "12320231220110257"
+  },
+  "request_id": "111111",
+  "topic": "ecrhub.pay.query",
+  "timestamp": "1698302992264"
 }
 ```
 
 **Response**
+
 ```json
 {
-        "app_id": "your app id",
-        "biz_data": {
-                "merchant_order_no": "12320231220110257",
-                "order_amount": "10",
-                "trans_status": "2",
-                "price_currency": "USD",
-                "trans_no": "5021000010210602000003",
-                "pay_scenario": "SWIPE_CARD",
-                "trans_type": "1"
-        },
-        "response_code": "000",
-        "response_msg": "",
-        "request_id": "111111",
-        "topic": "ecrhub.pay.query"
+  "app_id": "your app id",
+  "biz_data": {
+    "merchant_order_no": "12320231220110257",
+    "order_amount": "10",
+    "trans_status": "2",
+    "price_currency": "USD",
+    "trans_no": "5021000010210602000003",
+    "pay_scenario": "SWIPE_CARD",
+    "trans_type": "1"
+  },
+  "response_code": "000",
+  "response_msg": "",
+  "request_id": "111111",
+  "topic": "ecrhub.pay.query"
 }
 ```
 
 ### 3. Close transaction
 
 **Request**
+
 ```json
 {
-        "app_id": "your app id",
-        "biz_data": {
-                "merchant_order_no": "12320231220110257"
-        },
-        "request_id": "111111",
-        "topic": "ecrhub.pay.close",
-        "timestamp": "1698302992265"
+  "app_id": "your app id",
+  "biz_data": {
+    "merchant_order_no": "12320231220110257"
+  },
+  "request_id": "111111",
+  "topic": "ecrhub.pay.close",
+  "timestamp": "1698302992265"
 }
 ```
 
 **Response**
+
 ```json
 {
-        "app_id": "your app id",
-        "biz_data": {
-                "merchant_order_no": "12320231220110257"
-        },
-        "response_code": "000",
-        "response_msg": "",
-        "request_id": "111111",
-        "topic": "ecrhub.pay.close"
+  "app_id": "your app id",
+  "biz_data": {
+    "merchant_order_no": "12320231220110257"
+  },
+  "response_code": "000",
+  "response_msg": "",
+  "request_id": "111111",
+  "topic": "ecrhub.pay.close"
 }
 ```
 
 ## Debug tools
 
-1. You can install the plug-in <a href = "https://chromewebstore.google.com/detail/piesocket-websocket-teste/oilioclnckkoijghdniegedkbocfpnip?utm_source=ext_app_menu&pli=1">PIE SOCKET WebSocket Tester</a> in Chorme browser, using this plug-in, you can simulate sending data to the Codepay Register.
+1. You can install the plug-in <a href="https://chromewebstore.google.com/detail/piesocket-websocket-teste/oilioclnckkoijghdniegedkbocfpnip?utm_source=ext_app_menu&pli=1">PIE SOCKET WebSocket Tester</a> in Chorme browser, using this plug-in, you can simulate sending data to the Codepay Register.
 2. Enter the ip address obtained from CodePay Register and click CONNECT.
+
 <ImageZoom src={PieSocket} />
-3. When the connection is successful, enter the transaction message and click SEND MESSAGE.
+
+1. When the connection is successful, enter the transaction message and click SEND MESSAGE.
