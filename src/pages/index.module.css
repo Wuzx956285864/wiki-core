@@ -1,0 +1,58 @@
+/**
+ * CSS files with the .module.css suffix will be treated as CSS modules
+ * and scoped locally.
+ */
+
+.heroBanner {
+  padding: 4rem 0;
+  position: relative;
+  overflow: hidden;
+  /* background-image: url('/img/banner.png'); */
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+
+.heroBannerList {
+  font-size: 1.3rem;
+}
+
+.heroBannerList>div {
+  margin-bottom: 0.5rem;
+}
+
+.heroBannerList img {
+  margin-right: 6px;
+  vertical-align: middle;
+  width: 1.4rem;
+  padding-bottom: 6px;
+}
+
+@media screen and (max-width: 996px) {
+  .heroBanner {
+    padding: 2rem 1rem;
+  }
+
+  .heroBanner h1 {
+    font-size: 2rem;
+  }
+
+  .heroBannerList {
+    font-size: 1.4rem;
+  }
+}
+
+.searchBox {
+  max-width: 1000px;
+  width: 80%;
+  margin: 40px auto 3rem;
+}
+
+.homeMain {
+  background: #f0f0f0;
+}
+
+
+/* Styling one class specially in dark mode */
+[data-theme='dark'] .homeMain {
+  background: #1b1b1d;
+}

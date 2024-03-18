@@ -1,0 +1,69 @@
+import ImageZoom from "@site/src/components/ImageZoom";
+import WorkflowBImg from "@site/static/img/WorkflowB.png";
+import WLANSetStep from "@site/static/img/WLANSetStep.png";
+
+# WLAN/LAN mode integration
+
+## Introduction
+
+**CodePay Register** ECRHub service offers use WLAN mode for the **POS application** to push orders to the payment terminal.**CodePay Register** ECRHub service simulates a backend server, and the **POS application** acts as a client, sending and processing orders through client-server communication.
+- In WLAN mode, you must ensure that the POS application and the payment terminal are on the same WLAN.
+- WLAN mode comparison is more stable than USB mode without the limitation of USB cable and operating system.
+- WLAN mode allows two-way communication between client and server, while Cloud mode allows only one-way communication.
+
+The following is the process diagram:
+
+1. **POS application** sends order info (such as: order number, total amount etc. ) by local WLAN/LAN communication to **CodePay Register**.
+2. The checkout module of **CodePay Register** collects the bank card information and processes it securely, then merges it and order information in the transaction data, and sends the payment request to payment gateway or acquire system.
+3. Payment gateway or acquire system responses result to **CodePay Register**.
+4. **CodePay Register** send transaction result to **POS application** by local WLAN/LAN , and display payment result on the screen.
+
+<ImageZoom src={WorkflowBImg} />
+
+## Development guidelines
+
+### 1. Application setting
+
+#### 1.1 Preparation
+  - A stable wireless local area network environment including one or more wireless access points (APs) is required to cover the area where the POS/ECR system and POS Terminals are located.
+  - The wireless access point needs to be properly configured, including network name (SSID), security encryption (e.g., WPA2 or WPA3), channel selection, and bandwidth settings.
+  - The POS/ECR system and POS terminals need to be assigned the correct IP address, either static IP address assignment or automatic acquisition via DHCP.
+  - Ensure that the network settings of the POS/ECR system and POS terminals are compatible with the WLAN environment, including subnet masks, default gateways, and DNS servers.
+
+#### 1.2 CodePay register Setting
+  - Start the Codepay register application on the POS Terminal.
+  - Click the Side Menu, go to **Settings > General > ECR Hub**.
+  - Enable the ECR Hub, and select WLAN/LAN.
+  - Choose the available device which you want to connect, and click it to paired. Return to standby page and confirm the POS/ECR device is connected to the terminal
+
+<ImageZoom src={WLANSetStep} />
+
+### 2. Two ways for integration
+
+#### 2.1. Integration with Register-SDK
+
+We provide a <a href="/CodePayRegisterSDK" target="_blank">Rapid integration with Register-SDK under local network</a>. Currently, the SDK supports the following two programming languages
+
+- <a href="/ClientJavaSdk" target="_blank">
+  Java
+</a>
+- <a href="/ClientAndroidSdk" target="_blank">
+  Android
+</a>
+
+We recommend developers to use Register-SDK which secondary packages the communication protocol layer. SDK can help developers quickly complete application payment integration. In addition, we also provide <a href = "https://github.com/paycloud-open/ecrhub-client-demo-java" target="_blank">sample code</a>
+, and you can obtain their source code and latest version information through our GitHub.
+
+#### 2.2 Integration with websocket APIs
+
+If the above SDK cannot meet your needs, or if you need deeper control over product details, you can refer to our API specifications and write your own code.
+
+Next reading:
+
+- <a href="/WLANAPIList" target="_blank">
+  API list
+</a>
+
+- <a href="/WLANDebugResources" target="_blank">
+  Debug resources
+</a>

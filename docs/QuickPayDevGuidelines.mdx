@@ -1,0 +1,29 @@
+import codePayFlowImg from '@site/static/img/QuickPayFlow.png'
+import ImageZoom from '@site/src/components/ImageZoom'
+
+# QR Pay(Customer-presented)
+
+Merchants with QR code scanning devices can refer to the solutions provided in this section to access the CodePay gateway for payment.
+
+## Integration Instructions
+
+If the merchant is using a POS that has a scanning gun or other device that can scan barcode/QR code, it can be connected through the "QR Pay(Customer-presented)" product provided by CodePay.
+
+The so-called "QR Pay(Customer-presented)" means that the user opens the payment code of each mobile wallet, and the merchant uses the code-scanning device to obtain the content of the user's payment code (which is generally a string of digits or EMV-standardized character strings), and then carries the content of the payment code to request the CodePay interface to complete the deduction. In this payment mode, according to the business rules of each wallet, the password may be required, or the payment may be made directly without verifying the password (generally, small payments are free of password, and large payments are password-checked).
+
+**Usage Example**
+
+<ImageZoom src={codePayFlowImg} />
+
+## Development Guidelines
+
+We provide a set of REST APIs, please refer to the following table, the APIs are provided with SDKs for several languages, please visit<a href = "PaymentGatewaySDKSamples"> SDK Chapter Description</a>.
+
+| Function List \ width:25%; \                                                                                                | Description \ width:75%; \                                                                                                                                                                     |
+|-----------------------------------------------------------------------------------------------------------------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| <a href="./CloudAPI#tag/QR-Code-Payment/paths/~1api~1entry~1bscancpaysubmit/post" target="_blank">Submit for payment</a>    | Submit payment orders through this api                                                                                                                                                         |
+| <a href="./CloudAPI#tag/Public-API/paths/~1api~1entry~1orderrevoker/post" target="_blank">Cancel order</a>                  | Close unpaid orders through this api and refund the user if payment has already occurred                                                                                                       |
+| <a href="./CloudAPI#tag/Public-API/paths/~1api~1entry~1orderrefundsubmit/post" target="_blank">Submit a refund request</a>  | If you submit a refund request through this api and the refund does not arrive immediately, you can call the refund inquiry interface to get the progress of the refund.                       |
+| <a href="./CloudAPI#tag/Public-API/paths/~1api~1entry~1orderquery/post" target="_blank">Query order</a>                     | Query the transaction result (consumption/pre-authorization/pre-authorization completion) of a positive transaction order through this api                                                     |
+| <a href="./CloudAPI#tag/Public-API/paths/~1api~1entry~1orderrefundquery/post" target="_blank">Query refund</a>              | Query the transaction results of negative transaction orders (consumption cancellation/pre-authorization cancellation/consumption refund/pre-authorization completion refund) through this api |
+| <a href="./CloudAPI#tag/Public-API/paths/~1%7Bmerchant_website%7D/post" target="_blank">Transaction result notification</a> | After the transaction, notify the merchant through this webhook to tell the merchant the result of the transaction                                                                             |

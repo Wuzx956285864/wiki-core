@@ -1,0 +1,95 @@
+# Reference
+
+## 1. Payment scenario
+
+| Key \ width:25%; \ | Description \ width:75%; \ |
+|--------------------|----------------------------|
+| SWIPE_CARD         | Bank card payment          |
+| SCANQR_PAY         | QR Pay(Customer-presented) |
+| BSCANQR_PAY        | QR Pay(Customer-presented) |
+
+## 2. Payment method
+
+| Key \ width:25%; \ | Description \ width:75%; \ |
+|--------------------|----------------------------|
+| Visa               | Visa                       |
+| MasterCard         | MasterCard                 |
+| Amex               | Amex                       |
+| Discover           | Discover                   |
+| JCB                | JCB                        |
+| DinersClub         | DinersClub                 |
+| UnionPay           | UnionPay                   |
+| Alipay             | Alipay                     |
+| WeChatPay          | WeChatPay                  |
+| PayPal             | PayPal                     |
+| Venmo              | Venmo                      |
+| CashPay            | Payment by Cash            |
+
+
+## 3. Transaction type
+
+| Key \ width:25%; \ | Description \ width:75%; \ |
+|--------------------|----------------------------|
+| 1                  | Sale                       |
+| 2                  | Void                       |
+| 3                  | Refund                     |
+| 4                  | Authorization              |
+| 6                  | Completion                 |
+| 11                 | Sale with Cashback         |
+
+## 4. Transaction status
+
+| Key \ width:25%; \ | Description \ width:75%; \ |
+|--------------------|----------------------------|
+| 9                  | Transaction created        |
+| 0                  | Paying or refunding        |
+| 1                  | Transaction closed         |
+| 2                  | Transaction successful     |
+| 3                  | Transaction void           |
+
+## 5. Response code
+
+| Key \ width:25%; \ | Description \ width:75%; \                      |
+|--------------------|-------------------------------------------------|
+| 000                | Success                                         |
+| 101                | Transaction in progress, please try again later |
+| 102                | Transaction cancellation                        |
+| 103                | Transaction successful                          |
+| 104                | Transaction does not exist                      |
+| 105                | Transaction refunded                            |
+| 106                | Transaction failed                              |
+| 107                | Transaction timeout                             |
+| 108                | Transaction result unknown                      |
+| 109                | Network anomaly                                 |
+| 110                | Operator cancellation                           |
+| 111                | Read card timeout                               |
+| 112                | QR Code timeout                                 |
+| 113                | Duplicate merchant order number                 |
+| 114                | Unsupported transaction types                   |
+| 115                | Transaction reject                              |
+| 116                | Not logged in                                   |
+| 117                | Unsupported payment scenario                    |
+| 118                | Token expired                                   |
+| 119                | Can not void                                    |
+| 120                | Amount out of limit                             |
+| 121                | Incorrect amount format                         |
+| 201                | Failed to close the transaction                 |
+| 202                | Transaction parameter error                     |
+| 999                | Unknown error                                   |
+
+## 6. Card type
+
+| Key \ width:25%; \ | Description \ width:75%; \ |
+|--------------------|----------------------------|
+| 1                  | Debit card                 |
+| 2                  | Credit card                |
+| 3                  | Ebt card                   |
+| 4                  | Gift card                  |
+
+## 7. Paymethod category
+
+| Key   \ width:50% \ | Description                                                 |
+|---------------------|-------------------------------------------------------------|
+| BANKCARD            | Bank card payment                                           |
+| QR_C_SCAN_B         | Customers scan the merchant’s QR code for payment           |
+| QR_B_SCAN_C         | Scan the code to pay, merchants scan the customer’s QR code |

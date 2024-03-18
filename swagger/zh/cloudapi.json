@@ -1,0 +1,4393 @@
+{
+  "openapi": "3.0.1",
+  "info": {
+    "title": "CodePay Cloud Open Api(ZH)",
+    "description": "",
+    "version": "1.0.0"
+  },
+  "tags": [
+    {
+      "name": "POS集成"
+    },
+    {
+      "name": "扫码支付"
+    },
+    {
+      "name": "移动支付"
+    },
+    {
+      "name": "在线支付"
+    },
+    {
+      "name": "公共API"
+    }
+  ],
+  "paths": {
+    "/api/entry/wisehubcloudpayorder": {
+      "post": {
+        "summary": "创建订单",
+        "x-apifox-folder": "POS集成",
+        "x-apifox-status": "released",
+        "deprecated": false,
+        "description": "商户后端调用此API，CodePay服务器将向支付终端上的“CodePay Register”应用程序发送消息。这将激活应用程序，显示订单供收银员确认并引导用户完成付款。\n\n有关详细信息，请参阅<a href=\"CloudMode\" target=\"_blank\">跨终端应用集成-云端模式</a>",
+        "tags": [
+          "POS集成"
+        ],
+        "parameters": [],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "app_id": {
+                    "type": "string",
+                    "description": "由网关分配给访问应用程序以识别开发者的ID，请参阅<a href=\"GatewayOverview\" target=“_blank”>参数获取</a>",
+                    "maxLength": 32,
+                    "examples": [
+                      "wz3f35784c2cbe6f37"
+                    ]
+                  },
+                  "format": {
+                    "type": "string",
+                    "description": "请求数据格式，仅支持JSON",
+                    "maxLength": 4,
+                    "const": "JSON",
+                    "examples": [
+                      "JSON"
+                    ]
+                  },
+                  "charset": {
+                    "type": "string",
+                    "description": "用于请求的编码格式，仅支持UTF-8",
+                    "maxLength": 8,
+                    "const": "UTF-8",
+                    "examples": [
+                      "UTF-8"
+                    ]
+                  },
+                  "sign_type": {
+                    "type": "string",
+                    "description": "签名算法，目前只支持RSA2",
+                    "maxLength": 8,
+                    "const": "RSA2",
+                    "examples": [
+                      "RSA2"
+                    ]
+                  },
+                  "sign": {
+                    "type": "string",
+                    "description": "接口签名标识符，用于确定商家的真实性，以防止篡改消息，有关详细信息，请参阅<a href=\"Sign\" target=\"_blank\">签名规范</a>",
+                    "maxLength": 128,
+                    "examples": [
+                      "VD3AnpSR08BALF7U+A22kVCJOisv9WCCZJ1TGZSmM2lwhixKIi/uUPVYcB6gODbIsBmwJ2Cw9TtI/JiXJFPlJALLncrWTtxKeTxYWhkmnteiih6GhFw1hoFJqxJFgWoLXQI/pvZJr8NognBJjHE56uXBjqIyVanPaXvy3Xb47Cnbt29am7DuQJOyrylfGklbmZQW+kkMjrD4vhrPjvIaebSvkumL5CTOv5uXORYVVijd9UqOMZzTQjilpnH0In2+qZBsY/5if4ZCduFFItf31GRiJOh9WkR0nCiVJjt8y6eSs4Ms2FS9ZiISWgMMSwrkgqYAAJm4GpaP9UUAkmuGVg=="
+                    ]
+                  },
+                  "version": {
+                    "type": "string",
+                    "description": "版本号，固定值：1.0",
+                    "maxLength": 16,
+                    "const": "1.0",
+                    "examples": [
+                      "1.0"
+                    ]
+                  },
+                  "timestamp": {
+                    "type": "integer",
+                    "description": "发送请求的时间戳，长度为13位，不能超过15分钟之前或之后",
+                    "format": "long",
+                    "examples": [
+                      1693280636972
+                    ]
+                  },
+                  "method": {
+                    "type": "string",
+                    "description": "接口方法，此API的固定值：wisehub.cloud.pay.order",
+                    "maxLength": 32
+                  },
+                  "merchant_no": {
+                    "type": "string",
+                    "description": "商户编号，注册成为商户后获得，请参阅<a href=\"GatewayOverview\" target=“_blank”>参数获取</a>",
+                    "maxLength": 32,
+                    "examples": [
+                      "302100001612"
+                    ]
+                  },
+                  "store_no": {
+                    "type": "string",
+                    "description": "门店编号，注册门店后获得，请参阅<a href=\"GatewayOverview\" target=“_blank”>参数获取</a>",
+                    "maxLength": 32,
+                    "examples": [
+                      "4021000008"
+                    ]
+                  },
+                  "terminal_sn": {
+                    "type": "string",
+                    "description": "智能金融终端SN，需要绑定到商户店铺下",
+                    "maxLength": 32,
+                    "examples": [
+                      "P327701609001412"
+                    ]
+                  },
+                  "message_receiving_application": {
+                    "type": "string",
+                    "description": "消息接收应用程序，此处固定为“CodePay Register”",
+                    "maxLength": 32,
+                    "examples": [
+                      "CODEPAY_REGISTER"
+                    ]
+                  },
+                  "pay_scenario": {
+                    "type": "string",
+                    "description": "支付场景，请参阅  <a href=\"ParameterDictionary#payscenario\" target=\"_blank\">payscenario</a>",
+                    "enum": [
+                      "BSCANQR_PAY",
+                      "SCANQR_PAY",
+                      "SWIPE_CARD"
+                    ],
+                    "x-apifox": {
+                      "enumDescriptions": {
+                        "BSCANQR_PAY": "",
+                        "SCANQR_PAY": "",
+                        "SWIPE_CARD": ""
+                      }
+                    },
+                    "maxLength": 32,
+                    "examples": [
+                      "BANKCARD"
+                    ]
+                  },
+                  "pay_method_id": {
+                    "type": "string",
+                    "description": "要指定特定支付方式的使用，请参阅<a href=\"ParameterDictionary#paymethod\" target=\"_blank\">paymethod</a>",
+                    "examples": [
+                      "Visa"
+                    ]
+                  },
+                  "card_type": {
+                    "type": "integer",
+                    "description": "银行卡类型，请参阅<a href=\"./ParameterDictionary#cardtype\" target=\"_blank\">cardtype</a>"
+                  },
+                  "price_currency": {
+                    "type": "string",
+                    "description": "标价币种，ISO-4217货币编码，由基于三个字符的代码描述，例如：USD",
+                    "maxLength": 8,
+                    "examples": [
+                      "USD"
+                    ]
+                  },
+                  "order_amount": {
+                    "type": "number",
+                    "format": "float",
+                    "examples": [
+                      34.5
+                    ],
+                    "description": "订单金额，以其标价的货币表示，例如，1USD表示1美元，而不是1美分。"
+                  },
+                  "tip_amount": {
+                    "type": "number",
+                    "format": "float",
+                    "description": "小费金额。<br/><font color=“green”>示例：34.50</font>"
+                  },
+                  "on_screen_tip": {
+                    "type": "boolean",
+                    "description": "是否在CodePay Rigister页面上输入小费，默认为false，当“trans_type=1，3，4”时，可以设置此参数<br/><font color=“green”>示例：true</font>",
+                    "default": "false"
+                  },
+                  "cashback_amount": {
+                    "type": "number",
+                    "format": "float",
+                    "description": "返现金额，订单金额+返现金额=交易金额\n\n当 trans_type = 11 时，可以传递此参数"
+                  },
+                  "trans_type": {
+                    "type": "integer",
+                    "description": "交易类型，请参阅<a href=\"ParameterDictionary#transtype\" target=\"_blank\">transtype</a>",
+                    "examples": [
+                      1
+                    ]
+                  },
+                  "merchant_order_no": {
+                    "type": "string",
+                    "description": "商户系统内部订单号，要求32个字符内，只能是数字、大小写字母_-|*@ ，且在同一个商户下唯一<br />\n<font color=\"green\">示例值：1217752501201407033233368018</font>",
+                    "maxLength": 32,
+                    "examples": [
+                      "1217752501201407033233368018"
+                    ]
+                  },
+                  "orig_merchant_order_no": {
+                    "type": "string",
+                    "maxLength": 32,
+                    "examples": [
+                      "1217752501201407033233368018"
+                    ],
+                    "description": "原始交易商户系统订单号，trans_type=2、3、6需要"
+                  },
+                  "description": {
+                    "type": "string",
+                    "description": "客户购买的商品或服务的简要说明",
+                    "maxLength": 128,
+                    "examples": [
+                      "IPhone White X2"
+                    ]
+                  },
+                  "attach": {
+                    "type": "string",
+                    "description": "允许商家向网关提交额外的数据，这些数据将被原封不动地返回用于支付通知和查询",
+                    "maxLength": 128,
+                    "examples": [
+                      "{“key”:”value”, “key2”:”value2”}"
+                    ]
+                  },
+                  "notify_url": {
+                    "type": "string",
+                    "description": "商户系统接收CodePay支付通知的回调地址，请参阅<a href=\"CallbackNotificationNotes\" target=\"_blank\">回调通知说明</a>了解详细信息。<br />\n有关通知消息的报文结构，请参阅<a href=\"CloudAPI#tag/Common API/paths/~1%7Bmerchant_website%7D/post\" target=\"_blank\">交易结果通知</a>。",
+                    "maxLength": 256,
+                    "examples": [
+                      "http://www.mersite.com/pay/notify"
+                    ]
+                  },
+                  "expires": {
+                    "type": "integer",
+                    "examples": [
+                      5
+                    ],
+                    "description": "订单付款超时时期，超过此时间后，订单将无法再付款或取消，订单将被关闭，此时间的单位为：秒<br />\n\n<font color=\"red\">请设置合适的订单超时时间</font>"
+                  },
+                  "order_queue_mode": {
+                    "type": "string",
+                    "description": "订单队列模式，用于设置订单的排序规则，当推送多个订单时，优先处理新订单还是旧订单",
+                    "maxLength": 8,
+                    "examples": [
+                      "FIFO"
+                    ],
+                    "enum": [
+                      "FIFO",
+                      "FILO"
+                    ],
+                    "x-apifox": {
+                      "enumDescriptions": {
+                        "FIFO": "first-in first-out,default value",
+                        "FILO": "first-in last-out"
+                      }
+                    },
+                    "default": "FIFO"
+                  },
+                  "reject_trade_when_terminal_offline": {
+                    "type": "boolean",
+                    "description": "终端离线时是否拒绝交易，默认为false。\n<font color=\"red\">请小心设置此值，由于终端网络的不稳定，设备的联机状态可能会延迟，使用此功能之前请先进行测试，然后再决定是否在您的生产环境中应用</font>",
+                    "default": "false"
+                  },
+                  "required_terminal_authentication": {
+                    "type": "boolean",
+                    "description": "当退款或取消交易时，商店经理角色是否需要在终端上授权此操作？默认值：false",
+                    "default": "false"
+                  },
+                  "on_screen_signature": {
+                    "type": "boolean",
+                    "description": "此参数控制电子签名的显示逻辑：<br/>\n- true：显示电子签名页并打印采购订单上的签名信息<br />\n- false：不会显示电子签名页，但需要在采购订单上打印签名区域<br /><br />\n<font color=\"red\">但即使设置了此参数，在以下情况下，CodePay Register仍会根据以下逻辑处理电子签名：</font><br />\n- 信用卡网络，APP不显示签名页，固定在收据上打印签名栏 <br />\n- Pin借记交易不需要签名，APP不显示签名页面，收据也不打印",
+                    "default": "true"
+                  },
+                  "api_version": {
+                    "type": "string",
+                    "const": "2.0",
+                    "description": "此API的版本，固定值为“2.0”。"
+                  }
+                },
+                "x-apifox-refs": {},
+                "x-apifox-orders": [
+                  "app_id",
+                  "format",
+                  "charset",
+                  "sign_type",
+                  "sign",
+                  "version",
+                  "timestamp",
+                  "method",
+                  "merchant_no",
+                  "store_no",
+                  "terminal_sn",
+                  "message_receiving_application",
+                  "pay_scenario",
+                  "pay_method_id",
+                  "card_type",
+                  "price_currency",
+                  "order_amount",
+                  "tip_amount",
+                  "on_screen_tip",
+                  "cashback_amount",
+                  "trans_type",
+                  "merchant_order_no",
+                  "orig_merchant_order_no",
+                  "description",
+                  "attach",
+                  "notify_url",
+                  "expires",
+                  "order_queue_mode",
+                  "reject_trade_when_terminal_offline",
+                  "required_terminal_authentication",
+                  "on_screen_signature",
+                  "api_version"
+                ],
+                "required": [
+                  "app_id",
+                  "charset",
+                  "sign_type",
+                  "sign",
+                  "version",
+                  "format",
+                  "timestamp",
+                  "method",
+                  "merchant_no",
+                  "terminal_sn",
+                  "message_receiving_application",
+                  "price_currency",
+                  "order_amount",
+                  "trans_type",
+                  "merchant_order_no",
+                  "description",
+                  "expires",
+                  "api_version",
+                  "pay_scenario"
+                ],
+                "x-apifox-ignore-properties": []
+              },
+              "example": {
+                "merchant_no": "312300000969",
+                "charset": "UTF-8",
+                "expires": 180,
+                "method": "wisehub.cloud.pay.order",
+                "pay_scenario": "SWIPE_CARD",
+                "store_no": "4123000007",
+                "format": "JSON",
+                "sign": "gtKQ3297CtMCOxsia3kd2xJsxa1AI5DH6856Zuji9YRUxja3jyXGaV5uksiyNVrpnfw6tpfie9DJLCl7xVONnakEsFGgW1IWMvzHOyPhEigllondkWtO8rSPlyjtXoabCY1r8+JyPMLvDlxBmPB/x+7ZodKOOfK4C7dPT6oMNV+FxImF5wWE1LCiI0qUERM1b3YjO+/hputjadRTUZjFMeoyy2XEGCBilzcO8DmpuEY1SBtIrRD+dg8fxjV8fnhl7KY2cfC2o88qAg5I6VzCnM4BiUIqJbDqMaXYQxUH9i+cbp63bDaVpithAEP2+q5LvyExY3xFzwgoK1Y2KRrogA==",
+                "description": "IPhone 15 white X2",
+                "order_queue_mode": "FIFO",
+                "version": "1.0",
+                "merchant_order_no": "mapp1705395833091",
+                "message_receiving_application": "CodePay Register",
+                "order_amount": 34.5,
+                "app_id": "wz6012822ca2f1as78",
+                "sign_type": "RSA2",
+                "price_currency": "USD",
+                "terminal_sn": "WPYC002251000042",
+                "trans_type": 1,
+                "timestamp": "1705395833228"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "string",
+                      "description": "状态码，0表示请求成功，其他表示失败",
+                      "maxLength": 32
+                    },
+                    "msg": {
+                      "type": "string",
+                      "maxLength": 128,
+                      "description": "发生错误时，此消息包含错误消息"
+                    },
+                    "sign": {
+                      "type": "string",
+                      "maxLength": 128,
+                      "description": "接口签名标识符，用于确定商家的真实性，以防止篡改消息，有关详细信息，请参阅<a href=\"Sign\" target=\"_blank\">签名规范</a>"
+                    },
+                    "psn": {
+                      "type": "string",
+                      "maxLength": 16,
+                      "description": "返回消息序列号，用于跟踪请求链接，当您需要CodePay技术人员帮助进行故障排除时，请提供此跟踪号。"
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "message_id": {
+                          "type": "string",
+                          "maxLength": 32,
+                          "examples": [
+                            "M021000010210602000003"
+                          ],
+                          "description": "消息ID"
+                        },
+                        "trans_no": {
+                          "type": "string",
+                          "description": "唯一标识交易的CodePay交易编号",
+                          "maxLength": 32,
+                          "examples": [
+                            "5021000010210602000003"
+                          ]
+                        },
+                        "terminal_online_status": {
+                          "type": "string",
+                          "description": "终端的联机状态",
+                          "maxLength": 32,
+                          "enum": [
+                            "unknown",
+                            "online",
+                            "offline"
+                          ],
+                          "x-apifox": {
+                            "enumDescriptions": {
+                              "unknown": "Device status unknown",
+                              "online": "Device Online",
+                              "offline": "Device is offline"
+                            }
+                          }
+                        }
+                      },
+                      "x-apifox-orders": [
+                        "message_id",
+                        "trans_no",
+                        "terminal_online_status"
+                      ],
+                      "description": "响应业务数据，在实际请求中，此参数总是返回一个JSON字符串，此文档中的示例消息没有转换为字符串，为了便于查看，实际返回的消息是为了签名处理，解决JSON无序的问题，会做特殊处理，请以实际响应消息为准！\n例如：\n\n正确的格式data=“｛\\\\\\”k1\\\\\\“：\\\\\\”v1\\\\\\“，\\\\”k2\\\\\\““：\\\\”v2\\\\\\“｝”\n\n格式错误：data=｛“k1”：“v1”，“k2”：《v2》｝",
+                      "required": [
+                        "message_id",
+                        "trans_no"
+                      ],
+                      "x-apifox-ignore-properties": []
+                    }
+                  },
+                  "x-apifox-orders": [
+                    "code",
+                    "msg",
+                    "sign",
+                    "psn",
+                    "data"
+                  ],
+                  "required": [
+                    "code",
+                    "msg",
+                    "sign",
+                    "psn",
+                    "data"
+                  ],
+                  "x-apifox-refs": {},
+                  "x-apifox-ignore-properties": []
+                },
+                "examples": {
+                  "1": {
+                    "summary": "Successful Example",
+                    "value": {
+                      "code": "0",
+                      "msg": "success",
+                      "sign": "ARdktgKALtjqOoE9iPBcIt4n9jCz1VDV5q/qTRkmDMzU85xsf4RE4Mhffo4ccq95WBfu9sWQd2JswQKI9Qhln9qH/FzatuddMdfMCkOCO5i4L67A4RZEmF3+32XX6HzKOSPgzsV6syJ56EUu6ivFNPznJn6bt8buG4hljzoEc5ogEl+kn87EhXA+LpEyzJkgLI8ZhH7j6iMQlOeyYRjJ0pVMe7OZfIYOeULp3GfsUamj3ezWVZS/70d2irtxg4c9wsTcBe3dusmQpFfdzAUNuILINWFRj/LEiYWOIeU4DyAU9wBKLWJpyEtok1EUFpWmJJwhEeNQen5mwsJq4Nwv7Q==",
+                      "psn": "08290344008038160280",
+                      "data": {
+                        "message_id": "M021000010210602000003",
+                        "trans_no": "5021000010210602000003",
+                        "terminal_online_status": "online"
+                      }
+                    }
+                  },
+                  "2": {
+                    "summary": "Failure Example",
+                    "value": {
+                      "code": "E04112",
+                      "msg": "[E04112]Merchant order number repeat",
+                      "psn": "08290344008038160280",
+                      "sign": "ARdktgKALtjqOoE9iPBcIt4n9jCz1VDV5q/qTRkmDMzU85xsf4RE4Mhffo4ccq95WBfu9sWQd2JswQKI9Qhln9qH/FzatuddMdfMCkOCO5i4L67A4RZEmF3+32XX6HzKOSPgzsV6syJ56EUu6ivFNPznJn6bt8buG4hljzoEc5ogEl+kn87EhXA+LpEyzJkgLI8ZhH7j6iMQlOeyYRjJ0pVMe7OZfIYOeULp3GfsUamj3ezWVZS/70d2irtxg4c9wsTcBe3dusmQpFfdzAUNuILINWFRj/LEiYWOIeU4DyAU9wBKLWJpyEtok1EUFpWmJJwhEeNQen5mwsJq4Nwv7Q=="
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "x-run-in-apifox": "https://apifox.com/web/project/3919624/apis/api-142244455-run",
+        "security": []
+      }
+    },
+    "/api/entry/wisehubcloudpayclose": {
+      "post": {
+        "summary": "关闭订单",
+        "x-apifox-folder": "POS集成",
+        "x-apifox-status": "released",
+        "deprecated": false,
+        "description": "要关闭订单，商家的后端应调用此API。然后，支付网关将关闭订单，向物联网设备（如智能POS）上的指定应用程序发送消息，以从队列中清除订单。\n\n只有预支付状态订单（trans_status=9）才应使用此API主动关闭订单。如果不是，请使用“CodePay Register”应用程序界面取消。\n\n有关详细信息，请参阅<a href=\"CloudMode\" target=\"_blank\">跨终端应用集成-云端模式</a>\n",
+        "tags": [
+          "POS集成"
+        ],
+        "parameters": [],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "app_id": {
+                    "type": "string",
+                    "description": "由网关分配给访问应用程序以识别开发者的ID，请参阅<a href=\"GatewayOverview\" target=“_blank”>参数获取</a>",
+                    "maxLength": 32,
+                    "examples": [
+                      "wz3f35784c2cbe6f37"
+                    ]
+                  },
+                  "format": {
+                    "type": "string",
+                    "description": "请求数据格式，仅支持JSON",
+                    "maxLength": 4,
+                    "const": "JSON",
+                    "examples": [
+                      "JSON"
+                    ]
+                  },
+                  "charset": {
+                    "type": "string",
+                    "description": "用于请求的编码格式，仅支持UTF-8",
+                    "maxLength": 8,
+                    "const": "UTF-8",
+                    "examples": [
+                      "UTF-8"
+                    ]
+                  },
+                  "sign_type": {
+                    "type": "string",
+                    "description": "签名算法，目前只支持RSA2",
+                    "maxLength": 8,
+                    "const": "RSA2",
+                    "examples": [
+                      "RSA2"
+                    ]
+                  },
+                  "sign": {
+                    "type": "string",
+                    "description": "接口签名标识符，用于确定商家的真实性，以防止篡改消息，有关详细信息，请参阅<a href=\"Sign\" target=\"_blank\">签名规范</a>",
+                    "maxLength": 128,
+                    "examples": [
+                      "VD3AnpSR08BALF7U+A22kVCJOisv9WCCZJ1TGZSmM2lwhixKIi/uUPVYcB6gODbIsBmwJ2Cw9TtI/JiXJFPlJALLncrWTtxKeTxYWhkmnteiih6GhFw1hoFJqxJFgWoLXQI/pvZJr8NognBJjHE56uXBjqIyVanPaXvy3Xb47Cnbt29am7DuQJOyrylfGklbmZQW+kkMjrD4vhrPjvIaebSvkumL5CTOv5uXORYVVijd9UqOMZzTQjilpnH0In2+qZBsY/5if4ZCduFFItf31GRiJOh9WkR0nCiVJjt8y6eSs4Ms2FS9ZiISWgMMSwrkgqYAAJm4GpaP9UUAkmuGVg=="
+                    ]
+                  },
+                  "version": {
+                    "type": "string",
+                    "description": "版本号，固定值：1.0",
+                    "maxLength": 16,
+                    "const": "1.0",
+                    "examples": [
+                      "1.0"
+                    ]
+                  },
+                  "timestamp": {
+                    "type": "integer",
+                    "description": "发送请求的时间戳，长度为13位，不能超过15分钟之前或之后",
+                    "format": "long",
+                    "examples": [
+                      1693280636972
+                    ]
+                  },
+                  "method": {
+                    "type": "string",
+                    "description": "接口方法，此API的固定值：wisehub.cloud.pay.close",
+                    "maxLength": 32,
+                    "examples": [
+                      "wisehub.cloud.pay.close"
+                    ]
+                  },
+                  "merchant_no": {
+                    "type": "string",
+                    "description": "商户编号，注册成为商户后获得，请参阅<a href=\"GatewayOverview\" target=“_blank”>参数获取</a>",
+                    "maxLength": 32,
+                    "examples": [
+                      "302100001612"
+                    ]
+                  },
+                  "store_no": {
+                    "type": "string",
+                    "description": "门店编号，注册门店后获得，请参阅<a href=\"GatewayOverview\" target=“_blank”>参数获取</a>",
+                    "maxLength": 32,
+                    "examples": [
+                      "4021000008"
+                    ]
+                  },
+                  "terminal_sn": {
+                    "type": "string",
+                    "description": "智能金融终端SN，需要绑定到商户店铺下",
+                    "maxLength": 32,
+                    "examples": [
+                      "P327701609001412"
+                    ]
+                  },
+                  "merchant_order_no": {
+                    "type": "string",
+                    "description": "商户系统内部订单号，要求32个字符内，只能是数字、大小写字母_-|*@ ，且在同一个商户下唯一<br />\n<font color=\"green\">示例值：1217752501201407033233368018</font>",
+                    "maxLength": 32,
+                    "examples": [
+                      "1217752501201407033233368018"
+                    ]
+                  },
+                  "description": {
+                    "type": "string",
+                    "maxLength": 128,
+                    "description": "关闭交易记录的原因"
+                  },
+                  "message_receiving_application": {
+                    "type": "string",
+                    "description": "消息接收应用程序，此处固定为“CodePay Register”"
+                  }
+                },
+                "x-apifox-refs": {},
+                "x-apifox-orders": [
+                  "app_id",
+                  "format",
+                  "charset",
+                  "sign_type",
+                  "sign",
+                  "version",
+                  "timestamp",
+                  "method",
+                  "merchant_no",
+                  "store_no",
+                  "terminal_sn",
+                  "merchant_order_no",
+                  "description",
+                  "message_receiving_application"
+                ],
+                "required": [
+                  "app_id",
+                  "charset",
+                  "sign_type",
+                  "sign",
+                  "version",
+                  "format",
+                  "timestamp",
+                  "method",
+                  "merchant_no",
+                  "terminal_sn",
+                  "merchant_order_no",
+                  "message_receiving_application"
+                ],
+                "x-apifox-ignore-properties": []
+              },
+              "example": {
+                "merchant_no": "312200043123",
+                "charset": "UTF-8",
+                "method": "wisehub.cloud.pay.close",
+                "store_no": "4122006443",
+                "format": "JSON",
+                "sign": "VD3AnpSR08BALF7U+A22kVCJOisv9WCCZJ1TGZSmM2lwhixKIi/uUPVYcB6gODbIsBmwJ2Cw9TtI/JiXJFPlJALLncrWTtxKeTxYWhkmnteiih6GhFw1hoFJqxJFgWoLXQI/pvZJr8NognBJjHE56uXBjqIyVanPaXvy3Xb47Cnbt29am7DuQJOyrylfGklbmZQW+kkMjrD4vhrPjvIaebSvkumL5CTOv5uXORYVVijd9UqOMZzTQjilpnH0In2+qZBsY/5if4ZCduFFItf31GRiJOh9WkR0nCiVJjt8y6eSs4Ms2FS9ZiISWgMMSwrkgqYAAJm4GpaP9UUAkmuGVg==",
+                "version": "1.0",
+                "merchant_order_no": "1217752501201407033233368018",
+                "app_id": "wz3c35784c2cbe6f37",
+                "sign_type": "RSA2",
+                "terminal_sn": "PP85272109005865",
+                "timestamp": "1693280636972"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "string",
+                      "description": "状态码，0表示请求成功，其他表示失败",
+                      "maxLength": 32
+                    },
+                    "msg": {
+                      "type": "string",
+                      "maxLength": 128,
+                      "description": "发生错误时，此消息包含错误消息"
+                    },
+                    "sign": {
+                      "type": "string",
+                      "maxLength": 128,
+                      "description": "接口签名标识符，用于确定商家的真实性，以防止篡改消息，有关详细信息，请参阅<a href=\"Sign\" target=\"_blank\">签名规范</a>"
+                    },
+                    "psn": {
+                      "type": "string",
+                      "maxLength": 16,
+                      "description": "返回消息序列号，用于跟踪请求链接，当您需要CodePay技术人员帮助进行故障排除时，请提供此跟踪号。"
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "message_id": {
+                          "type": "string",
+                          "maxLength": 32,
+                          "examples": [
+                            "M021000010210602000003"
+                          ],
+                          "description": "消息ID"
+                        },
+                        "trans_no": {
+                          "type": "string",
+                          "description": "唯一标识交易的CodePay交易编号",
+                          "maxLength": 32,
+                          "examples": [
+                            "5021000010210602000003"
+                          ]
+                        },
+                        "terminal_online_status": {
+                          "type": "string",
+                          "description": "终端联机状态",
+                          "maxLength": 32,
+                          "enum": [
+                            "unknown",
+                            "online",
+                            "offline"
+                          ],
+                          "x-apifox": {
+                            "enumDescriptions": {
+                              "unknown": "Device status unknown",
+                              "online": "Device Online",
+                              "offline": "Device is offline"
+                            }
+                          }
+                        }
+                      },
+                      "x-apifox-orders": [
+                        "message_id",
+                        "trans_no",
+                        "terminal_online_status"
+                      ],
+                      "description": "响应业务数据，在实际请求中，此参数总是返回一个JSON字符串，此文档中的示例消息没有转换为字符串，为了便于查看，实际返回的消息是为了签名处理，解决JSON无序的问题，会做特殊处理，请以实际响应消息为准！\n例如：\n正确的格式data=“｛\\\\\\”k1\\\\\\“：\\\\\\”v1\\\\\\“，\\\\”k2\\\\\\““：\\\\”v2\\\\\\“｝”\n格式错误：data=｛“k1”：“v1”，“k2”：《v2》｝",
+                      "required": [
+                        "message_id",
+                        "trans_no"
+                      ],
+                      "x-apifox-ignore-properties": []
+                    }
+                  },
+                  "x-apifox-orders": [
+                    "code",
+                    "msg",
+                    "sign",
+                    "psn",
+                    "data"
+                  ],
+                  "required": [
+                    "code",
+                    "msg",
+                    "sign",
+                    "psn",
+                    "data"
+                  ],
+                  "x-apifox-refs": {},
+                  "x-apifox-ignore-properties": []
+                },
+                "examples": {
+                  "1": {
+                    "summary": "Successful Example",
+                    "value": {
+                      "code": "0",
+                      "msg": "success",
+                      "sign": "ARdktgKALtjqOoE9iPBcIt4n9jCz1VDV5q/qTRkmDMzU85xsf4RE4Mhffo4ccq95WBfu9sWQd2JswQKI9Qhln9qH/FzatuddMdfMCkOCO5i4L67A4RZEmF3+32XX6HzKOSPgzsV6syJ56EUu6ivFNPznJn6bt8buG4hljzoEc5ogEl+kn87EhXA+LpEyzJkgLI8ZhH7j6iMQlOeyYRjJ0pVMe7OZfIYOeULp3GfsUamj3ezWVZS/70d2irtxg4c9wsTcBe3dusmQpFfdzAUNuILINWFRj/LEiYWOIeU4DyAU9wBKLWJpyEtok1EUFpWmJJwhEeNQen5mwsJq4Nwv7Q==",
+                      "psn": "08290344008038160280",
+                      "data": {
+                        "message_id": "M021000010210602000003",
+                        "trans_no": "5021000010210602000003"
+                      }
+                    }
+                  },
+                  "2": {
+                    "summary": "Failure Example",
+                    "value": {
+                      "code": "E04113",
+                      "msg": "[E04113]Merchant order number error",
+                      "psn": "08290344008038160280",
+                      "sign": "ARdktgKALtjqOoE9iPBcIt4n9jCz1VDV5q/qTRkmDMzU85xsf4RE4Mhffo4ccq95WBfu9sWQd2JswQKI9Qhln9qH/FzatuddMdfMCkOCO5i4L67A4RZEmF3+32XX6HzKOSPgzsV6syJ56EUu6ivFNPznJn6bt8buG4hljzoEc5ogEl+kn87EhXA+LpEyzJkgLI8ZhH7j6iMQlOeyYRjJ0pVMe7OZfIYOeULp3GfsUamj3ezWVZS/70d2irtxg4c9wsTcBe3dusmQpFfdzAUNuILINWFRj/LEiYWOIeU4DyAU9wBKLWJpyEtok1EUFpWmJJwhEeNQen5mwsJq4Nwv7Q=="
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "x-run-in-apifox": "https://apifox.com/web/project/3919624/apis/api-142244456-run",
+        "security": []
+      }
+    },
+    "/api/entry/bscancpaysubmit": {
+      "post": {
+        "summary": "扫码支付(客户呈现)",
+        "x-apifox-folder": "扫码支付",
+        "x-apifox-status": "developing",
+        "deprecated": false,
+        "description": "收银员使用扫码设备读取用户钱包APP中的条形码或二维码以后，付款凭证信息传送至商户收银台，由商户收银台或者商户后台调用此接口发起支付。\n\n>1. 交易结果是同步返回的。如果出现 \"系统错误\"，请等待 5 秒钟，然后调用[<a href =\"./CloudAPI#tag/API/paths/~1api~1entry~1orderquery/post\"  target=\"_blank\">查询订单API</a>]，直到支付成功或超时（建议 30 秒，调用间隔为 5 秒）。\n>2. 如果在调用[<a href =\"./CloudAPI#tag/API/paths/~1api~1entry~1orderquery/post\"  target=\"_blank\">查询订单API</a>]时返回不确定的交易状态，请取消订单。取消后，成功的订单将被退回，而失败的订单将关闭。如果对<a href=\"./CloudAPI#tag/API/paths/~1api~1entry~1orderrevoker/post\"  target=\"_blank\">[取消订单API]</a>的调用返回失败，请再次调用。请注意，应在创建订单后至少15秒调用<a href=\"./CloudAPI#tag/API/paths/~1api~1entry~1orderrevoker/post\"  target=\"_blank\">[取消订单API]</a>。\n\n有关详细信息，请参阅<a href=\"QuickPayDevGuidelines\" target=\"_blank\">扫码支付-客户呈现二维码产品介绍</a>\n\n",
+        "tags": [
+          "扫码支付"
+        ],
+        "parameters": [],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "app_id": {
+                    "type": "string",
+                    "description": "由网关分配给访问应用程序以识别开发者的ID，请参阅<a href=\"GatewayOverview\" target=“_blank”>参数获取</a>",
+                    "maxLength": 32,
+                    "examples": [
+                      "wz3c35784c2cbe6f37"
+                    ]
+                  },
+                  "format": {
+                    "type": "string",
+                    "description": "请求数据格式，仅支持JSON",
+                    "maxLength": 4,
+                    "const": "JSON",
+                    "examples": [
+                      "JSON"
+                    ]
+                  },
+                  "charset": {
+                    "type": "string",
+                    "description": "用于请求的编码格式，仅支持UTF-8",
+                    "maxLength": 8,
+                    "const": "UTF-8",
+                    "examples": [
+                      "UTF-8"
+                    ]
+                  },
+                  "sign_type": {
+                    "type": "string",
+                    "description": "签名算法，目前只支持RSA2",
+                    "maxLength": 8,
+                    "const": "RSA2",
+                    "examples": [
+                      "RSA2"
+                    ]
+                  },
+                  "sign": {
+                    "type": "string",
+                    "description": "接口签名标识符，用于确定商家的真实性，以防止篡改消息，有关详细信息，请参阅<a href=\"Sign\" target=\"_blank\">签名规范</a>",
+                    "maxLength": 128,
+                    "examples": [
+                      "VD3AnpSR08BALF7U+A22kVCJOisv9WCCZJ1TGZSmM2lwhixKIi/uUPVYcB6gODbIsBmwJ2Cw9TtI/JiXJFPlJALLncrWTtxKeTxYWhkmnteiih6GhFw1hoFJqxJFgWoLXQI/pvZJr8NognBJjHE56uXBjqIyVanPaXvy3Xb47Cnbt29am7DuQJOyrylfGklbmZQW+kkMjrD4vhrPjvIaebSvkumL5CTOv5uXORYVVijd9UqOMZzTQjilpnH0In2+qZBsY/5if4ZCduFFItf31GRiJOh9WkR0nCiVJjt8y6eSs4Ms2FS9ZiISWgMMSwrkgqYAAJm4GpaP9UUAkmuGVg=="
+                    ]
+                  },
+                  "version": {
+                    "type": "string",
+                    "description": "版本号，固定值：1.0",
+                    "maxLength": 16,
+                    "const": "1.0",
+                    "examples": [
+                      "1.0"
+                    ]
+                  },
+                  "timestamp": {
+                    "type": "integer",
+                    "description": "发送请求的时间戳，长度为13位，不能超过15分钟之前或之后",
+                    "format": "long",
+                    "examples": [
+                      1693280636972
+                    ]
+                  },
+                  "method": {
+                    "type": "string",
+                    "description": "接口方法，此API的固定值：bscanc.pay.submit"
+                  },
+                  "merchant_no": {
+                    "type": "string",
+                    "description": "商户编号，注册成为商户后获得，请参阅<a href=\"GatewayOverview\" target=“_blank”>参数获取</a>",
+                    "maxLength": 32
+                  },
+                  "store_no": {
+                    "type": "string",
+                    "description": "门店编号，注册门店后获得，请参阅<a href=\"GatewayOverview\" target=“_blank”>参数获取</a>",
+                    "maxLength": 32,
+                    "examples": [
+                      "4021000008"
+                    ]
+                  },
+                  "auth_code": {
+                    "type": "string",
+                    "maxLength": 128,
+                    "description": "通过扫描二维码/条形码获得的移动钱包支付代码、号码或字符串"
+                  },
+                  "pay_method_id": {
+                    "type": "string",
+                    "description": "指定特定支付方式的使用，请参阅<a href=\"ParameterDictionary#paymethod\" target=\"_blank\">paymethod</a>",
+                    "examples": [
+                      "Visa"
+                    ]
+                  },
+                  "merchant_order_no": {
+                    "type": "string",
+                    "description": "商户系统内部订单号，要求32个字符内，只能是数字、大小写字母_-|*@ ，且在同一个商户下唯一<br />\n<font color=\"green\">示例值：1217752501201407033233368018</font>",
+                    "maxLength": 32,
+                    "examples": [
+                      "1217752501201407033233368018"
+                    ]
+                  },
+                  "price_currency": {
+                    "type": "string",
+                    "description": "标价币种，ISO-4217货币编码，由基于三个字符的代码描述，例如：USD",
+                    "maxLength": 8,
+                    "examples": [
+                      "USD"
+                    ]
+                  },
+                  "order_amount": {
+                    "type": "number",
+                    "format": "float",
+                    "examples": [
+                      34.5
+                    ],
+                    "description": "订单金额，以其标价的货币表示，例如，1USD表示1美元，而不是1美分。"
+                  },
+                  "expires": {
+                    "type": "integer",
+                    "examples": [
+                      5
+                    ],
+                    "description": "订单付款超时时期，超过此时间后，订单将无法再付款或取消，订单将被关闭，此时间的单位为：秒<br />\n\n<font color=\"red\">请设置合适的订单超时时间</font>"
+                  },
+                  "description": {
+                    "type": "string",
+                    "description": "客户购买的商品或服务的简要说明",
+                    "maxLength": 128,
+                    "examples": [
+                      "IPhone White X2"
+                    ]
+                  },
+                  "attach": {
+                    "type": "string",
+                    "description": "允许商家向网关提交额外的数据，这些数据将在付款通知和查询过程中原样返回",
+                    "maxLength": 128,
+                    "examples": [
+                      "{“key”:”value”, “key2”:”value2”}"
+                    ]
+                  },
+                  "terminal_sn": {
+                    "type": "string",
+                    "description": "智能金融终端的SN需要绑定到商家的店铺",
+                    "maxLength": 32,
+                    "examples": [
+                      "P327701609001412"
+                    ]
+                  },
+                  "term_ip": {
+                    "type": "string",
+                    "maxLength": 32,
+                    "description": "终端的IP地址。如果没有终端，则可以提交服务器的IP地址"
+                  },
+                  "longitude": {
+                    "type": "string",
+                    "maxLength": 16,
+                    "description": "地理经度"
+                  },
+                  "latitude": {
+                    "type": "string",
+                    "description": "地理纬度",
+                    "maxLength": 16
+                  },
+                  "notify_url": {
+                    "type": "string",
+                    "description": "商户系统接收CodePay支付通知的回调地址，请参阅<a href=\"CallbackNotificationNotes\" target=\"_blank\">回调通知说明</a>了解详细信息。<br />\n有关通知消息的报文结构，请参阅<a href=\"CloudAPI#tag/Common API/paths/~1%7Bmerchant_website%7D/post\" target=\"_blank\">交易结果通知</a>。",
+                    "maxLength": 256,
+                    "examples": [
+                      "http://www.mersite.com/pay/notify"
+                    ]
+                  }
+                },
+                "x-apifox-orders": [
+                  "app_id",
+                  "format",
+                  "charset",
+                  "sign_type",
+                  "sign",
+                  "version",
+                  "timestamp",
+                  "method",
+                  "merchant_no",
+                  "store_no",
+                  "auth_code",
+                  "pay_method_id",
+                  "merchant_order_no",
+                  "price_currency",
+                  "order_amount",
+                  "expires",
+                  "description",
+                  "attach",
+                  "terminal_sn",
+                  "term_ip",
+                  "longitude",
+                  "latitude",
+                  "notify_url"
+                ],
+                "required": [
+                  "app_id",
+                  "charset",
+                  "sign_type",
+                  "sign",
+                  "version",
+                  "format",
+                  "timestamp",
+                  "method",
+                  "merchant_no",
+                  "auth_code",
+                  "pay_method_id",
+                  "merchant_order_no",
+                  "price_currency",
+                  "order_amount",
+                  "expires",
+                  "description",
+                  "term_ip"
+                ],
+                "x-apifox-refs": {},
+                "x-apifox-ignore-properties": []
+              },
+              "example": {
+                "merchant_no": "302110041048",
+                "charset": "UTF-8",
+                "expires": 300,
+                "method": "bscanc.pay.submit",
+                "store_no": "4021000201",
+                "format": "JSON",
+                "sign": "Q3v4mjwRmZfuNeRi6uoFH8GKmPzUqpy5htuhVoZ5FlKXS4dhNIZ3SgD7CPRfy5L5FQ4djmnmy0zKTFM7KwU+QqfJ2znsvj4KlWqxWNnMBxMy2TyQfwBAyydffTVMi9OZBqEqCns69y5PLlEzi8poBHZhVYY8kPgCXQGe8GLXMg7x3AHWsOqgnzFhFj5B/Z8zUMaz6sKHEW+VV+7QmazrbhIulXVmCnpdHdNo1QAW19ZerJ+gallyOjFx2xvXiAfnx9EUcSDU0pzBF2kzdb8LuCloGo7jYfKewEwLyDV3UQbZ/i3UgP1rQxIg0bFVTMRfoeeA2/FuOw3rAoH3OH841g==",
+                "description": "IPhone 12 5G White",
+                "pay_method_id": "Alipay+",
+                "notify_url": "https://www.baidu.com",
+                "trans_amount": 200,
+                "version": "1.0",
+                "merchant_order_no": "TEST_1693882417637",
+                "auth_code": "281666029913682898991367",
+                "app_id": "wz9f2a175d0e0ef632",
+                "sign_type": "RSA2",
+                "price_currency": "JPY",
+                "timestamp": "1693882417747"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "string",
+                      "description": "状态码，0表示请求成功，其他表示失败",
+                      "maxLength": 32,
+                      "examples": [
+                        "0"
+                      ]
+                    },
+                    "msg": {
+                      "type": "string",
+                      "description": "发生错误时，此消息包含错误消息",
+                      "maxLength": 128,
+                      "examples": [
+                        "success"
+                      ]
+                    },
+                    "sign": {
+                      "type": "string",
+                      "maxLength": 128,
+                      "examples": [
+                        "ARdktgKALtjqOoE9iPBcIt4n9jCz1VDV5q/qTRkmDMzU85xsf4RE4Mhffo4ccq95WBfu9sWQd2JswQKI9Qhln9qH/FzatuddMdfMCkOCO5i4L67A4RZEmF3+32XX6HzKOSPgzsV6syJ56EUu6ivFNPznJn6bt8buG4hljzoEc5ogEl+kn87EhXA+LpEyzJkgLI8ZhH7j6iMQlOeyYRjJ0pVMe7OZfIYOeULp3GfsUamj3ezWVZS/70d2irtxg4c9wsTcBe3dusmQpFfdzAUNuILINWFRj/LEiYWOIeU4DyAU9wBKLWJpyEtok1EUFpWmJJwhEeNQen5mwsJq4Nwv7Q=="
+                      ],
+                      "description": "接口签名标识符，用于确定商家的真实性，以防止篡改消息，有关详细信息，请参阅<a href=\"Sign\" target=\"_blank\">签名规范</a>"
+                    },
+                    "psn": {
+                      "type": "string",
+                      "description": "返回消息序列号，用于跟踪请求链接，当您需要CodePay技术人员帮助进行故障排除时，请提供此跟踪号。",
+                      "maxLength": 16,
+                      "examples": [
+                        "08290344008038160280"
+                      ]
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "trans_no": {
+                          "type": "string",
+                          "description": "唯一标识交易的CodePay交易编号",
+                          "maxLength": 32,
+                          "examples": [
+                            "5021000010210602000003"
+                          ]
+                        },
+                        "trans_status": {
+                          "type": "integer",
+                          "description": "交易状态，请参阅 <a href=\"ParameterDictionary#transstatus\" target=\"_blank\">TransStatus</a>"
+                        },
+                        "pay_channel_trans_no": {
+                          "type": "string",
+                          "description": "支付渠道的交易序列号，如微信、支付宝、Visa、万事达卡和其他支付平台",
+                          "maxLength": 64
+                        },
+                        "pay_user_account_id": {
+                          "type": "string",
+                          "maxLength": 64,
+                          "description": "买家用户 ID"
+                        },
+                        "trans_amount": {
+                          "type": "number",
+                          "format": "double",
+                          "description": "在大多数情况下，订单金额和交易金额相等，当客户需要支付服务费和消费税时，交易金额会大于订单金额"
+                        },
+                        "trans_fee_c": {
+                          "type": "number",
+                          "format": "double",
+                          "description": "客户需要支付的服务费"
+                        },
+                        "vat_amount": {
+                          "type": "number",
+                          "description": "VAT：Value added Tax（增值税）的缩写，是一种根据当地政府法律法规向商家收取增值税的支付渠道",
+                          "format": "double"
+                        },
+                        "paid_amount": {
+                          "type": "number",
+                          "format": "double",
+                          "description": "客户实际付款金额"
+                        },
+                        "discount_bmopc": {
+                          "type": "number",
+                          "format": "double",
+                          "description": "商户通过支付渠道向客户提供优惠金额，这些金额不会结算给商户"
+                        },
+                        "discount_bpc": {
+                          "type": "number",
+                          "format": "double",
+                          "description": "将付款渠道的金额折算给客户，这部分资金将存入商家账户"
+                        },
+                        "trans_end_time": {
+                          "type": "string",
+                          "format": "date-time",
+                          "description": "交易成功的时间，时区 UTC/GMT 0，格式：YYYY-MM-DD HH:mm:ss <br />\n<font color=\"green\">示例：2021-06-03 12:48:51<font>"
+                        },
+                        "ref_no": {
+                          "type": "string",
+                          "description": "银行卡交易参考编号",
+                          "maxLength": 64
+                        }
+                      },
+                      "x-apifox-orders": [
+                        "trans_no",
+                        "trans_status",
+                        "pay_channel_trans_no",
+                        "pay_user_account_id",
+                        "trans_amount",
+                        "trans_fee_c",
+                        "vat_amount",
+                        "paid_amount",
+                        "discount_bmopc",
+                        "discount_bpc",
+                        "trans_end_time",
+                        "ref_no"
+                      ],
+                      "description": "响应业务数据，在实际请求中，此参数总是返回一个JSON字符串，此文档中的示例消息没有转换为字符串，为了便于查看，实际返回的消息是为了签名处理，解决JSON无序的问题，会做特殊处理，请以实际响应消息为准！\n\n例如：正确的格式data=“｛\\\\\\”k1\\\\\\“：\\\\\\”v1\\\\\\“，\\\\”k2\\\\\\“；\\\\”v2\\\\\\“｝”\n\n错误的格式：data=｛”k1“：”v1“，”k2“：“v2”｝",
+                      "required": [
+                        "trans_no",
+                        "trans_status"
+                      ],
+                      "x-apifox-ignore-properties": []
+                    }
+                  },
+                  "x-apifox-orders": [
+                    "code",
+                    "msg",
+                    "sign",
+                    "psn",
+                    "data"
+                  ],
+                  "required": [
+                    "code",
+                    "msg",
+                    "sign",
+                    "psn",
+                    "data"
+                  ],
+                  "x-apifox-refs": {},
+                  "x-apifox-ignore-properties": []
+                },
+                "examples": {
+                  "1": {
+                    "summary": "Success Example",
+                    "value": {
+                      "code": "0",
+                      "data": {
+                        "trans_no": "50210004102309050000002",
+                        "trans_end_time": "2023-09-05 02:57:30",
+                        "pay_user_account_id": "2102209000001474545H6",
+                        "trans_fee_c": "0",
+                        "trans_amount": "200",
+                        "pay_channel_trans_no": "20230905190741010000G0004578720",
+                        "discount_bpc": "0",
+                        "vat_amount": "0",
+                        "pay_platform_trans_no": "20230905198881010004H0000505133",
+                        "paid_amount": "200",
+                        "trans_amount_cny": "9.95",
+                        "trans_status": 2,
+                        "discount_bmopc": "0"
+                      },
+                      "msg": "success",
+                      "psn": "09050257284550801420",
+                      "sign": "OpmXLxxMjZYjNo+Vk7cd8EpGzZsl6qQLHBq4wdvZt2MQ6QPzUc5sZ8xfOn2y+BC1mNnEQ473gKrbubVxSheeMy+KjVECM8KVdVRrmALuIdbCyY98aBHQOQidgwY2cER15JbAl/Ts7jHV1sJXbXyrrY/Puksmr82LB+e7srbtHvkDrUpvh4kp/72V5Tqxbsvi/VKiX5QWuZgXTSV4dWGg+hsbLPsi7zWb3vQUO7PnNaASnt+N+RLnkuVnAe8qlt4Wj181Y/a9Eu2DgZUY+qgdcl8AglaLRD7J2Q65bkVcdDueT9En6oIx09jLzbp6swihmdM/lmUwOgrxh3xcbC6uRQ=="
+                    }
+                  },
+                  "2": {
+                    "summary": "Failure Example",
+                    "value": {
+                      "code": "EC0000",
+                      "msg": "[EC0000]The identity code is invalid.",
+                      "psn": "09050253393428495770",
+                      "sign": "ZPr3deBU2bg5GHpte7y86gbPQ5lWRz+ewI29NGfZEM6KnghR+oE+9OPvI34XAZckw4pgPB4oU9x2I1KzfhiiGWzf7Q/gjspFux1HwzHh2dZyxwtz44B9PX582xfqoewtYCDMXhNYmWFO3EuywHVnnyYabSHaNpH4HboHMc5DMoPeVXFxunHVMK5vxaclzEdplWLFCwYS+P9ubQUuCjucQMDaru8l1i5QPhSPfoeJdmPEA12tl+N8CSv+4zzQXwHAbpN6VEzuhwXkq3GwCzKnPvkpKMnDwMiXU79uPu8UB4QXZXB3Ypx/NuoG9J7PqGwuqMSNEDhhbnxJw7Tj2Fsitg==",
+                      "success": false
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "x-run-in-apifox": "https://apifox.com/web/project/3919624/apis/api-142244457-run",
+        "security": []
+      }
+    },
+    "/api/entry/cscanbpaygetqrcode": {
+      "post": {
+        "summary": "扫码交易(商户呈现)",
+        "x-apifox-folder": "扫码支付",
+        "x-apifox-status": "developing",
+        "deprecated": false,
+        "description": "商家后台调用此API在 CodePay 上创建预付款交易。CodePay 返回二维码图片链接，客户使用手机钱包扫描二维码即可完成支付。\n\n>1. 生成二维码并显示给客户扫描后，商家系统需要调用订单查询 API，直到支付成功或超时（建议超时 60 秒，调用频率 5 秒）。\n>2. 如果超过超时时间后调用 [<a href=\"./CloudAPI#tag/API/paths/~1api~1entry~1orderquery/post\" target=\"_blank\">查询订单</a>] 时交易状态仍然不确定，请取消订单。取消后，成功的订单将被退回，而失败的订单将关闭。 如果对 [<a href =\"./CloudAPI#tag/API/paths/~1api~1entry~1orderrevoker/post\"  target=\"_blank\">取消订单</a>] 的调用返回失败，请再次调用。\n\n有关详细信息，请参阅<a href=\"QRCodePayDevGuidelines\" target=\"_blank\">扫码支付-商户呈现二维码产品介绍</a>",
+        "tags": [
+          "扫码支付"
+        ],
+        "parameters": [],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "app_id": {
+                    "type": "string",
+                    "description": "由网关分配给访问应用程序以识别开发者的ID，请参阅<a href=\"GatewayOverview\" target=“_blank”>参数获取</a>",
+                    "maxLength": 32,
+                    "examples": [
+                      "wz3c35784c2cbe6f37"
+                    ]
+                  },
+                  "format": {
+                    "type": "string",
+                    "description": "请求数据格式，仅支持 JSON",
+                    "maxLength": 4,
+                    "const": "JSON",
+                    "examples": [
+                      "JSON"
+                    ]
+                  },
+                  "charset": {
+                    "type": "string",
+                    "description": "请求使用的编码格式，仅支持 UTF-8",
+                    "maxLength": 8,
+                    "const": "UTF-8",
+                    "examples": [
+                      "UTF-8"
+                    ]
+                  },
+                  "sign_type": {
+                    "type": "string",
+                    "description": "签名算法，目前仅支持 RSA2",
+                    "maxLength": 8,
+                    "const": "RSA2",
+                    "examples": [
+                      "RSA2"
+                    ]
+                  },
+                  "sign": {
+                    "type": "string",
+                    "description": "接口签名标识符，用于确定商家的真实性，以防止篡改消息，有关详细信息，请参阅<a href=\"Sign\" target=\"_blank\">签名规范</a>",
+                    "maxLength": 128,
+                    "examples": [
+                      "VD3AnpSR08BALF7U+A22kVCJOisv9WCCZJ1TGZSmM2lwhixKIi/uUPVYcB6gODbIsBmwJ2Cw9TtI/JiXJFPlJALLncrWTtxKeTxYWhkmnteiih6GhFw1hoFJqxJFgWoLXQI/pvZJr8NognBJjHE56uXBjqIyVanPaXvy3Xb47Cnbt29am7DuQJOyrylfGklbmZQW+kkMjrD4vhrPjvIaebSvkumL5CTOv5uXORYVVijd9UqOMZzTQjilpnH0In2+qZBsY/5if4ZCduFFItf31GRiJOh9WkR0nCiVJjt8y6eSs4Ms2FS9ZiISWgMMSwrkgqYAAJm4GpaP9UUAkmuGVg=="
+                    ]
+                  },
+                  "version": {
+                    "type": "string",
+                    "description": "版本号，固定值：1.0",
+                    "maxLength": 16,
+                    "const": "1.0",
+                    "examples": [
+                      "1.0"
+                    ]
+                  },
+                  "timestamp": {
+                    "type": "integer",
+                    "description": "请求发送时间的时间戳，长度为 13 位数字，不能超过 15 分钟或更晚。",
+                    "format": "long",
+                    "examples": [
+                      1693280636972
+                    ]
+                  },
+                  "method": {
+                    "type": "string",
+                    "description": "接口方法，此 API 的固定值：cscanb.pay.getqrcode"
+                  },
+                  "merchant_no": {
+                    "type": "string",
+                    "description": "商户编号，注册成为商户后获得，请参阅<a href=\"GatewayOverview\" target=“_blank”>参数获取</a>",
+                    "maxLength": 32
+                  },
+                  "store_no": {
+                    "type": "string",
+                    "description": "门店编号，注册门店后获得，请参阅<a href=\"GatewayOverview\" target=“_blank”>参数获取</a>",
+                    "maxLength": 32,
+                    "examples": [
+                      "4021000008"
+                    ]
+                  },
+                  "pay_method_id": {
+                    "type": "string",
+                    "description": "指定使用某种付款方式，请参阅 <a href=\"ParameterDictionary#paymethod\" target=\"_blank\">PayMethod</a>",
+                    "examples": [
+                      "Visa"
+                    ]
+                  },
+                  "merchant_order_no": {
+                    "type": "string",
+                    "description": "商户系统内部订单号，要求32个字符内，只能是数字、大小写字母_-|*@ ，且在同一个商户下唯一<br />\n<font color=\"green\">示例值：1217752501201407033233368018</font>",
+                    "maxLength": 32,
+                    "examples": [
+                      "1217752501201407033233368018"
+                    ]
+                  },
+                  "price_currency": {
+                    "type": "string",
+                    "description": "标价币种，ISO-4217货币编码，由基于三个字符的代码描述，例如：USD",
+                    "maxLength": 8,
+                    "examples": [
+                      "USD"
+                    ]
+                  },
+                  "order_amount": {
+                    "type": "number",
+                    "format": "float",
+                    "examples": [
+                      34.5
+                    ],
+                    "description": "订单金额，以其标价的货币表示，例如，1USD表示1美元，而不是1美分。"
+                  },
+                  "expires": {
+                    "type": "integer",
+                    "examples": [
+                      5
+                    ],
+                    "description": "订单付款超时时期，超过此时间后，订单将无法再付款或取消，订单将被关闭，此时间的单位为：秒<br />\n\n<font color=\"red\">请设置合适的订单超时时间</font>"
+                  },
+                  "description": {
+                    "type": "string",
+                    "description": "客户所购商品或服务的简要说明",
+                    "maxLength": 128,
+                    "examples": [
+                      "IPhone White X2"
+                    ]
+                  },
+                  "attach": {
+                    "type": "string",
+                    "description": "允许商家向网关提交附加数据，这些数据将在付款通知和查询时原样返回",
+                    "maxLength": 128,
+                    "examples": [
+                      "{“key”:”value”, “key2”:”value2”}"
+                    ]
+                  },
+                  "terminal_sn": {
+                    "type": "string",
+                    "description": "智能金融终端的 SN 需要与商家的店铺绑定",
+                    "maxLength": 32,
+                    "examples": [
+                      "P327701609001412"
+                    ]
+                  },
+                  "term_ip": {
+                    "type": "string",
+                    "maxLength": 32,
+                    "description": "终端的 IP 地址。如果没有终端，可提交服务器的 IP 地址"
+                  },
+                  "longitude": {
+                    "type": "string",
+                    "maxLength": 16,
+                    "description": "地理经度"
+                  },
+                  "latitude": {
+                    "type": "string",
+                    "description": "地理纬度",
+                    "maxLength": 16
+                  },
+                  "notify_url": {
+                    "type": "string",
+                    "description": "商户系统接收CodePay支付通知的回调地址，请参阅<a href=\"CallbackNotificationNotes\" target=\"_blank\">回调通知说明</a>了解详细信息。<br />\n有关通知消息的报文结构，请参阅<a href=\"CloudAPI#tag/Common API/paths/~1%7Bmerchant_website%7D/post\" target=\"_blank\">交易结果通知</a>。",
+                    "maxLength": 256,
+                    "examples": [
+                      "http://www.mersite.com/pay/notify"
+                    ]
+                  }
+                },
+                "x-apifox-orders": [
+                  "app_id",
+                  "format",
+                  "charset",
+                  "sign_type",
+                  "sign",
+                  "version",
+                  "timestamp",
+                  "method",
+                  "merchant_no",
+                  "store_no",
+                  "pay_method_id",
+                  "merchant_order_no",
+                  "price_currency",
+                  "order_amount",
+                  "expires",
+                  "description",
+                  "attach",
+                  "terminal_sn",
+                  "term_ip",
+                  "longitude",
+                  "latitude",
+                  "notify_url"
+                ],
+                "required": [
+                  "app_id",
+                  "charset",
+                  "sign_type",
+                  "sign",
+                  "version",
+                  "format",
+                  "timestamp",
+                  "method",
+                  "merchant_no",
+                  "pay_method_id",
+                  "merchant_order_no",
+                  "price_currency",
+                  "order_amount",
+                  "expires",
+                  "description",
+                  "term_ip"
+                ],
+                "x-apifox-refs": {},
+                "x-apifox-ignore-properties": []
+              },
+              "example": {
+                "merchant_no": "312100041048",
+                "charset": "UTF-8",
+                "method": "cscanb.pay.getqrcode",
+                "store_no": "4021000201",
+                "format": "JSON",
+                "sign": "EJML4t1EbY8BvUwruveoLTqwgXfgB/52nuH1x20FV9eEOBftqvZ5vmtmjhxT9HcrhKKoT10FVZHMyFSzYhL2rIMm+8Pn9ItCalKcca/0HuH8vJ4BHKAiIsgkbruE8HhG4cnQ4Tfd7h+wqT/d4cZH7f7oDMNbgy1DsbuebBAhygIbPGxF3PQNQD9zDM95jYmYLBc5EcUulHXAeZ/hU9/4QpVcKzJ9nzFpwvCeii6vGVVS8gxJmUL9lwiIXW6V5Gshvp/cmDT9jTswhd/a11l2wtbtHscrdZi63E3Tt5lAtz+yr+DV8pp0TJMG5CLMqaznsXNcI5r4tnxuMuK8ff2AXw==",
+                "description": "test",
+                "pay_method_id": "Alipay+",
+                "trans_amount": 1,
+                "version": "1.0",
+                "merchant_order_no": "TEST_1693895595408",
+                "app_id": "wz9f2a175d0e0ef632",
+                "sign_type": "RSA2",
+                "price_currency": "JPY",
+                "timestamp": "1693895595505"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "string",
+                      "description": "状态代码，0 表示请求成功，其他表示失败",
+                      "maxLength": 32,
+                      "examples": [
+                        "0"
+                      ]
+                    },
+                    "msg": {
+                      "type": "string",
+                      "description": "当发生错误时，该 msg 包含错误信息",
+                      "maxLength": 128,
+                      "examples": [
+                        "success"
+                      ]
+                    },
+                    "sign": {
+                      "type": "string",
+                      "maxLength": 128,
+                      "examples": [
+                        "ARdktgKALtjqOoE9iPBcIt4n9jCz1VDV5q/qTRkmDMzU85xsf4RE4Mhffo4ccq95WBfu9sWQd2JswQKI9Qhln9qH/FzatuddMdfMCkOCO5i4L67A4RZEmF3+32XX6HzKOSPgzsV6syJ56EUu6ivFNPznJn6bt8buG4hljzoEc5ogEl+kn87EhXA+LpEyzJkgLI8ZhH7j6iMQlOeyYRjJ0pVMe7OZfIYOeULp3GfsUamj3ezWVZS/70d2irtxg4c9wsTcBe3dusmQpFfdzAUNuILINWFRj/LEiYWOIeU4DyAU9wBKLWJpyEtok1EUFpWmJJwhEeNQen5mwsJq4Nwv7Q=="
+                      ],
+                      "description": "接口签名标识符，用于确定商家的真实性，以防止篡改消息，有关详细信息，请参阅<a href=\"Sign\" target=\"_blank\">签名规范</a>"
+                    },
+                    "psn": {
+                      "type": "string",
+                      "description": "返回信息序列号，用于跟踪请求链接，当您需要 CodePay 技术人员协助排除故障时，请提供此跟踪号码。",
+                      "maxLength": 16,
+                      "examples": [
+                        "08290344008038160280"
+                      ]
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "trans_no": {
+                          "type": "string",
+                          "description": "唯一标识交易的 CodePay 交易编号",
+                          "maxLength": 32,
+                          "examples": [
+                            "5021000010210602000003"
+                          ]
+                        },
+                        "qrcode_url": {
+                          "type": "string",
+                          "description": "支付二维码链接地址，转换为二维码图片供用户扫描，例如：微信：//wxpay/s/An4baqw",
+                          "maxLength": 64
+                        },
+                        "trans_amount": {
+                          "type": "number",
+                          "format": "double",
+                          "description": "在大多数情况下，订单金额和交易金额相等。当客户需要支付服务费和消费税时，交易金额会大于订单金额。"
+                        },
+                        "trans_fee_c": {
+                          "type": "number",
+                          "format": "double",
+                          "description": "客户需要支付的服务费"
+                        },
+                        "vat_amount": {
+                          "type": "number",
+                          "description": "VAT：Value added Tax（增值税）的缩写，是一种根据当地政府法律法规向商家收取增值税的支付渠道",
+                          "format": "double"
+                        }
+                      },
+                      "x-apifox-orders": [
+                        "trans_no",
+                        "qrcode_url",
+                        "trans_amount",
+                        "trans_fee_c",
+                        "vat_amount"
+                      ],
+                      "description": "响应业务数据时，在实际请求中，此参数总是返回一个JSON字符串，本文档中的示例报文没有转换成字符串，为了方便查看，实际返回的报文在签收处理时为了解决JSON无序的问题，会做特殊处理，请以实际响应的报文为准！ \n例如：\n正确格式数据=\"{\\\"k1\\\":\\\"v1\\\",\\\"k2\\\":\\\"v2\\\"}\"Wrong format: data = {\"k1\"： \"v1\", \"k2\"： \"v2\"}",
+                      "required": [
+                        "trans_no",
+                        "qrcode_url"
+                      ],
+                      "x-apifox-ignore-properties": []
+                    }
+                  },
+                  "x-apifox-orders": [
+                    "code",
+                    "msg",
+                    "sign",
+                    "psn",
+                    "data"
+                  ],
+                  "required": [
+                    "code",
+                    "msg",
+                    "sign",
+                    "psn",
+                    "data"
+                  ],
+                  "x-apifox-refs": {},
+                  "x-apifox-ignore-properties": []
+                },
+                "examples": {
+                  "1": {
+                    "summary": "Success Example",
+                    "value": {
+                      "code": "0",
+                      "data": {
+                        "trans_no": "50210004102309050000002",
+                        "trans_end_time": "2023-09-05 02:57:30",
+                        "pay_user_account_id": "2102209000001474545H6",
+                        "trans_fee_c": "0",
+                        "trans_amount": "200",
+                        "pay_channel_trans_no": "20230905190741010000G0004578720",
+                        "discount_bpc": "0",
+                        "vat_amount": "0",
+                        "pay_platform_trans_no": "20230905198881010004H0000505133",
+                        "paid_amount": "200",
+                        "trans_amount_cny": "9.95",
+                        "trans_status": 2,
+                        "discount_bmopc": "0"
+                      },
+                      "msg": "success",
+                      "psn": "09050257284550801420",
+                      "sign": "OpmXLxxMjZYjNo+Vk7cd8EpGzZsl6qQLHBq4wdvZt2MQ6QPzUc5sZ8xfOn2y+BC1mNnEQ473gKrbubVxSheeMy+KjVECM8KVdVRrmALuIdbCyY98aBHQOQidgwY2cER15JbAl/Ts7jHV1sJXbXyrrY/Puksmr82LB+e7srbtHvkDrUpvh4kp/72V5Tqxbsvi/VKiX5QWuZgXTSV4dWGg+hsbLPsi7zWb3vQUO7PnNaASnt+N+RLnkuVnAe8qlt4Wj181Y/a9Eu2DgZUY+qgdcl8AglaLRD7J2Q65bkVcdDueT9En6oIx09jLzbp6swihmdM/lmUwOgrxh3xcbC6uRQ=="
+                    }
+                  },
+                  "2": {
+                    "summary": "Failure Example",
+                    "value": {
+                      "code": "E04103",
+                      "msg": "[E04103]Merchant does not exist",
+                      "psn": "09050639431036021289",
+                      "sign": "PXWAMfvSeE5ZPv2ptjTrK89bhiG1hvNvzgNu3gO63WJbsPJv/FZ4rQuna7a/wgV1pQrwXNzOFQkuILQDczJBb+TxthkRfL7ZQt9NVy4IZ2SnZQi6fdEN51rkCgfjlEmnSOJlMlM2JMNT8QVkI2gnMQmubyMzEqHY0nbw20Z39Gu1591L6C+a9kbYI1GNBSEkka5jvMOudV6PX3OdWDcwCcnRqjGZS7rQKsGG7MUyEZ2XEJzfBVjv4DA7UUSZ0dxxfAqD3mo0r17Lwwn1txbNTkUWsGswVtAsEMeHUNlIzhBUSCS37e0o5/nZ2MUEekyHFbRt24hV2rUgqlaFo97rhw=="
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "x-run-in-apifox": "https://apifox.com/web/project/3919624/apis/api-142244458-run",
+        "security": []
+      }
+    },
+    "/api/entry/orderquery": {
+      "post": {
+        "summary": "查询订单",
+        "x-apifox-folder": "公共API",
+        "x-apifox-status": "developing",
+        "deprecated": false,
+        "description": "该接口提供所有支付订单的查询，商户可以通过该接口主动查询订单状态，完成下一步的业务逻辑。\n\n使用此 API 的情况包括\n>1. 如果您的后台出现任何问题，可能导致错过付款通知。\n>2. 如果出现系统故障，或支付后交易状态仍不清晰。\n>3. 要监控触发 \"bscanc.pay.submit \"API 后的付款状态。\n>4. 如果交易状态不明确，例如调用 \"cscanb.pay.getQRCode \"或 \"pay.unifiedorder \"API后。\n>5. 在启动取消订单 API 之前确认付款状态。",
+        "tags": [
+          "公共API"
+        ],
+        "parameters": [],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "app_id": {
+                    "type": "string",
+                    "description": "由网关分配给访问应用程序以识别开发者的ID，请参阅<a href=\"GatewayOverview\" target=“_blank”>参数获取</a>",
+                    "maxLength": 32,
+                    "examples": [
+                      "wz3c35784c2cbe6f37"
+                    ]
+                  },
+                  "format": {
+                    "type": "string",
+                    "description": "请求数据格式，仅支持 JSON",
+                    "maxLength": 4,
+                    "const": "JSON",
+                    "examples": [
+                      "JSON"
+                    ]
+                  },
+                  "charset": {
+                    "type": "string",
+                    "description": "请求使用的编码格式，仅支持 UTF-8",
+                    "maxLength": 8,
+                    "const": "UTF-8",
+                    "examples": [
+                      "UTF-8"
+                    ]
+                  },
+                  "sign_type": {
+                    "type": "string",
+                    "description": "签名算法，目前仅支持 RSA2",
+                    "maxLength": 8,
+                    "const": "RSA2",
+                    "examples": [
+                      "RSA2"
+                    ]
+                  },
+                  "sign": {
+                    "type": "string",
+                    "description": "接口签名标识符，用于确定商家的真实性，以防止篡改消息，有关详细信息，请参阅<a href=\"Sign\" target=\"_blank\">签名规范</a>",
+                    "maxLength": 128,
+                    "examples": [
+                      "VD3AnpSR08BALF7U+A22kVCJOisv9WCCZJ1TGZSmM2lwhixKIi/uUPVYcB6gODbIsBmwJ2Cw9TtI/JiXJFPlJALLncrWTtxKeTxYWhkmnteiih6GhFw1hoFJqxJFgWoLXQI/pvZJr8NognBJjHE56uXBjqIyVanPaXvy3Xb47Cnbt29am7DuQJOyrylfGklbmZQW+kkMjrD4vhrPjvIaebSvkumL5CTOv5uXORYVVijd9UqOMZzTQjilpnH0In2+qZBsY/5if4ZCduFFItf31GRiJOh9WkR0nCiVJjt8y6eSs4Ms2FS9ZiISWgMMSwrkgqYAAJm4GpaP9UUAkmuGVg=="
+                    ]
+                  },
+                  "version": {
+                    "type": "string",
+                    "description": "版本号，固定值：1.0",
+                    "maxLength": 16,
+                    "const": "1.0",
+                    "examples": [
+                      "1.0"
+                    ]
+                  },
+                  "timestamp": {
+                    "type": "integer",
+                    "description": "请求发送时间的时间戳，长度为 13 位数字，不能超过 15 分钟或更晚。",
+                    "format": "long",
+                    "examples": [
+                      1693280636972
+                    ]
+                  },
+                  "method": {
+                    "type": "string",
+                    "description": "接口方法，本 API 的固定值：order.query"
+                  },
+                  "merchant_no": {
+                    "type": "string",
+                    "description": "商户编号，注册成为商户后获得，请参阅<a href=\"GatewayOverview\" target=“_blank”>参数获取</a>",
+                    "maxLength": 32
+                  },
+                  "merchant_order_no": {
+                    "type": "string",
+                    "description": "商户系统内部订单号，要求32个字符内，只能是数字、大小写字母_-|*@ ，且在同一个商户下唯一<br />\n\nmerchant_order_no和trans_no，至少需要二选一，如果两者都存在，则trans_no优先。<br />\n\n<font color=\"green\">示例值：1217752501201407033233368018</font>",
+                    "maxLength": 32,
+                    "examples": [
+                      "1217752501201407033233368018"
+                    ]
+                  },
+                  "trans_no": {
+                    "type": "string",
+                    "description": "CodePay 交易编号，唯一标识交易。 merchant_order_no和 trans_no 必须任选其一，当两者都存在时，trans_no 优先",
+                    "maxLength": 32,
+                    "examples": [
+                      "5021000010210602000003"
+                    ]
+                  }
+                },
+                "x-apifox-orders": [
+                  "app_id",
+                  "format",
+                  "charset",
+                  "sign_type",
+                  "sign",
+                  "version",
+                  "timestamp",
+                  "method",
+                  "merchant_no",
+                  "merchant_order_no",
+                  "trans_no"
+                ],
+                "required": [
+                  "app_id",
+                  "charset",
+                  "sign_type",
+                  "sign",
+                  "version",
+                  "format",
+                  "timestamp",
+                  "method",
+                  "merchant_no"
+                ],
+                "x-apifox-refs": {},
+                "x-apifox-ignore-properties": []
+              },
+              "example": {
+                "merchant_no": "312100041048",
+                "charset": "UTF-8",
+                "method": "order.query",
+                "format": "JSON",
+                "sign": "D2mHAJWclOpKTEiqoNV12XCVJzhS3RefjZs/y2PgXxS6qLZklxP7odqb30BK5ZOf3PSXzPYielT7fL1CwNbdHSpOhrkkrOsLXYsEgL5dcrJEfiV8dYZWnTh8pdCe4RUW6AegITNXbiQdb6GdI1sEJIUbFZbFqtR5V8LQeUuXaqFp17sF/uN0RHkhIUthAFa5il8TGnUBPsqQVvjJhv10v/DhlQZ4PtIr6SGDqaFmSBWfUoESuq6Xs2v6TB7abzORoXhw0EyvIFDqYBJVERAFUHzPoJZZsVyJaXM4mn/MJ5hE9oUtKe6R+ergAfgPNFP5+Hp//PJjrMM5iK6MXE7j1Q==",
+                "app_id": "wz9f2a175d0e0ef632",
+                "sign_type": "RSA2",
+                "version": "1.0",
+                "merchant_order_no": "TEST_1686732708342",
+                "timestamp": "1693898084054"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "string",
+                      "description": "状态代码，0 表示请求成功，其他表示失败",
+                      "maxLength": 32,
+                      "examples": [
+                        "0"
+                      ]
+                    },
+                    "msg": {
+                      "type": "string",
+                      "description": "当发生错误时，该 msg 包含错误信息",
+                      "maxLength": 128,
+                      "examples": [
+                        "success"
+                      ]
+                    },
+                    "sign": {
+                      "type": "string",
+                      "maxLength": 128,
+                      "examples": [
+                        "ARdktgKALtjqOoE9iPBcIt4n9jCz1VDV5q/qTRkmDMzU85xsf4RE4Mhffo4ccq95WBfu9sWQd2JswQKI9Qhln9qH/FzatuddMdfMCkOCO5i4L67A4RZEmF3+32XX6HzKOSPgzsV6syJ56EUu6ivFNPznJn6bt8buG4hljzoEc5ogEl+kn87EhXA+LpEyzJkgLI8ZhH7j6iMQlOeyYRjJ0pVMe7OZfIYOeULp3GfsUamj3ezWVZS/70d2irtxg4c9wsTcBe3dusmQpFfdzAUNuILINWFRj/LEiYWOIeU4DyAU9wBKLWJpyEtok1EUFpWmJJwhEeNQen5mwsJq4Nwv7Q=="
+                      ],
+                      "description": "接口签名标识符，用于确定商家的真实性，以防止篡改消息，有关详细信息，请参阅<a href=\"Sign\" target=\"_blank\">签名规范</a>"
+                    },
+                    "psn": {
+                      "type": "string",
+                      "description": "返回信息序列号，用于跟踪请求链接，当您需要 CodePay 技术人员协助排除故障时，请提供此跟踪号码。",
+                      "maxLength": 16,
+                      "examples": [
+                        "08290344008038160280"
+                      ]
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "trans_no": {
+                          "type": "string",
+                          "description": "唯一标识交易的 CodePay 交易编号",
+                          "maxLength": 32,
+                          "examples": [
+                            "5021000010210602000003"
+                          ]
+                        },
+                        "trans_type": {
+                          "type": "integer",
+                          "description": "交易类型，请参阅 <a href = \"ParameterDictionary#transtype\" target=\"_blank\"> TransType </a>.",
+                          "examples": [
+                            1
+                          ]
+                        },
+                        "trans_status": {
+                          "type": "integer",
+                          "description": "交易状态，请参阅 <a href=\"ParameterDictionary#transstatus\" target=\"_blank\">TransStatus</a>"
+                        },
+                        "price_currency": {
+                          "type": "string",
+                          "description": "标价币种，ISO-4217货币编码，由基于三个字符的代码描述，例如：USD",
+                          "maxLength": 8,
+                          "examples": [
+                            "USD"
+                          ]
+                        },
+                        "merchant_order_no": {
+                          "type": "string",
+                          "description": "商户系统内部订单号，要求32个字符内，只能是数字、大小写字母_-|*@ ，且在同一个商户下唯一<br />\n<font color=\"green\">示例值：1217752501201407033233368018</font>",
+                          "maxLength": 32,
+                          "examples": [
+                            "1217752501201407033233368018"
+                          ]
+                        },
+                        "order_amount": {
+                          "type": "number",
+                          "format": "float",
+                          "examples": [
+                            34.5
+                          ],
+                          "description": "订单金额，以其标价的货币表示，例如，1USD表示1美元，而不是1美分。"
+                        },
+                        "tip_amount": {
+                          "type": "number",
+                          "format": "float",
+                          "description": "小费金额。<br/><font color=“green”>示例：34.50</font>"
+                        },
+                        "cashback_amount": {
+                          "type": "number",
+                          "description": "返现金额. 以标价货币表示，例如，1 USD 代表 1 美元，而不是 1 美分 <br /> <br /> <font color = \"green\">例: 10.00</font>",
+                          "format": "float"
+                        },
+                        "trans_amount": {
+                          "type": "number",
+                          "format": "double",
+                          "description": "在大多数情况下，订单金额和交易金额相等，当客户需要支付服务费和消费税时，交易金额会大于订单金额"
+                        },
+                        "trans_fee_c": {
+                          "type": "number",
+                          "format": "double",
+                          "description": "客户需要支付的服务费"
+                        },
+                        "vat_amount": {
+                          "type": "number",
+                          "description": "VAT：Value added Tax（增值税）的缩写，是一种根据当地政府法律法规向商家收取增值税的支付渠道",
+                          "format": "double"
+                        },
+                        "attach": {
+                          "type": "string",
+                          "description": "允许商家向网关提交附加数据，这些数据将在付款通知和查询时原样返回",
+                          "maxLength": 128,
+                          "examples": [
+                            "{“key”:”value”, “key2”:”value2”}"
+                          ]
+                        },
+                        "store_no": {
+                          "type": "string",
+                          "description": "门店编号，注册门店后获得，请参阅<a href=\"GatewayOverview\" target=“_blank”>参数获取</a>",
+                          "maxLength": 32,
+                          "examples": [
+                            "4021000008"
+                          ]
+                        },
+                        "terminal_sn": {
+                          "type": "string",
+                          "description": "智能金融终端的 SN 需要与商家的店铺绑定",
+                          "maxLength": 32,
+                          "examples": [
+                            "P327701609001412"
+                          ]
+                        },
+                        "pay_scenario": {
+                          "type": "string",
+                          "description": "支付场景，请参阅 <a href = \"ParameterDictionary#payscenario\" target=\"_blank\"> PayScenario</a>。"
+                        },
+                        "pay_channel_trans_no": {
+                          "type": "string",
+                          "description": "支付渠道的交易序列号，如微信、支付宝、Visa、万事达卡和其他支付平台",
+                          "maxLength": 64
+                        },
+                        "pay_user_account_id": {
+                          "type": "string",
+                          "maxLength": 64,
+                          "description": "买家用户 ID"
+                        },
+                        "paid_amount": {
+                          "type": "number",
+                          "format": "double",
+                          "description": "客户实际付款金额"
+                        },
+                        "discount_bmopc": {
+                          "type": "number",
+                          "format": "double",
+                          "description": "商户通过支付渠道向客户提供优惠金额，这些金额不会结算给商户"
+                        },
+                        "discount_bpc": {
+                          "type": "number",
+                          "format": "double",
+                          "description": "将付款渠道的金额折算给客户，这部分资金将存入商家账户"
+                        },
+                        "trans_end_time": {
+                          "type": "string",
+                          "format": "date-time",
+                          "description": "交易成功的时间，时区 UTC/GMT 0，格式：YYYY-MM-DD HH:mm:ss <br />\n<font color=\"green\">示例：2021-06-03 12:48:51<font>"
+                        },
+                        "ref_no": {
+                          "type": "string",
+                          "description": "银行卡交易参考编号",
+                          "maxLength": 64
+                        },
+                        "pay_method_id": {
+                          "type": "string",
+                          "description": "付款方式，请参阅 <a href = \"ParameterDictionary#paymethod\" target=\"_blank\"> PayMethod</a>",
+                          "examples": [
+                            "Visa"
+                          ]
+                        },
+                        "trans_error_code": {
+                          "type": "string",
+                          "description": "交易错误码"
+                        },
+                        "trans_error_msg": {
+                          "type": "string",
+                          "description": "交易错误信息"
+                        }
+                      },
+                      "x-apifox-orders": [
+                        "trans_no",
+                        "trans_type",
+                        "trans_status",
+                        "price_currency",
+                        "merchant_order_no",
+                        "order_amount",
+                        "tip_amount",
+                        "cashback_amount",
+                        "trans_amount",
+                        "trans_fee_c",
+                        "vat_amount",
+                        "attach",
+                        "store_no",
+                        "terminal_sn",
+                        "pay_scenario",
+                        "pay_channel_trans_no",
+                        "pay_user_account_id",
+                        "paid_amount",
+                        "discount_bmopc",
+                        "discount_bpc",
+                        "trans_end_time",
+                        "ref_no",
+                        "pay_method_id",
+                        "trans_error_code",
+                        "trans_error_msg"
+                      ],
+                      "description": "响应业务数据时，在实际请求中，此参数总是返回一个JSON字符串，本文档中的示例报文没有转换成字符串，为了方便查看，实际返回的报文在签收处理时为了解决JSON无序的问题，会做特殊处理，请以实际响应的报文为准！ 例如：正确格式数据=\"{\\\"k1\\\":\\\"v1\\\",\\\"k2\\\":\\\"v2\\\"}\"Wrong format: data = {\"k1\"： \"v1\", \"k2\"： \"v2\"}",
+                      "required": [
+                        "trans_no",
+                        "trans_status",
+                        "trans_type",
+                        "price_currency",
+                        "merchant_order_no",
+                        "order_amount",
+                        "pay_scenario"
+                      ],
+                      "x-apifox-ignore-properties": []
+                    }
+                  },
+                  "x-apifox-orders": [
+                    "code",
+                    "msg",
+                    "sign",
+                    "psn",
+                    "data"
+                  ],
+                  "required": [
+                    "code",
+                    "msg",
+                    "sign",
+                    "psn",
+                    "data"
+                  ],
+                  "x-apifox-refs": {},
+                  "x-apifox-ignore-properties": []
+                },
+                "examples": {
+                  "1": {
+                    "summary": "Success Example",
+                    "value": {
+                      "code": "0",
+                      "data": {
+                        "trans_no": "50210004102306140000003",
+                        "trans_end_time": "2023-06-14 08:51:51",
+                        "pay_user_account_id": "2102209000000858994F9",
+                        "store_no": "4021000201",
+                        "pay_scenario": "BSCANQR_PAY",
+                        "pay_method_id": "Alipay+",
+                        "trans_fee_c": "0",
+                        "trans_amount": "200",
+                        "merchant_order_no": "TEST_1686732708342",
+                        "pay_channel_trans_no": "20230614190741010007G0004187182",
+                        "discount_bpc": "0",
+                        "vat_amount": "0",
+                        "pay_platform_trans_no": "20230614198881010003B0000463071",
+                        "order_amount": "200",
+                        "paid_amount": "200",
+                        "trans_status": 2,
+                        "price_currency": "JPY",
+                        "trans_type": 1,
+                        "discount_bmopc": "0"
+                      },
+                      "msg": "success",
+                      "psn": "09050714451053895687",
+                      "sign": "X/kTK7T3fbUBeSAHU/F6KLcBYPouyEISuKqLBC8LnZ/IOQA1vhdfmK2fLiSv6OCEeB3Dm3fDOIpKQKhy15GgmxhDUiTEa0w3VwFbg1Qpo6eXd3MYw0vudPtBVcYeIOZNs653KshQzkIrSHLNZJhawd2Nl2E1utRmphNxqf13xQ9hFg9OQUZOiSl4zchDSiVfVlf03vIuh6Rswc7QXIVHlwTHmF1JV81x/986eV68pKIsekvn9V+qLIRJ0FpaIs5yGkDk6ZcXzAEHXwWX8k0/ntAyOz+TvpyjA6RRGt+jCTMdUlzJRINiIbFa4FzEWweUvyMVWy5fMHKzdvJyNqksrQ=="
+                    }
+                  },
+                  "2": {
+                    "summary": "Failure Example",
+                    "value": {
+                      "code": "E04111",
+                      "msg": "[E04111]Merchant order number is invalid",
+                      "psn": "09050716411100274711",
+                      "sign": "VIh8kKVrp7UmE9Is0qMCVO3Wh5CnXF4b35knFfI6HyENuTJOzO4qOfOrgPY6ZfWtLS0PsCPQDsXvDAzCSus3fNh+srmzVwTcxM9hnsv4IRQhk9gqs6Qa/mwEIngbbmI07Gq1QCuxCH8ZqZFvx0LiumODUja/BIxULrHxjCLcFEGHYcWR419I51tJmRojv1WrGWK8IJCLr0A81o2MF7iJrD8RXmfprPrlkGTUksbuoNnwLbppmkVIbB6vP6ynJOK5Ijhl7MfhzWpBQ4U8zXcAwceUj3UZXf1ww6kaOR/yhKakNOpi3XftJIw9egZynQYQon2HrmdxZTaOdJL2pLjNCw=="
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "x-run-in-apifox": "https://apifox.com/web/project/3919624/apis/api-142244459-run",
+        "security": []
+      }
+    },
+    "/api/entry/orderrevoker": {
+      "post": {
+        "summary": "取消订单",
+        "x-apifox-folder": "公共API",
+        "x-apifox-status": "released",
+        "deprecated": false,
+        "description": "支付交易返回失败或支付系统超时，调用该接口撤销交易。如果此订单用户支付失败，CodePay系统会将此订单关闭；如果用户支付成功，CodePay系统会将此订单资金退还给用户。\n\n如果您遇到付款状态不清楚的情况，您应该使用此API启动取消。对于已成功完成的交易，如果需要退款，您应调用[<a href=\"./CloudAPI#tag/API/paths/~1api~1entry~1orderrefundsubmit/post\" target=\"_blank\">提交退款申请API</a>] 。在任何交易后调用[<a href = \"./CloudAPI#tag/API/paths/~1api~1entry~1orderquery/post\" target=\"_blank\">查询订单API</a>]以确认其状态非常重要。如果状态仍然不清楚，请在原始订单创建后等待15秒窗口后再次调用取消订单API。",
+        "tags": [
+          "公共API"
+        ],
+        "parameters": [],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "app_id": {
+                    "type": "string",
+                    "description": "由网关分配给访问应用程序以识别开发者的ID，请参阅<a href=\"GatewayOverview\" target=“_blank”>参数获取</a>",
+                    "maxLength": 32,
+                    "examples": [
+                      "wz3f35784c2cbe6f37"
+                    ]
+                  },
+                  "format": {
+                    "type": "string",
+                    "description": "请求数据格式，仅支持 JSON",
+                    "maxLength": 4,
+                    "const": "JSON",
+                    "examples": [
+                      "JSON"
+                    ]
+                  },
+                  "charset": {
+                    "type": "string",
+                    "description": "请求使用的编码格式，仅支持 UTF-8",
+                    "maxLength": 8,
+                    "const": "UTF-8",
+                    "examples": [
+                      "UTF-8"
+                    ]
+                  },
+                  "sign_type": {
+                    "type": "string",
+                    "description": "签名算法，目前仅支持 RSA2",
+                    "maxLength": 8,
+                    "const": "RSA2",
+                    "examples": [
+                      "RSA2"
+                    ]
+                  },
+                  "sign": {
+                    "type": "string",
+                    "description": "接口签名标识符，用于确定商家的真实性，以防止篡改消息，有关详细信息，请参阅<a href=\"Sign\" target=\"_blank\">签名规范</a>",
+                    "maxLength": 128,
+                    "examples": [
+                      "VD3AnpSR08BALF7U+A22kVCJOisv9WCCZJ1TGZSmM2lwhixKIi/uUPVYcB6gODbIsBmwJ2Cw9TtI/JiXJFPlJALLncrWTtxKeTxYWhkmnteiih6GhFw1hoFJqxJFgWoLXQI/pvZJr8NognBJjHE56uXBjqIyVanPaXvy3Xb47Cnbt29am7DuQJOyrylfGklbmZQW+kkMjrD4vhrPjvIaebSvkumL5CTOv5uXORYVVijd9UqOMZzTQjilpnH0In2+qZBsY/5if4ZCduFFItf31GRiJOh9WkR0nCiVJjt8y6eSs4Ms2FS9ZiISWgMMSwrkgqYAAJm4GpaP9UUAkmuGVg=="
+                    ]
+                  },
+                  "version": {
+                    "type": "string",
+                    "description": "版本号，固定值：1.0",
+                    "maxLength": 16,
+                    "const": "1.0",
+                    "examples": [
+                      "1.0"
+                    ]
+                  },
+                  "timestamp": {
+                    "type": "integer",
+                    "description": "请求发送时间的时间戳，长度为 13 位数字，不能超过 15 分钟或更晚。",
+                    "format": "long",
+                    "examples": [
+                      1693280636972
+                    ]
+                  },
+                  "method": {
+                    "type": "string",
+                    "description": "接口方法，此API的固定值：order.revoker",
+                    "maxLength": 32,
+                    "examples": [
+                      "wisehub.cloud.pay.close"
+                    ]
+                  },
+                  "merchant_no": {
+                    "type": "string",
+                    "description": "商户编号，注册成为商户后获得，请参阅<a href=\"GatewayOverview\" target=“_blank”>参数获取</a>",
+                    "maxLength": 32,
+                    "examples": [
+                      "302100001612"
+                    ]
+                  },
+                  "merchant_order_no": {
+                    "type": "string",
+                    "description": "商户系统内部订单号，要求32个字符内，只能是数字、大小写字母_-|*@ ，且在同一个商户下唯一<br />\n<font color=\"green\">示例值：1217752501201407033233368018</font>",
+                    "maxLength": 32,
+                    "examples": [
+                      "1217752501201407033233368018"
+                    ]
+                  }
+                },
+                "x-apifox-refs": {},
+                "x-apifox-orders": [
+                  "app_id",
+                  "format",
+                  "charset",
+                  "sign_type",
+                  "sign",
+                  "version",
+                  "timestamp",
+                  "method",
+                  "merchant_no",
+                  "merchant_order_no"
+                ],
+                "required": [
+                  "app_id",
+                  "charset",
+                  "sign_type",
+                  "sign",
+                  "version",
+                  "format",
+                  "timestamp",
+                  "method",
+                  "merchant_no",
+                  "merchant_order_no"
+                ],
+                "x-apifox-ignore-properties": []
+              },
+              "example": {
+                "merchant_no": "302100041048",
+                "charset": "UTF-8",
+                "method": "order.revoker",
+                "format": "JSON",
+                "sign": "W6M/IZTN+tuvvAeIhUDFECeUTRzFszOOxM+ozIqUdWw2CENO9G2z9ehfMdrktNmlP7TjFr6Ind/6DO5ZPhWaVu6Nx7K8UkicNwlu/BK4j8s+K108hzYUNQsVEE3ScvB46vyrxUIXdqG83Zvw3rK+o56tnU7YGodOuqGP20nx/emuLPZj7GBZEGrdgY0mRUmJHw951Hc0BYKLqa9jBuJbQzu4AkymyCX/9/G2KrVsaFWxoc7KR0vA/K84pLSe+JFggS6P9Xq4xjZBWqsWN60a39FtGYS9g5/ETT+vvjmyDBOW2hvRzUiEOvos77L/RteRbVnPxcciC/6IP4YEg0Zq7Q==",
+                "app_id": "wz9f2a175d0e0ef632",
+                "sign_type": "RSA2",
+                "version": "1.0",
+                "merchant_order_no": "TEST_1654765371046",
+                "timestamp": "1693902797892"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "string",
+                      "description": "状态代码，0 表示请求成功，其他表示失败",
+                      "maxLength": 32
+                    },
+                    "msg": {
+                      "type": "string",
+                      "maxLength": 128,
+                      "description": "当发生错误时，该 msg 包含错误信息"
+                    },
+                    "sign": {
+                      "type": "string",
+                      "maxLength": 128,
+                      "description": "接口签名标识符，用于确定商家的真实性，以防止篡改消息，有关详细信息，请参阅<a href=\"Sign\" target=\"_blank\">签名规范</a>"
+                    },
+                    "psn": {
+                      "type": "string",
+                      "maxLength": 16,
+                      "description": "返回信息序列号，用于跟踪请求链接，当您需要 CodePay 技术人员协助排除故障时，请提供此跟踪号码。"
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {},
+                      "x-apifox-orders": [],
+                      "description": "响应业务数据时，在实际请求中，此参数总是返回一个JSON字符串，本文档中的示例报文没有转换成字符串，为了方便查看，实际返回的报文在签收处理时为了解决JSON无序的问题，会做特殊处理，请以实际响应的报文为准！ 例如：正确格式数据=\"{\\\"k1\\\":\\\"v1\\\",\\\"k2\\\":\\\"v2\\\"}\"Wrong format: data = {\"k1\"： \"v1\", \"k2\"： \"v2\"}",
+                      "x-apifox-ignore-properties": []
+                    }
+                  },
+                  "x-apifox-orders": [
+                    "code",
+                    "msg",
+                    "sign",
+                    "psn",
+                    "data"
+                  ],
+                  "required": [
+                    "code",
+                    "msg",
+                    "sign",
+                    "psn",
+                    "data"
+                  ],
+                  "x-apifox-refs": {},
+                  "x-apifox-ignore-properties": []
+                },
+                "examples": {
+                  "1": {
+                    "summary": "Successful Example",
+                    "value": {
+                      "code": "0",
+                      "msg": "success",
+                      "sign": "ARdktgKALtjqOoE9iPBcIt4n9jCz1VDV5q/qTRkmDMzU85xsf4RE4Mhffo4ccq95WBfu9sWQd2JswQKI9Qhln9qH/FzatuddMdfMCkOCO5i4L67A4RZEmF3+32XX6HzKOSPgzsV6syJ56EUu6ivFNPznJn6bt8buG4hljzoEc5ogEl+kn87EhXA+LpEyzJkgLI8ZhH7j6iMQlOeyYRjJ0pVMe7OZfIYOeULp3GfsUamj3ezWVZS/70d2irtxg4c9wsTcBe3dusmQpFfdzAUNuILINWFRj/LEiYWOIeU4DyAU9wBKLWJpyEtok1EUFpWmJJwhEeNQen5mwsJq4Nwv7Q==",
+                      "psn": "08290344008038160280",
+                      "data": {
+                        "message_id": "M021000010210602000003",
+                        "trans_no": "5021000010210602000003"
+                      }
+                    }
+                  },
+                  "2": {
+                    "summary": "Failure Example",
+                    "value": {
+                      "code": "E04121",
+                      "msg": "[E04121]The order is cancelled",
+                      "psn": "09050833197667212900",
+                      "sign": "Q7AKZ9nrLtusawXaKsgeYiiN3THQxx1cBzJfnctwfIP8rnXCkL53aQU58QUzBVaAzdZaUNHC2sust+3O+1BVy7FTmkYMBUKc4yBH13jZJB2Vgw7SeprWdnjzzGZ5z1gGUyoza7vBPSpKHCxbpFg/n5uy5BfXfC1fUK45EIB1/GOtBJ6vWiiZDjXfk040s7MFwuVDG9MlWkkVHyRhJE1fQjebRIm3TqjVpy1vLjjX3szZl3MNUdfFRpg0lkqRBTCYXc229NpV/Km962QiEWnj324SOxwMW0Nnn776IGzos51ZFTgWoYKUKhLLSnRqangbSnA70OSUGLkaQTmMPn2asw=="
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "x-run-in-apifox": "https://apifox.com/web/project/3919624/apis/api-142244460-run",
+        "security": []
+      }
+    },
+    "/api/entry/orderrefundsubmit": {
+      "post": {
+        "summary": "提交退款申请",
+        "x-apifox-folder": "公共API",
+        "x-apifox-status": "released",
+        "deprecated": false,
+        "description": "如果付款完成后需要退款，可以通过此 API 申请退款。一旦支付网关确认了退款请求的合法性，就会根据既定的退款准则将金额退还给付款人。\n\n>1. 可以使用原始订单号进行多次部分退款。但是，所有退款的总金额不应超过原始付款金额。通常情况下，一个订单的部分退款不应超过50笔。\n>2. 退款后，您应使用[<a href=\"./CloudAPI#tag/API/paths/~1api~1entry~1orderrefundquery/post\" target=\"_blank\">查询退款</a>]API检查其状态。请记住，退款可能不是即时的，可能会受到特定支付渠道政策的影响。",
+        "tags": [
+          "公共API"
+        ],
+        "parameters": [],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "app_id": {
+                    "type": "string",
+                    "description": "由网关分配给访问应用程序以识别开发者的ID，请参阅<a href=\"GatewayOverview\" target=“_blank”>参数获取</a>",
+                    "maxLength": 32,
+                    "examples": [
+                      "wz3f35784c2cbe6f37"
+                    ]
+                  },
+                  "format": {
+                    "type": "string",
+                    "description": "请求数据格式，仅支持 JSON",
+                    "maxLength": 4,
+                    "const": "JSON",
+                    "examples": [
+                      "JSON"
+                    ]
+                  },
+                  "charset": {
+                    "type": "string",
+                    "description": "请求使用的编码格式，仅支持 UTF-8",
+                    "maxLength": 8,
+                    "const": "UTF-8",
+                    "examples": [
+                      "UTF-8"
+                    ]
+                  },
+                  "sign_type": {
+                    "type": "string",
+                    "description": "签名算法，目前仅支持 RSA2",
+                    "maxLength": 8,
+                    "const": "RSA2",
+                    "examples": [
+                      "RSA2"
+                    ]
+                  },
+                  "sign": {
+                    "type": "string",
+                    "description": "接口签名标识符，用于确定商家的真实性，以防止篡改消息，有关详细信息，请参阅<a href=\"Sign\" target=\"_blank\">签名规范</a>",
+                    "maxLength": 128,
+                    "examples": [
+                      "VD3AnpSR08BALF7U+A22kVCJOisv9WCCZJ1TGZSmM2lwhixKIi/uUPVYcB6gODbIsBmwJ2Cw9TtI/JiXJFPlJALLncrWTtxKeTxYWhkmnteiih6GhFw1hoFJqxJFgWoLXQI/pvZJr8NognBJjHE56uXBjqIyVanPaXvy3Xb47Cnbt29am7DuQJOyrylfGklbmZQW+kkMjrD4vhrPjvIaebSvkumL5CTOv5uXORYVVijd9UqOMZzTQjilpnH0In2+qZBsY/5if4ZCduFFItf31GRiJOh9WkR0nCiVJjt8y6eSs4Ms2FS9ZiISWgMMSwrkgqYAAJm4GpaP9UUAkmuGVg=="
+                    ]
+                  },
+                  "version": {
+                    "type": "string",
+                    "description": "版本号，固定值：1.0",
+                    "maxLength": 16,
+                    "const": "1.0",
+                    "examples": [
+                      "1.0"
+                    ]
+                  },
+                  "timestamp": {
+                    "type": "integer",
+                    "description": "请求发送时间的时间戳，长度为 13 位数字，不能超过 15 分钟或更晚。",
+                    "format": "long",
+                    "examples": [
+                      1693280636972
+                    ]
+                  },
+                  "method": {
+                    "type": "string",
+                    "description": "接口方法，此API的固定值：order.refund.submit",
+                    "maxLength": 32,
+                    "examples": [
+                      "wisehub.cloud.pay.close"
+                    ]
+                  },
+                  "merchant_no": {
+                    "type": "string",
+                    "description": "商户编号，注册成为商户后获得，请参阅<a href=\"GatewayOverview\" target=“_blank”>参数获取</a>",
+                    "maxLength": 32,
+                    "examples": [
+                      "302100001612"
+                    ]
+                  },
+                  "orig_merchant_order_no": {
+                    "type": "string",
+                    "description": "原商户订单编号，\"orig_merchant_order_no\"和\"orig_trans_no\"至少传递一个，同时存在时，\"orig_trans_no\"优先",
+                    "maxLength": 32,
+                    "examples": [
+                      "1217752501201407033233368018"
+                    ]
+                  },
+                  "orig_trans_no": {
+                    "type": "string",
+                    "maxLength": 32,
+                    "description": "原交易编号，\"orig_merchant_order_no\"和\"orig_trans_no\"至少传递一个，同时存在时，\"orig_trans_no\"优先"
+                  },
+                  "merchant_order_no": {
+                    "type": "string",
+                    "description": "商户系统内部退款订单号，要求32个字符内，只能是数字、大小写字母_-|*@ ，且在同一个商户下唯一<br />\n<font color=\"green\">示例值：1217752501201407033233368018</font>",
+                    "maxLength": 32
+                  },
+                  "price_currency": {
+                    "type": "string",
+                    "description": "标价币种，ISO-4217货币编码，由基于三个字符的代码描述，例如：USD",
+                    "maxLength": 8,
+                    "examples": [
+                      "USD"
+                    ]
+                  },
+                  "order_amount": {
+                    "type": "number",
+                    "format": "float",
+                    "examples": [
+                      34.5
+                    ],
+                    "description": "退款订单的金额，以标价货币表示，例如 1 USD 表示 1 美元，而不是 1 美分。"
+                  },
+                  "description": {
+                    "type": "string",
+                    "maxLength": 64,
+                    "description": "退款原因"
+                  },
+                  "notify_url": {
+                    "type": "string",
+                    "maxLength": 256,
+                    "description": "商户系统接收CodePay支付通知的回调地址，请参阅<a href=\"CallbackNotificationNotes\" target=\"_blank\">回调通知说明</a>了解详细信息。<br />\n有关通知消息的报文结构，请参阅<a href=\"CloudAPI#tag/Common API/paths/~1%7Bmerchant_website%7D/post\" target=\"_blank\">交易结果通知</a>。"
+                  }
+                },
+                "x-apifox-refs": {},
+                "x-apifox-orders": [
+                  "app_id",
+                  "format",
+                  "charset",
+                  "sign_type",
+                  "sign",
+                  "version",
+                  "timestamp",
+                  "method",
+                  "merchant_no",
+                  "orig_merchant_order_no",
+                  "orig_trans_no",
+                  "merchant_order_no",
+                  "price_currency",
+                  "order_amount",
+                  "description",
+                  "notify_url"
+                ],
+                "required": [
+                  "app_id",
+                  "charset",
+                  "sign_type",
+                  "sign",
+                  "version",
+                  "format",
+                  "timestamp",
+                  "method",
+                  "merchant_no",
+                  "merchant_order_no",
+                  "price_currency",
+                  "order_amount",
+                  "description"
+                ],
+                "x-apifox-ignore-properties": []
+              },
+              "example": {
+                "merchant_no": "302100041048",
+                "charset": "UTF-8",
+                "method": "order.refund.submit",
+                "format": "JSON",
+                "sign": "E2QaYadyJr6mpa8iNhjaSPqvScTJ0cIaEmvhi2oljATNY+w56x6DMFesozLkcM5cKFi7Pb565ODMESr7WY9wDE+6egcy/uKlo7J1912rYvLVajrc1SZOsh6JbQEitClJCUaCIQQOV2enaKYsBfmmi0bM6aFra2G1m2Ik8yLi/k/PsM/BQQTSVc97wRUTHU+IG0GLWI3HkvH9zFA76xA6P+bX/UD6+Khw9C3Cwsaz4uJkGN+28BrUBVUCxiuLyRCOd7DCMTJ04lOU9oBe415wGof5IQku4VHlUaJ8djUOkB4Y0/+Xn7zzIivsUS9ueUbPcyoPor+JXhorK2zavpYXgA==",
+                "description": "test refund",
+                "trans_amount": 100,
+                "version": "1.0",
+                "merchant_order_no": "TEST_16547658746871_2",
+                "orig_merchant_order_no": "TEST_1654765874687",
+                "app_id": "wz9f2a175d0e0ef632",
+                "sign_type": "RSA2",
+                "timestamp": "1693904002543"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "string",
+                      "description": "状态代码，0 表示请求成功，其他表示失败",
+                      "maxLength": 32
+                    },
+                    "msg": {
+                      "type": "string",
+                      "maxLength": 128,
+                      "description": "当发生错误时，该 msg 包含错误信息"
+                    },
+                    "sign": {
+                      "type": "string",
+                      "maxLength": 128,
+                      "description": "接口签名标识符，用于确定商家的真实性，以防止篡改消息，有关详细信息，请参阅<a href=\"Sign\" target=\"_blank\">签名规范</a>"
+                    },
+                    "psn": {
+                      "type": "string",
+                      "maxLength": 16,
+                      "description": "返回信息序列号，用于跟踪请求链接，当您需要 CodePay 技术人员协助排除故障时，请提供此跟踪号码。"
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {},
+                      "x-apifox-orders": [],
+                      "description": "响应业务数据时，在实际请求中，此参数总是返回一个JSON字符串，本文档中的示例报文没有转换成字符串，为了方便查看，实际返回的报文在签收处理时为了解决JSON无序的问题，会做特殊处理，请以实际响应的报文为准！ 例如：正确格式数据=\"{\\\"k1\\\":\\\"v1\\\",\\\"k2\\\":\\\"v2\\\"}\"Wrong format: data = {\"k1\"： \"v1\", \"k2\"： \"v2\"}",
+                      "x-apifox-ignore-properties": []
+                    }
+                  },
+                  "x-apifox-orders": [
+                    "code",
+                    "msg",
+                    "sign",
+                    "psn",
+                    "data"
+                  ],
+                  "required": [
+                    "code",
+                    "msg",
+                    "sign",
+                    "psn",
+                    "data"
+                  ],
+                  "x-apifox-refs": {},
+                  "x-apifox-ignore-properties": []
+                },
+                "examples": {
+                  "1": {
+                    "summary": "Successful Example",
+                    "value": {
+                      "code": "0",
+                      "msg": "success",
+                      "psn": "09050853244715542560",
+                      "sign": "Z4FU2k2idXNJXriBLQd/Z8OLBeErxJeQvSlUqu1UpjY70C2MetBuxv7esK7M1VY7eepQ7+FVSo0dmx99tWp0lIXmka/gszkriA+RF11dom8vbbmlPNzCo3cVacTRvS8xjwVZDrk2+OhpGo3qRO+5rPRatiw/f04DNQyAC23nX7N5NS/Knq5STJTKHhj8yQUYqUD1TPbdvlCKgx12lP2VZTLEQfYWj+Av15VfCvy9EOwbcHhz6lVi127r6HlFgBxdWfrLPM5qxyK4QoAmUx7qg7XXq59Qo/IIDe6/9j9Wk5xvZ9gR0uoVJVUBc5UXNifXpJf/1PHlcSFMS9P7WwikNA==",
+                      "data": {
+                        "trans_no": "519018719199919",
+                        "trans_amount": "100.00",
+                        "trans_fee_c": "0",
+                        "vat_amount": "0"
+                      }
+                    }
+                  },
+                  "2": {
+                    "summary": "Failure Example",
+                    "value": {
+                      "code": "E04112",
+                      "msg": "[E04112]Merchant order number repeat",
+                      "psn": "09050853244715542560",
+                      "sign": "Z4FU2k2idXNJXriBLQd/Z8OLBeErxJeQvSlUqu1UpjY70C2MetBuxv7esK7M1VY7eepQ7+FVSo0dmx99tWp0lIXmka/gszkriA+RF11dom8vbbmlPNzCo3cVacTRvS8xjwVZDrk2+OhpGo3qRO+5rPRatiw/f04DNQyAC23nX7N5NS/Knq5STJTKHhj8yQUYqUD1TPbdvlCKgx12lP2VZTLEQfYWj+Av15VfCvy9EOwbcHhz6lVi127r6HlFgBxdWfrLPM5qxyK4QoAmUx7qg7XXq59Qo/IIDe6/9j9Wk5xvZ9gR0uoVJVUBc5UXNifXpJf/1PHlcSFMS9P7WwikNA=="
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "x-run-in-apifox": "https://apifox.com/web/project/3919624/apis/api-142244461-run",
+        "security": []
+      }
+    },
+    "/api/entry/orderrefundquery": {
+      "post": {
+        "summary": "查询退款",
+        "x-apifox-folder": "公共API",
+        "x-apifox-status": "developing",
+        "deprecated": false,
+        "description": "启动退款后，可使用此 API 检查并确认其当前状态。值得注意的是，退款到账时间可能会有所不同，可能会根据付款渠道的实际退款处理时间而出现延迟。",
+        "tags": [
+          "公共API"
+        ],
+        "parameters": [],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "app_id": {
+                    "type": "string",
+                    "description": "由网关分配给访问应用程序以识别开发者的ID，请参阅<a href=\"GatewayOverview\" target=“_blank”>参数获取</a>",
+                    "maxLength": 32,
+                    "examples": [
+                      "wz3c35784c2cbe6f37"
+                    ]
+                  },
+                  "format": {
+                    "type": "string",
+                    "description": "请求数据格式，仅支持 JSON",
+                    "maxLength": 4,
+                    "const": "JSON",
+                    "examples": [
+                      "JSON"
+                    ]
+                  },
+                  "charset": {
+                    "type": "string",
+                    "description": "请求使用的编码格式，仅支持 UTF-8",
+                    "maxLength": 8,
+                    "const": "UTF-8",
+                    "examples": [
+                      "UTF-8"
+                    ]
+                  },
+                  "sign_type": {
+                    "type": "string",
+                    "description": "签名算法，目前仅支持 RSA2",
+                    "maxLength": 8,
+                    "const": "RSA2",
+                    "examples": [
+                      "RSA2"
+                    ]
+                  },
+                  "sign": {
+                    "type": "string",
+                    "description": "接口签名标识符，用于确定商家的真实性，以防止篡改消息，有关详细信息，请参阅<a href=\"Sign\" target=\"_blank\">签名规范</a>",
+                    "maxLength": 128,
+                    "examples": [
+                      "VD3AnpSR08BALF7U+A22kVCJOisv9WCCZJ1TGZSmM2lwhixKIi/uUPVYcB6gODbIsBmwJ2Cw9TtI/JiXJFPlJALLncrWTtxKeTxYWhkmnteiih6GhFw1hoFJqxJFgWoLXQI/pvZJr8NognBJjHE56uXBjqIyVanPaXvy3Xb47Cnbt29am7DuQJOyrylfGklbmZQW+kkMjrD4vhrPjvIaebSvkumL5CTOv5uXORYVVijd9UqOMZzTQjilpnH0In2+qZBsY/5if4ZCduFFItf31GRiJOh9WkR0nCiVJjt8y6eSs4Ms2FS9ZiISWgMMSwrkgqYAAJm4GpaP9UUAkmuGVg=="
+                    ]
+                  },
+                  "version": {
+                    "type": "string",
+                    "description": "版本号，固定值：1.0",
+                    "maxLength": 16,
+                    "const": "1.0",
+                    "examples": [
+                      "1.0"
+                    ]
+                  },
+                  "timestamp": {
+                    "type": "integer",
+                    "description": "请求发送时间的时间戳，长度为 13 位数字，不能超过 15 分钟或更晚。",
+                    "format": "long",
+                    "examples": [
+                      1693280636972
+                    ]
+                  },
+                  "method": {
+                    "type": "string",
+                    "description": "接口方法，此API的固定值：order.refund.query"
+                  },
+                  "merchant_no": {
+                    "type": "string",
+                    "description": "商户编号，注册成为商户后获得，请参阅<a href=\"GatewayOverview\" target=“_blank”>参数获取</a>",
+                    "maxLength": 32
+                  },
+                  "merchant_order_no": {
+                    "type": "string",
+                    "description": "merchant_order_no 和 trans_no 不能同时为空，至少二选一，当两者都存在时，trans_no 优先<br />\n<font color=\"green\">示例值：1217752501201407033233368018</font>",
+                    "maxLength": 32,
+                    "examples": [
+                      "1217752501201407033233368018"
+                    ]
+                  },
+                  "trans_no": {
+                    "type": "string",
+                    "description": "CodePay 退款交易号， merchant_order_no 和 trans_no 不能同时为空，至少二选一，当两者都存在时，trans_no 优先",
+                    "maxLength": 32,
+                    "examples": [
+                      "5021000010210602000003"
+                    ]
+                  }
+                },
+                "x-apifox-orders": [
+                  "app_id",
+                  "format",
+                  "charset",
+                  "sign_type",
+                  "sign",
+                  "version",
+                  "timestamp",
+                  "method",
+                  "merchant_no",
+                  "merchant_order_no",
+                  "trans_no"
+                ],
+                "required": [
+                  "app_id",
+                  "charset",
+                  "sign_type",
+                  "sign",
+                  "version",
+                  "format",
+                  "timestamp",
+                  "method",
+                  "merchant_no"
+                ],
+                "x-apifox-refs": {},
+                "x-apifox-ignore-properties": []
+              },
+              "example": {
+                "merchant_no": "302100002572",
+                "charset": "UTF-8",
+                "method": "order.refund.query",
+                "format": "JSON",
+                "sign": "GutzRQrBW2ZLy3KssFocqpLIyV/Z8h1SDgg4uOZikC2HmbT2RvRpkpwUwmNs2riMNb44eiT/IP6RlRiD+h2wKXt66rjhIHEAbc/yB6ib4KGumsGwiC/+mFB+oo34AOBBbHS0wuGzwm764LAyaHkjmUNsC0ojBXtER3T2gpZq6KwchMv/Ecw5y3kbnGdidIvGcbcygEXnHktz4YEJEPisXfh6PH7etpzvWloZfBdLPY6EgQCLepFIbh0Cer44gLWcfgDuIFwp6NzaW/d+3LJKJxNTTXxjKrEtopjPGm4jpd2T52o5OeIlifFKLRT74R6H4w9t0ry/JxscwvySpqFFfg==",
+                "app_id": "wz9f2a175d0e0ef632",
+                "sign_type": "RSA2",
+                "version": "1.0",
+                "merchant_order_no": "TEST_1623925902130_002",
+                "timestamp": "1693905451835"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "string",
+                      "description": "状态代码，0 表示请求成功，其他表示失败",
+                      "maxLength": 32,
+                      "examples": [
+                        "0"
+                      ]
+                    },
+                    "msg": {
+                      "type": "string",
+                      "description": "当发生错误时，该 msg 包含错误信息",
+                      "maxLength": 128,
+                      "examples": [
+                        "success"
+                      ]
+                    },
+                    "sign": {
+                      "type": "string",
+                      "maxLength": 128,
+                      "examples": [
+                        "ARdktgKALtjqOoE9iPBcIt4n9jCz1VDV5q/qTRkmDMzU85xsf4RE4Mhffo4ccq95WBfu9sWQd2JswQKI9Qhln9qH/FzatuddMdfMCkOCO5i4L67A4RZEmF3+32XX6HzKOSPgzsV6syJ56EUu6ivFNPznJn6bt8buG4hljzoEc5ogEl+kn87EhXA+LpEyzJkgLI8ZhH7j6iMQlOeyYRjJ0pVMe7OZfIYOeULp3GfsUamj3ezWVZS/70d2irtxg4c9wsTcBe3dusmQpFfdzAUNuILINWFRj/LEiYWOIeU4DyAU9wBKLWJpyEtok1EUFpWmJJwhEeNQen5mwsJq4Nwv7Q=="
+                      ],
+                      "description": "接口签名标识符，用于确定商家的真实性，以防止篡改消息，有关详细信息，请参阅<a href=\"Sign\" target=\"_blank\">签名规范</a>"
+                    },
+                    "psn": {
+                      "type": "string",
+                      "description": "返回信息序列号，用于跟踪请求链接，当您需要 CodePay 技术人员协助排除故障时，请提供此跟踪号码。",
+                      "maxLength": 16,
+                      "examples": [
+                        "08290344008038160280"
+                      ]
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "trans_no": {
+                          "type": "string",
+                          "description": "唯一标识交易的 CodePay 交易编号",
+                          "maxLength": 32,
+                          "examples": [
+                            "5021000010210602000003"
+                          ]
+                        },
+                        "orig_trans_no": {
+                          "type": "string",
+                          "description": "原始支付交易 CodePay 交易编号是交易的唯一标识",
+                          "maxLength": 32,
+                          "examples": [
+                            "5021000010210602000003"
+                          ]
+                        },
+                        "merchant_order_no": {
+                          "type": "string",
+                          "description": "商户系统内部退款订单号，要求32个字符内，只能是数字、大小写字母_-|*@ ，且在同一个商户下唯一<br />\n<font color=\"green\">示例值：1217752501201407033233368018</font>",
+                          "maxLength": 32,
+                          "examples": [
+                            "1217752501201407033233368018"
+                          ]
+                        },
+                        "price_currency": {
+                          "type": "string",
+                          "description": "标价币种，ISO-4217货币编码，由基于三个字符的代码描述，例如：USD",
+                          "maxLength": 8,
+                          "examples": [
+                            "USD"
+                          ]
+                        },
+                        "order_amount": {
+                          "type": "number",
+                          "format": "float",
+                          "examples": [
+                            34.5
+                          ],
+                          "description": "订单金额，以其标价的货币表示，例如，1USD表示1美元，而不是1美分。"
+                        },
+                        "tip_amount": {
+                          "type": "number",
+                          "format": "float",
+                          "description": "小费金额。<br/><font color=“green”>示例：34.50</font>"
+                        },
+                        "trans_amount": {
+                          "type": "number",
+                          "format": "double",
+                          "description": "在大多数情况下，订单金额和交易金额相等，当客户需要支付服务费和消费税时，交易金额会大于订单金额"
+                        },
+                        "trans_fee_c": {
+                          "type": "number",
+                          "format": "double",
+                          "description": "客户需要支付的服务费"
+                        },
+                        "vat_amount": {
+                          "type": "number",
+                          "description": "VAT：Value added Tax（增值税）的缩写，是一种根据当地政府法律法规向商家收取增值税的支付渠道",
+                          "format": "double"
+                        },
+                        "trans_status": {
+                          "type": "integer",
+                          "description": "交易状态，请参阅 <a href=\"ParameterDictionary#transstatus\" target=\"_blank\">TransStatus</a>"
+                        },
+                        "pay_channel_trans_no": {
+                          "type": "string",
+                          "description": "支付渠道的交易序列号，如微信、支付宝、Visa、万事达卡和其他支付平台",
+                          "maxLength": 64
+                        },
+                        "trans_end_time": {
+                          "type": "string",
+                          "format": "date-time",
+                          "description": "退款交易成功的时间，时区 UTC/GMT 0，格式：YYYY-MM-DD HH:mm:ss <br />\n<font color=\"green\">示例：2021-06-03 12:48:51<font>"
+                        },
+                        "ref_no": {
+                          "type": "string",
+                          "description": "银行卡交易参考编号",
+                          "maxLength": 64
+                        },
+                        "trans_error_code": {
+                          "type": "string",
+                          "description": "交易错误码"
+                        },
+                        "trans_error_msg": {
+                          "type": "string",
+                          "description": "交易错误信息"
+                        }
+                      },
+                      "x-apifox-orders": [
+                        "trans_no",
+                        "orig_trans_no",
+                        "merchant_order_no",
+                        "price_currency",
+                        "order_amount",
+                        "tip_amount",
+                        "trans_amount",
+                        "trans_fee_c",
+                        "vat_amount",
+                        "trans_status",
+                        "pay_channel_trans_no",
+                        "trans_end_time",
+                        "ref_no",
+                        "trans_error_code",
+                        "trans_error_msg"
+                      ],
+                      "description": "响应业务数据时，在实际请求中，此参数总是返回一个JSON字符串，本文档中的示例报文没有转换成字符串，为了方便查看，实际返回的报文在签收处理时为了解决JSON无序的问题，会做特殊处理，请以实际响应的报文为准！ 例如：正确格式数据=\"{\\\"k1\\\":\\\"v1\\\",\\\"k2\\\":\\\"v2\\\"}\"Wrong format: data = {\"k1\"： \"v1\", \"k2\"： \"v2\"}",
+                      "required": [
+                        "trans_no",
+                        "trans_status",
+                        "orig_trans_no",
+                        "price_currency",
+                        "merchant_order_no",
+                        "order_amount"
+                      ],
+                      "x-apifox-ignore-properties": []
+                    }
+                  },
+                  "x-apifox-orders": [
+                    "code",
+                    "msg",
+                    "sign",
+                    "psn",
+                    "data"
+                  ],
+                  "required": [
+                    "code",
+                    "msg",
+                    "sign",
+                    "psn",
+                    "data"
+                  ],
+                  "x-apifox-refs": {},
+                  "x-apifox-ignore-properties": []
+                },
+                "examples": {
+                  "1": {
+                    "summary": "Success Example",
+                    "value": {
+                      "code": "0",
+                      "data": {
+                        "trans_no": "50210004102306140000003",
+                        "trans_end_time": "2023-06-14 08:51:51",
+                        "trans_fee_c": "0",
+                        "trans_amount": "200",
+                        "merchant_order_no": "TEST_1686732708342",
+                        "pay_channel_trans_no": "20230614190741010007G0004187182",
+                        "vat_amount": "0",
+                        "order_amount": "200",
+                        "trans_status": 2,
+                        "price_currency": "JPY",
+                        "trans_type": 3
+                      },
+                      "msg": "success",
+                      "psn": "09050714451053895687",
+                      "sign": "X/kTK7T3fbUBeSAHU/F6KLcBYPouyEISuKqLBC8LnZ/IOQA1vhdfmK2fLiSv6OCEeB3Dm3fDOIpKQKhy15GgmxhDUiTEa0w3VwFbg1Qpo6eXd3MYw0vudPtBVcYeIOZNs653KshQzkIrSHLNZJhawd2Nl2E1utRmphNxqf13xQ9hFg9OQUZOiSl4zchDSiVfVlf03vIuh6Rswc7QXIVHlwTHmF1JV81x/986eV68pKIsekvn9V+qLIRJ0FpaIs5yGkDk6ZcXzAEHXwWX8k0/ntAyOz+TvpyjA6RRGt+jCTMdUlzJRINiIbFa4FzEWweUvyMVWy5fMHKzdvJyNqksrQ=="
+                    }
+                  },
+                  "2": {
+                    "summary": "Failure Example",
+                    "value": {
+                      "code": "E04111",
+                      "msg": "[E04111]Merchant order number is invalid",
+                      "psn": "09050917332031092217",
+                      "sign": "NYtj3Lpuq+Jx2ha/NZ0bQkaLlP8xZXdVCleAAs4/++Ro8R06WofyCOQhmWF5hdrrgTQ4jkNuZ/ov8t0U7cgyWYektagGW6Lc9TUC5METiLSfr1uY0AwmFPKj4kNqLGAhLpjgA8vTk/sKsNJLYmmtBR0IU7ET5yGnODefObyw+Ty8uNUlkdfTYOm+owu/2RQDzwCrU2DCYILoPY6C+7qIEDgjuCZPzN02gtRygkL2C5/WdgGxpFZameevFTo5HWXTWNAuv9DqU/ciAz9HfTHLB7dT/DDxIgozw7x60qwvk4sv5UmFMsyj6o4hmflmjz9T1MCDp2HSTEbOJ0eBosH2IA=="
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "x-run-in-apifox": "https://apifox.com/web/project/3919624/apis/api-142244462-run",
+        "security": []
+      }
+    },
+    "/{merchant_website}": {
+      "post": {
+        "summary": "交易结果通知",
+        "x-apifox-folder": "公共API",
+        "x-apifox-status": "developing",
+        "deprecated": false,
+        "description": "付款或退款完成后，CodePay 会将交易结果和相关用户详细信息转发给商家。在这种情况下，商家的后台系统必须通过向网关支付系统发送响应来确认这些数据。\n\n>1. 如果网关支付系统没有收到商户方面的确认（成功或超时），就会将其理解为错过通知。为确保商户收到这些通知，系统会定期重新发送通知，在 12 小时内共发送 15 次。但请注意，系统不能保证每次通知都能送达。提醒通知的发送间隔为 5s、10s、15s、30s、60s、3m、10m、15m、三个 30m 间隔和三个 3h 间隔。\n>2. 商家的后台有可能多次收到相同的付款通知。因此，商家需要确保其系统具备处理此类重复通知的能力。\n>3. 建议的方法是在收到任何通知时检查所附的付款信息。这样做是为了确定这些详细信息之前是否已被处理过。如果数据已被处理，则只需返回先前确定的结果。如果没有，则处理新数据，然后发送响应。为确保数据完整性，尤其是在并发交易的情况下，应在仔细检查付款数据之前使用交易锁。\n>4. 为提高安全性，商家还应验证通知的签名。这意味着要检查通知中提到的订单总额是否与商家自己系统中记录的订单总额一致。\n>5. 在未来的迭代中，可能会根据不断变化的业务需求为通知添加其他参数。因此，确保验证系统的适应性至关重要。与硬编码的验证参数列表不同，您的系统应能动态处理每份通知中提供的参数。\n>6. 最后，可能会出现未收到付款通知或存在签名验证问题的情况。为了应对潜在的交易疏忽，强烈建议实施轮询机制作为保障措施。\n\n<font  color = \"red\">确认： 如果准确接收并处理了通知，则返回字符串： success</font>",
+        "tags": [
+          "公共API"
+        ],
+        "parameters": [
+          {
+            "name": "merchant_website",
+            "in": "path",
+            "description": "",
+            "required": true,
+            "example": "",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "app_id": {
+                    "type": "string",
+                    "description": "由网关分配给访问应用程序以识别开发者的ID，请参阅<a href=\"GatewayOverview\" target=“_blank”>参数获取</a>",
+                    "maxLength": 32,
+                    "examples": [
+                      "wz3c35784c2cbe6f37"
+                    ]
+                  },
+                  "format": {
+                    "type": "string",
+                    "description": "请求数据格式，仅支持 JSON",
+                    "maxLength": 4,
+                    "const": "JSON",
+                    "examples": [
+                      "JSON"
+                    ]
+                  },
+                  "charset": {
+                    "type": "string",
+                    "description": "请求使用的编码格式，仅支持 UTF-8",
+                    "maxLength": 8,
+                    "const": "UTF-8",
+                    "examples": [
+                      "UTF-8"
+                    ]
+                  },
+                  "sign_type": {
+                    "type": "string",
+                    "description": "签名算法，目前仅支持 RSA2",
+                    "maxLength": 8,
+                    "const": "RSA2",
+                    "examples": [
+                      "RSA2"
+                    ]
+                  },
+                  "sign": {
+                    "type": "string",
+                    "description": "接口签名标识符，用于确定商家的真实性，以防止篡改消息，有关详细信息，请参阅<a href=\"Sign\" target=\"_blank\">签名规范</a>",
+                    "maxLength": 128,
+                    "examples": [
+                      "VD3AnpSR08BALF7U+A22kVCJOisv9WCCZJ1TGZSmM2lwhixKIi/uUPVYcB6gODbIsBmwJ2Cw9TtI/JiXJFPlJALLncrWTtxKeTxYWhkmnteiih6GhFw1hoFJqxJFgWoLXQI/pvZJr8NognBJjHE56uXBjqIyVanPaXvy3Xb47Cnbt29am7DuQJOyrylfGklbmZQW+kkMjrD4vhrPjvIaebSvkumL5CTOv5uXORYVVijd9UqOMZzTQjilpnH0In2+qZBsY/5if4ZCduFFItf31GRiJOh9WkR0nCiVJjt8y6eSs4Ms2FS9ZiISWgMMSwrkgqYAAJm4GpaP9UUAkmuGVg=="
+                    ]
+                  },
+                  "version": {
+                    "type": "string",
+                    "description": "版本号，固定值：1.0",
+                    "maxLength": 16,
+                    "const": "1.0",
+                    "examples": [
+                      "1.0"
+                    ]
+                  },
+                  "timestamp": {
+                    "type": "integer",
+                    "description": "请求发送时间的时间戳，长度为 13 位数字，不能超过 15 分钟或更晚。",
+                    "format": "long",
+                    "examples": [
+                      1693280636972
+                    ]
+                  },
+                  "method": {
+                    "type": "string",
+                    "description": "接口方法，此API的固定值：payment.result.notify"
+                  },
+                  "merchant_no": {
+                    "type": "string",
+                    "description": "商户编号，注册成为商户后获得，请参阅<a href=\"GatewayOverview\" target=“_blank”>参数获取</a>",
+                    "maxLength": 32
+                  },
+                  "merchant_order_no": {
+                    "type": "string",
+                    "description": "商户系统内部订单号，要求32个字符内，只能是数字、大小写字母_-|*@ ，且在同一个商户下唯一<br />\n<font color=\"green\">示例值：1217752501201407033233368018</font>",
+                    "maxLength": 32,
+                    "examples": [
+                      "1217752501201407033233368018"
+                    ]
+                  },
+                  "trans_no": {
+                    "type": "string",
+                    "description": "唯一标识交易的 CodePay 交易编号",
+                    "maxLength": 32,
+                    "examples": [
+                      "5021000010210602000003"
+                    ]
+                  },
+                  "trans_type": {
+                    "type": "integer",
+                    "description": "交易类型，请参阅 <a href = \"ParameterDictionary#transtype\" target=\"_blank\"> TransType </a>.",
+                    "examples": [
+                      1
+                    ]
+                  },
+                  "price_currency": {
+                    "type": "string",
+                    "description": "标价币种，ISO-4217货币编码，由基于三个字符的代码描述，例如：USD",
+                    "maxLength": 8,
+                    "examples": [
+                      "USD"
+                    ]
+                  },
+                  "order_amount": {
+                    "type": "number",
+                    "format": "float",
+                    "examples": [
+                      34.5
+                    ],
+                    "description": "订单金额，以其标价的货币表示，例如，1USD表示1美元，而不是1美分。"
+                  },
+                  "tip_amount": {
+                    "type": "number",
+                    "format": "float",
+                    "description": "小费金额。<br/><font color=“green”>示例：34.50</font>"
+                  },
+                  "cashback_amount": {
+                    "type": "number",
+                    "description": "返现金额.  用标价货币表示，例如，1 USD 代表 1 美元，而不是 1 美分 <br /> <br /> <font color = \"green\">例: 10.00</font>",
+                    "format": "float"
+                  },
+                  "trans_amount": {
+                    "type": "number",
+                    "format": "double",
+                    "description": "在大多数情况下，订单金额和交易金额相等，当客户需要支付服务费和消费税时，交易金额会大于订单金额"
+                  },
+                  "trans_fee_c": {
+                    "type": "number",
+                    "format": "double",
+                    "description": "客户需要支付的服务费"
+                  },
+                  "vat_amount": {
+                    "type": "number",
+                    "description": "VAT：Value added Tax（增值税）的缩写，是一种根据当地政府法律法规向商家收取增值税的支付渠道",
+                    "format": "double"
+                  },
+                  "attach": {
+                    "type": "string",
+                    "description": "允许商家向网关提交附加数据，这些数据将在付款通知和查询时原样返回",
+                    "maxLength": 128,
+                    "examples": [
+                      "{“key”:”value”, “key2”:”value2”}"
+                    ]
+                  },
+                  "store_no": {
+                    "type": "string",
+                    "description": "门店编号，注册门店后获得，请参阅<a href=\"GatewayOverview\" target=“_blank”>参数获取</a>",
+                    "maxLength": 32,
+                    "examples": [
+                      "4021000008"
+                    ]
+                  },
+                  "terminal_sn": {
+                    "type": "string",
+                    "description": "智能金融终端的 SN 需要与商家的店铺绑定",
+                    "maxLength": 32,
+                    "examples": [
+                      "P327701609001412"
+                    ]
+                  },
+                  "pay_scenario": {
+                    "type": "string",
+                    "description": "交易类型，请参阅 <a href = \"ParameterDictionary#payscenario\" target=\"_blank\"> PayScenario </a> 。"
+                  },
+                  "trans_status": {
+                    "type": "integer",
+                    "description": "交易状态，请参阅 <a href=\"ParameterDictionary#transstatus\" target=\"_blank\">TransStatus</a>"
+                  },
+                  "pay_channel_trans_no": {
+                    "type": "string",
+                    "description": "支付渠道的交易序列号，如微信、支付宝、Visa、万事达卡和其他支付平台",
+                    "maxLength": 64
+                  },
+                  "pay_user_account_id": {
+                    "type": "string",
+                    "maxLength": 64,
+                    "description": "买家用户 ID"
+                  },
+                  "paid_amount": {
+                    "type": "number",
+                    "format": "double",
+                    "description": "客户实际付款金额"
+                  },
+                  "discount_bmopc": {
+                    "type": "number",
+                    "format": "double",
+                    "description": "商户通过支付渠道向客户提供优惠金额，这些金额不会结算给商户"
+                  },
+                  "discount_bpc": {
+                    "type": "number",
+                    "format": "double",
+                    "description": "将付款渠道的金额折算给客户，这部分资金将存入商家账户"
+                  },
+                  "trans_end_time": {
+                    "type": "string",
+                    "format": "date-time",
+                    "description": "交易成功的时间，时区 UTC/GMT 0，格式：YYYY-MM-DD HH:mm:ss <br />\n<font color=\"green\">示例：2021-06-03 12:48:51<font>"
+                  },
+                  "ref_no": {
+                    "type": "string",
+                    "description": "银行卡交易参考编号",
+                    "maxLength": 64
+                  },
+                  "pay_method_id": {
+                    "type": "string",
+                    "description": "付款方式，请参阅 <a href = \"ParameterDictionary#paymethod\" target=\"_blank\"> PayMethod</a>",
+                    "examples": [
+                      "Visa"
+                    ]
+                  },
+                  "trans_error_code": {
+                    "type": "string",
+                    "description": "交易错误码"
+                  },
+                  "trans_error_msg": {
+                    "type": "string",
+                    "description": "交易错误信息"
+                  }
+                },
+                "x-apifox-orders": [
+                  "app_id",
+                  "format",
+                  "charset",
+                  "sign_type",
+                  "sign",
+                  "version",
+                  "timestamp",
+                  "method",
+                  "merchant_no",
+                  "merchant_order_no",
+                  "trans_no",
+                  "trans_type",
+                  "price_currency",
+                  "order_amount",
+                  "tip_amount",
+                  "cashback_amount",
+                  "trans_amount",
+                  "trans_fee_c",
+                  "vat_amount",
+                  "attach",
+                  "store_no",
+                  "terminal_sn",
+                  "pay_scenario",
+                  "trans_status",
+                  "pay_channel_trans_no",
+                  "pay_user_account_id",
+                  "paid_amount",
+                  "discount_bmopc",
+                  "discount_bpc",
+                  "trans_end_time",
+                  "ref_no",
+                  "pay_method_id",
+                  "trans_error_code",
+                  "trans_error_msg"
+                ],
+                "required": [
+                  "trans_no",
+                  "trans_status",
+                  "trans_type",
+                  "price_currency",
+                  "merchant_order_no",
+                  "order_amount",
+                  "pay_scenario",
+                  "merchant_no",
+                  "app_id",
+                  "format",
+                  "charset",
+                  "sign_type",
+                  "sign",
+                  "version",
+                  "timestamp",
+                  "method",
+                  "trans_amount"
+                ],
+                "x-apifox-ignore-properties": []
+              },
+              "example": {
+                "trans_end_time": "2023-03-28 10:54:48",
+                "charset": "UTF-8",
+                "store_no": "4100006443",
+                "pay_scenario": "SWIPE_CARD",
+                "sign": "xwJo6NU00GeoQMe0630kaXO7kYVM55/5DRSxXnPWTTXOgxeTTsXol39WhAyWiiJchKyT3fw3LSiLXBW+AP3YH/Oj7920JnVc7WHTMEhfGhuRHUbcoHyE0VpMTgFpltCFA6lECt2TWDD3JHt72rbYvsmDrOEH4Fd8aV0ZceJSqwr2qJBoYtxhlxuFoLgC8k5RIsPrbkT1ypCaSyL0+zynhLo6IkmtKV7U22Mb+fMcIjK9wMZbWiUGJQq4dMyUX90m2oLD5EWgCdcitwxzScJlkpEwJOE4ZnDpFwV2lwQJacqIBtHYTvpq4b21e62pwausxu7S4SUxrhU+BH1z8vJxkQ==",
+                "trans_fee_c": "0",
+                "discount_bpc": "0",
+                "vat_amount": "0",
+                "order_amount": "10",
+                "app_id": "wza61f2e0da88ff7f8",
+                "sign_type": "RSA2",
+                "trans_status": 2,
+                "price_currency": "ZAR",
+                "terminal_sn": "PP30002209005865",
+                "trans_type": 1,
+                "timestamp": "1680001064206",
+                "trans_no": "51220064312303280787009",
+                "merchant_no": "317700643123",
+                "method": "payment.result.notify",
+                "pay_user_account_id": "430011******6161",
+                "format": "JSON",
+                "pay_method_id": "Visa",
+                "trans_amount": "10",
+                "http_request_id": "03281057441217642320",
+                "version": "1.0",
+                "pay_channel_trans_no": "00777000284306837100005105865001097",
+                "paid_amount": "10",
+                "discount_bmopc": "0"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {},
+                  "x-apifox-orders": [],
+                  "x-apifox-ignore-properties": []
+                },
+                "examples": {
+                  "1": {
+                    "summary": "Success Example",
+                    "value": "success"
+                  },
+                  "2": {
+                    "summary": "Failure Example",
+                    "value": "system error"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "x-run-in-apifox": "https://apifox.com/web/project/3919624/apis/api-142244463-run",
+        "security": []
+      }
+    },
+    "/api/entry/payunifiedorder": {
+      "post": {
+        "summary": "WEB网页支付",
+        "x-apifox-folder": "在线支付",
+        "x-apifox-status": "developing",
+        "deprecated": false,
+        "description": "在实施在线支付时，您的后台系统应启动对该 API 的调用，以建立初步的支付交易。这将创建一个支付链接，用户可通过该链接完成支付。\n\n通过这一过程，我们的网络收银界面简化了处理不同支付方式的各种步骤。这样，您就可以专注于您的主要业务功能，而不是错综复杂的支付处理。\n\n有关详细信息，请参阅<a href=\"PCWebPayDevGuidelines\" target=\"_blank\">WEB网页支付产品介绍</a>",
+        "tags": [
+          "在线支付"
+        ],
+        "parameters": [],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "app_id": {
+                    "type": "string",
+                    "description": "由网关分配给访问应用程序以识别开发者的ID，请参阅<a href=\"GatewayOverview\" target=“_blank”>参数获取</a>",
+                    "maxLength": 32,
+                    "examples": [
+                      "wz3c35784c2cbe6f37"
+                    ]
+                  },
+                  "format": {
+                    "type": "string",
+                    "description": "请求数据格式，仅支持 JSON",
+                    "maxLength": 4,
+                    "const": "JSON",
+                    "examples": [
+                      "JSON"
+                    ]
+                  },
+                  "charset": {
+                    "type": "string",
+                    "description": "请求使用的编码格式，仅支持 UTF-8",
+                    "maxLength": 8,
+                    "const": "UTF-8",
+                    "examples": [
+                      "UTF-8"
+                    ]
+                  },
+                  "sign_type": {
+                    "type": "string",
+                    "description": "签名算法，目前仅支持 RSA2",
+                    "maxLength": 8,
+                    "const": "RSA2",
+                    "examples": [
+                      "RSA2"
+                    ]
+                  },
+                  "sign": {
+                    "type": "string",
+                    "description": "接口签名标识符，用于确定商家的真实性，以防止篡改消息，有关详细信息，请参阅<a href=\"Sign\" target=\"_blank\">签名规范</a>",
+                    "maxLength": 128,
+                    "examples": [
+                      "VD3AnpSR08BALF7U+A22kVCJOisv9WCCZJ1TGZSmM2lwhixKIi/uUPVYcB6gODbIsBmwJ2Cw9TtI/JiXJFPlJALLncrWTtxKeTxYWhkmnteiih6GhFw1hoFJqxJFgWoLXQI/pvZJr8NognBJjHE56uXBjqIyVanPaXvy3Xb47Cnbt29am7DuQJOyrylfGklbmZQW+kkMjrD4vhrPjvIaebSvkumL5CTOv5uXORYVVijd9UqOMZzTQjilpnH0In2+qZBsY/5if4ZCduFFItf31GRiJOh9WkR0nCiVJjt8y6eSs4Ms2FS9ZiISWgMMSwrkgqYAAJm4GpaP9UUAkmuGVg=="
+                    ]
+                  },
+                  "version": {
+                    "type": "string",
+                    "description": "版本号，固定值：1.0",
+                    "maxLength": 16,
+                    "const": "1.0",
+                    "examples": [
+                      "1.0"
+                    ]
+                  },
+                  "timestamp": {
+                    "type": "integer",
+                    "description": "请求发送时间的时间戳，长度为 13 位数字，不能超过 15 分钟或更晚。",
+                    "format": "long",
+                    "examples": [
+                      1693280636972
+                    ]
+                  },
+                  "method": {
+                    "type": "string",
+                    "description": "接口方法，本 API 的固定值：pay.unifiedorder"
+                  },
+                  "merchant_no": {
+                    "type": "string",
+                    "description": "商户编号，注册成为商户后获得，请参阅<a href=\"GatewayOverview\" target=“_blank”>参数获取</a>",
+                    "maxLength": 32
+                  },
+                  "store_no": {
+                    "type": "string",
+                    "description": "门店编号，注册门店后获得，请参阅<a href=\"GatewayOverview\" target=“_blank”>参数获取</a>",
+                    "maxLength": 32,
+                    "examples": [
+                      "4021000008"
+                    ]
+                  },
+                  "pay_method_id": {
+                    "type": "string",
+                    "description": "指定使用某种付款方式，请参阅 <a href=\"ParameterDictionary#paymethod\" target=\"_blank\">PayMethod</a>",
+                    "examples": [
+                      "Visa"
+                    ]
+                  },
+                  "merchant_order_no": {
+                    "type": "string",
+                    "description": "商户系统内部订单号，要求32个字符内，只能是数字、大小写字母_-|*@ ，且在同一个商户下唯一<br />\n<font color=\"green\">示例值：1217752501201407033233368018</font>",
+                    "maxLength": 32,
+                    "examples": [
+                      "1217752501201407033233368018"
+                    ]
+                  },
+                  "price_currency": {
+                    "type": "string",
+                    "description": "标价币种，ISO-4217货币编码，由基于三个字符的代码描述，例如：USD",
+                    "maxLength": 8,
+                    "examples": [
+                      "USD"
+                    ]
+                  },
+                  "order_amount": {
+                    "type": "number",
+                    "format": "float",
+                    "examples": [
+                      34.5
+                    ],
+                    "description": "订单金额，以其标价的货币表示，例如，1USD表示1美元，而不是1美分。"
+                  },
+                  "expires": {
+                    "type": "integer",
+                    "examples": [
+                      5
+                    ],
+                    "description": "订单付款超时时期，超过此时间后，订单将无法再付款或取消，订单将被关闭，此时间的单位为：秒<br />\n\n<font color=\"red\">请设置合适的订单超时时间</font>"
+                  },
+                  "description": {
+                    "type": "string",
+                    "description": "客户所购商品或服务的简要说明",
+                    "maxLength": 128,
+                    "examples": [
+                      "IPhone White X2"
+                    ]
+                  },
+                  "attach": {
+                    "type": "string",
+                    "description": "允许商家向网关提交附加数据，这些数据将在付款通知和查询时原样返回",
+                    "maxLength": 128,
+                    "examples": [
+                      "{“key”:”value”, “key2”:”value2”}"
+                    ]
+                  },
+                  "terminal_sn": {
+                    "type": "string",
+                    "description": "智能金融终端的 SN 需要与商家的店铺绑定",
+                    "maxLength": 32,
+                    "examples": [
+                      "P327701609001412"
+                    ]
+                  },
+                  "term_ip": {
+                    "type": "string",
+                    "maxLength": 32,
+                    "description": "终端的 IP 地址。如果没有终端，可提交服务器的 IP 地址"
+                  },
+                  "longitude": {
+                    "type": "string",
+                    "maxLength": 16,
+                    "description": "地理经度"
+                  },
+                  "latitude": {
+                    "type": "string",
+                    "description": "地理维度",
+                    "maxLength": 16
+                  },
+                  "return_url": {
+                    "type": "string",
+                    "description": "前端重定向用户页面的 URL",
+                    "maxLength": 256
+                  },
+                  "notify_url": {
+                    "type": "string",
+                    "description": "商户系统接收CodePay支付通知的回调地址，请参阅<a href=\"CallbackNotificationNotes\" target=\"_blank\">回调通知说明</a>了解详细信息。<br />\n有关通知消息的报文结构，请参阅<a href=\"CloudAPI#tag/Common API/paths/~1%7Bmerchant_website%7D/post\" target=\"_blank\">交易结果通知</a>。",
+                    "maxLength": 256,
+                    "examples": [
+                      "http://www.mersite.com/pay/notify"
+                    ]
+                  },
+                  "terminal_type": {
+                    "type": "string",
+                    "const": "WEB",
+                    "description": "终端类型，固定值： WEB"
+                  },
+                  "language": {
+                    "type": "string",
+                    "description": "收银界面上显示的语言 <a href=\"./dictionary#language\" target=\"_blank\">Language</a>."
+                  }
+                },
+                "x-apifox-orders": [
+                  "app_id",
+                  "format",
+                  "charset",
+                  "sign_type",
+                  "sign",
+                  "version",
+                  "timestamp",
+                  "method",
+                  "merchant_no",
+                  "store_no",
+                  "pay_method_id",
+                  "merchant_order_no",
+                  "price_currency",
+                  "order_amount",
+                  "expires",
+                  "description",
+                  "attach",
+                  "terminal_sn",
+                  "term_ip",
+                  "longitude",
+                  "latitude",
+                  "return_url",
+                  "notify_url",
+                  "terminal_type",
+                  "language"
+                ],
+                "required": [
+                  "app_id",
+                  "charset",
+                  "sign_type",
+                  "sign",
+                  "version",
+                  "format",
+                  "timestamp",
+                  "method",
+                  "merchant_no",
+                  "merchant_order_no",
+                  "price_currency",
+                  "order_amount",
+                  "expires",
+                  "description",
+                  "term_ip",
+                  "return_url",
+                  "terminal_type"
+                ],
+                "x-apifox-refs": {},
+                "x-apifox-ignore-properties": []
+              },
+              "example": {
+                "terminal_type": "WEB",
+                "merchant_no": "302100041048",
+                "charset": "UTF-8",
+                "expires": 300,
+                "method": "pay.unifiedorder",
+                "store_no": "4022000019",
+                "format": "JSON",
+                "sign": "Gfv1kSMeNHFISPhOEU3dTJlBnqBlCJ6c1f5jU2e7Foco5gFNvBJn9iocLq2tGf3hNWYbgqpk35Jl0dDYKPTgDtmoTxW2M//aPGWsDxfdLaOz5NUgwx2G9uMWydfGxQA3QYzC6FLq58YLF4SzDCXASvT2Zlvy2KcAR/loFCITOpjtP5O1W50nWZepTprhIZAqpBC5Tvq9TKcj+Lb2IJAqrJkKliFzYxR2nu+tsfXoyME37VtNaj1WFY8sGbrzU9PNdL2lm/H94IUFM2mSRu1lc77lDOysxZwLEiyN8mQq2LgRrPlTyMQ3SHRvrB9joIA1kx91FFPsU6PqgTD8augO9g==",
+                "description": "IPhone 12 5G White",
+                "pay_method_id": "Alipay+",
+                "trans_amount": 1,
+                "version": "1.0",
+                "merchant_order_no": "TEST_1693979057469",
+                "return_url": "https://www.baidu.com",
+                "app_id": "wz9f2a175d0e0ef632",
+                "sign_type": "RSA2",
+                "price_currency": "JPY",
+                "timestamp": "1693979057656"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "string",
+                      "description": "状态代码，0 表示请求成功，其他表示失败",
+                      "maxLength": 32,
+                      "examples": [
+                        "0"
+                      ]
+                    },
+                    "msg": {
+                      "type": "string",
+                      "description": "当发生错误时，该 msg 包含错误信息",
+                      "maxLength": 128,
+                      "examples": [
+                        "success"
+                      ]
+                    },
+                    "sign": {
+                      "type": "string",
+                      "maxLength": 128,
+                      "examples": [
+                        "ARdktgKALtjqOoE9iPBcIt4n9jCz1VDV5q/qTRkmDMzU85xsf4RE4Mhffo4ccq95WBfu9sWQd2JswQKI9Qhln9qH/FzatuddMdfMCkOCO5i4L67A4RZEmF3+32XX6HzKOSPgzsV6syJ56EUu6ivFNPznJn6bt8buG4hljzoEc5ogEl+kn87EhXA+LpEyzJkgLI8ZhH7j6iMQlOeyYRjJ0pVMe7OZfIYOeULp3GfsUamj3ezWVZS/70d2irtxg4c9wsTcBe3dusmQpFfdzAUNuILINWFRj/LEiYWOIeU4DyAU9wBKLWJpyEtok1EUFpWmJJwhEeNQen5mwsJq4Nwv7Q=="
+                      ],
+                      "description": "接口签名标识符，用于确定商家的真实性，以防止篡改消息，有关详细信息，请参阅<a href=\"Sign\" target=\"_blank\">签名规范</a>"
+                    },
+                    "psn": {
+                      "type": "string",
+                      "description": "返回信息序列号，用于跟踪请求链接，当您需要 CodePay 技术人员协助排除故障时，请提供此跟踪号码。",
+                      "maxLength": 16,
+                      "examples": [
+                        "08290344008038160280"
+                      ]
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "trans_no": {
+                          "type": "string",
+                          "description": "唯一标识交易的 CodePay 交易编号",
+                          "maxLength": 32,
+                          "examples": [
+                            "5021000010210602000003"
+                          ]
+                        },
+                        "pay_url": {
+                          "type": "string",
+                          "description": "网络支付链接地址，商户系统前端跳转至该页面，启动支付流程",
+                          "maxLength": 64
+                        },
+                        "trans_amount": {
+                          "type": "number",
+                          "format": "double",
+                          "description": "在大多数情况下，订单金额和交易金额相等。当客户需要支付服务费和消费税时，交易金额会大于订单金额。"
+                        },
+                        "trans_fee_c": {
+                          "type": "number",
+                          "format": "double",
+                          "description": "客户需要支付的服务费"
+                        },
+                        "vat_amount": {
+                          "type": "number",
+                          "description": "VAT：Value added Tax（增值税）的缩写，是一种根据当地政府法律法规向商家收取增值税的支付渠道",
+                          "format": "double"
+                        }
+                      },
+                      "x-apifox-orders": [
+                        "trans_no",
+                        "pay_url",
+                        "trans_amount",
+                        "trans_fee_c",
+                        "vat_amount"
+                      ],
+                      "description": "响应业务数据时，在实际请求中，此参数总是返回一个JSON字符串，本文档中的示例报文没有转换成字符串，为了方便查看，实际返回的报文在签收处理时为了解决JSON无序的问题，会做特殊处理，请以实际响应的报文为准！ 例如：正确格式数据=\"{\\\"k1\\\":\\\"v1\\\",\\\"k2\\\":\\\"v2\\\"}\"Wrong format: data = {\"k1\"： \"v1\", \"k2\"： \"v2\"}",
+                      "required": [
+                        "trans_no",
+                        "pay_url"
+                      ],
+                      "x-apifox-ignore-properties": []
+                    }
+                  },
+                  "x-apifox-orders": [
+                    "code",
+                    "msg",
+                    "sign",
+                    "psn",
+                    "data"
+                  ],
+                  "required": [
+                    "code",
+                    "msg",
+                    "sign",
+                    "psn",
+                    "data"
+                  ],
+                  "x-apifox-refs": {},
+                  "x-apifox-ignore-properties": []
+                },
+                "examples": {
+                  "1": {
+                    "summary": "Success Example",
+                    "value": {
+                      "code": "0",
+                      "data": {
+                        "pay_url": "https://open-sea-global.alipayplus.com/api/open/v1/ac/cashier/self/codevalue/checkout.htm?codeValue=281666040098XYPf7PzAu8YvSe9gDy32sOYn&loadMode=2"
+                      },
+                      "msg": "success",
+                      "psn": "09060544199400731500",
+                      "sign": "fD/HAMdtVCp0pSdvUrdTZdCMHDXbd4H7pSYnFyDqFADbYtR01RBc3P9IsdQY8WznTd7MC9wBHkXktxrm7wn1sWGE3SCfLXO5JATMoh9f2zjU6vZ0GA8PdYyapVkOZvbFUBj9XRWGBT3zXB3fyGw58FLvKRDaFDCVVhuk06rKvBdr/wV01ZBQ99bCG/ZYbUj1NpwUR67Twk5tnCa5tU75agY8BG8t6fjsgyQnAOY0WhZykxUrvEBlpnorDuMPjRcoQ6ShBCq7QqjIUA2x1DrbuO+YojfM7/RGeoquWTQbceqwPNzrQjReIgDJT1Oviov3Xk4EA54hi5QgBhKR1ascLA=="
+                    }
+                  },
+                  "2": {
+                    "summary": "Failure Example",
+                    "value": {
+                      "code": "SYS013",
+                      "msg": "[SYS013]parameter error:order_amount or trans_amount",
+                      "psn": "09060549451789549845",
+                      "sign": "gDzst6zsmBwcZuoDfmajw2Sc0nQSLqTozVB1zyLt82mITrVIpw0FFa9825bNAdUwqCqeR6EbHtK9gt+ZrNjmMTMVeS0t1sSL6YGjHQdfS8GKxkZ8u4VePRt5+oRTfaSG2iHiuPvxaKtG6A/mB1dVNqI73U5BSuMNgbGMifBcyr2FkFYJwLTcWLxh60T8ypxmcNSO9MnyJo+NQsHv3bel/bMmfUm7izGv176ZHcpwV7DjGCeTzUU+E9ywZ44H6tzZioun1DjjeshpbSkYAOFz8Mo9FlnekQam2wTWmUwgKe9Ez17wyuY3/zq9eJJURRvgKPUxFItRUjoVioNW1mmiAw=="
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "x-run-in-apifox": "https://apifox.com/web/project/3919624/apis/api-142244464-run",
+        "security": []
+      }
+    },
+    "/api/entry/h5pay": {
+      "post": {
+        "summary": "手机网页支付",
+        "x-apifox-folder": "移动支付",
+        "x-apifox-status": "developing",
+        "deprecated": false,
+        "description": "商户在移动端网页展示商品或服务，然后调用此接口，拿到CodePay支付收银台页面地址。用户进入CodePay移动收银台，确认订单，完成付款。CodePay移动收银台聚合了多个支付渠道提供的网页支付功能，可以完成各种支付方式的收款。\n\n有关详细信息，请参阅<a href=\"MobileWebPayDevGuidelines\" target=\"_blank\">手机网页支付产品介绍</a>",
+        "tags": [
+          "移动支付"
+        ],
+        "parameters": [],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "app_id": {
+                    "type": "string",
+                    "description": "由网关分配给访问应用程序以识别开发者的ID，请参阅<a href=\"GatewayOverview\" target=“_blank”>参数获取</a>",
+                    "maxLength": 32,
+                    "examples": [
+                      "wz3c35784c2cbe6f37"
+                    ]
+                  },
+                  "format": {
+                    "type": "string",
+                    "description": "请求数据格式，仅支持 JSON",
+                    "maxLength": 4,
+                    "const": "JSON",
+                    "examples": [
+                      "JSON"
+                    ]
+                  },
+                  "charset": {
+                    "type": "string",
+                    "description": "请求使用的编码格式，仅支持 UTF-8",
+                    "maxLength": 8,
+                    "const": "UTF-8",
+                    "examples": [
+                      "UTF-8"
+                    ]
+                  },
+                  "sign_type": {
+                    "type": "string",
+                    "description": "签名算法，目前仅支持 RSA2",
+                    "maxLength": 8,
+                    "const": "RSA2",
+                    "examples": [
+                      "RSA2"
+                    ]
+                  },
+                  "sign": {
+                    "type": "string",
+                    "description": "接口签名标识符，用于确定商家的真实性，以防止篡改消息，有关详细信息，请参阅<a href=\"Sign\" target=\"_blank\">签名规范</a>",
+                    "maxLength": 128,
+                    "examples": [
+                      "VD3AnpSR08BALF7U+A22kVCJOisv9WCCZJ1TGZSmM2lwhixKIi/uUPVYcB6gODbIsBmwJ2Cw9TtI/JiXJFPlJALLncrWTtxKeTxYWhkmnteiih6GhFw1hoFJqxJFgWoLXQI/pvZJr8NognBJjHE56uXBjqIyVanPaXvy3Xb47Cnbt29am7DuQJOyrylfGklbmZQW+kkMjrD4vhrPjvIaebSvkumL5CTOv5uXORYVVijd9UqOMZzTQjilpnH0In2+qZBsY/5if4ZCduFFItf31GRiJOh9WkR0nCiVJjt8y6eSs4Ms2FS9ZiISWgMMSwrkgqYAAJm4GpaP9UUAkmuGVg=="
+                    ]
+                  },
+                  "version": {
+                    "type": "string",
+                    "description": "版本号，固定值：1.0",
+                    "maxLength": 16,
+                    "const": "1.0",
+                    "examples": [
+                      "1.0"
+                    ]
+                  },
+                  "timestamp": {
+                    "type": "integer",
+                    "description": "请求发送时间的时间戳，长度为 13 位数字，不能超过 15 分钟或更晚。",
+                    "format": "long",
+                    "examples": [
+                      1693280636972
+                    ]
+                  },
+                  "method": {
+                    "type": "string",
+                    "description": "接口方法，本 API 的固定值：pay.unifiedorder"
+                  },
+                  "merchant_no": {
+                    "type": "string",
+                    "description": "商户编号，注册成为商户后获得，请参阅<a href=\"GatewayOverview\" target=“_blank”>参数获取</a>",
+                    "maxLength": 32
+                  },
+                  "store_no": {
+                    "type": "string",
+                    "description": "门店编号，注册门店后获得，请参阅<a href=\"GatewayOverview\" target=“_blank”>参数获取</a>",
+                    "maxLength": 32,
+                    "examples": [
+                      "4021000008"
+                    ]
+                  },
+                  "pay_method_id": {
+                    "type": "string",
+                    "description": "指定使用某种付款方式，请参阅 <a href=\"ParameterDictionary#paymethod\" target=\"_blank\">PayMethod</a>",
+                    "examples": [
+                      "Visa"
+                    ]
+                  },
+                  "merchant_order_no": {
+                    "type": "string",
+                    "description": "商户系统内部订单号，要求32个字符内，只能是数字、大小写字母_-|*@ ，且在同一个商户下唯一<br />\n<font color=\"green\">示例值：1217752501201407033233368018</font>",
+                    "maxLength": 32,
+                    "examples": [
+                      "1217752501201407033233368018"
+                    ]
+                  },
+                  "price_currency": {
+                    "type": "string",
+                    "description": "标价币种，ISO-4217货币编码，由基于三个字符的代码描述，例如：USD",
+                    "maxLength": 8,
+                    "examples": [
+                      "USD"
+                    ]
+                  },
+                  "order_amount": {
+                    "type": "number",
+                    "format": "float",
+                    "examples": [
+                      34.5
+                    ],
+                    "description": "订单金额，以其标价的货币表示，例如，1USD表示1美元，而不是1美分。"
+                  },
+                  "expires": {
+                    "type": "integer",
+                    "examples": [
+                      5
+                    ],
+                    "description": "订单付款超时时期，超过此时间后，订单将无法再付款或取消，订单将被关闭，此时间的单位为：秒<br />\n\n<font color=\"red\">请设置合适的订单超时时间</font>"
+                  },
+                  "description": {
+                    "type": "string",
+                    "description": "客户所购商品或服务的简要说明",
+                    "maxLength": 128,
+                    "examples": [
+                      "IPhone White X2"
+                    ]
+                  },
+                  "attach": {
+                    "type": "string",
+                    "description": "允许商家向网关提交附加数据，这些数据将在付款通知和查询时原样返回",
+                    "maxLength": 128,
+                    "examples": [
+                      "{“key”:”value”, “key2”:”value2”}"
+                    ]
+                  },
+                  "terminal_sn": {
+                    "type": "string",
+                    "description": "智能金融终端的 SN 需要与商家的店铺绑定",
+                    "maxLength": 32,
+                    "examples": [
+                      "P327701609001412"
+                    ]
+                  },
+                  "term_ip": {
+                    "type": "string",
+                    "maxLength": 32,
+                    "description": "终端的 IP 地址。如果没有终端，可提交服务器的 IP 地址"
+                  },
+                  "longitude": {
+                    "type": "string",
+                    "maxLength": 16,
+                    "description": "地理经度"
+                  },
+                  "latitude": {
+                    "type": "string",
+                    "description": "地理维度",
+                    "maxLength": 16
+                  },
+                  "return_url": {
+                    "type": "string",
+                    "description": "前端重定向用户页面的 URL",
+                    "maxLength": 256
+                  },
+                  "notify_url": {
+                    "type": "string",
+                    "description": "商户系统接收CodePay支付通知的回调地址，请参阅<a href=\"CallbackNotificationNotes\" target=\"_blank\">回调通知说明</a>了解详细信息。<br />\n有关通知消息的报文结构，请参阅<a href=\"CloudAPI#tag/Common API/paths/~1%7Bmerchant_website%7D/post\" target=\"_blank\">交易结果通知</a>。",
+                    "maxLength": 256,
+                    "examples": [
+                      "http://www.mersite.com/pay/notify"
+                    ]
+                  },
+                  "terminal_type": {
+                    "type": "string",
+                    "description": "终端类型，固定值： WAP",
+                    "const": "WAP"
+                  },
+                  "language": {
+                    "type": "string",
+                    "description": "收银界面上显示的语言 <a href=\"./dictionary#language\" target=\"_blank\">Language</a>."
+                  }
+                },
+                "x-apifox-orders": [
+                  "app_id",
+                  "format",
+                  "charset",
+                  "sign_type",
+                  "sign",
+                  "version",
+                  "timestamp",
+                  "method",
+                  "merchant_no",
+                  "store_no",
+                  "pay_method_id",
+                  "merchant_order_no",
+                  "price_currency",
+                  "order_amount",
+                  "expires",
+                  "description",
+                  "attach",
+                  "terminal_sn",
+                  "term_ip",
+                  "longitude",
+                  "latitude",
+                  "return_url",
+                  "notify_url",
+                  "terminal_type",
+                  "language"
+                ],
+                "required": [
+                  "app_id",
+                  "charset",
+                  "sign_type",
+                  "sign",
+                  "version",
+                  "format",
+                  "timestamp",
+                  "method",
+                  "merchant_no",
+                  "merchant_order_no",
+                  "price_currency",
+                  "order_amount",
+                  "expires",
+                  "description",
+                  "term_ip",
+                  "return_url",
+                  "terminal_type"
+                ],
+                "x-apifox-refs": {},
+                "x-apifox-ignore-properties": []
+              },
+              "example": {
+                "terminal_type": "WAP",
+                "merchant_no": "302100041048",
+                "charset": "UTF-8",
+                "expires": 300,
+                "method": "pay.unifiedorder",
+                "store_no": "4022000019",
+                "format": "JSON",
+                "sign": "Gfv1kSMeNHFISPhOEU3dTJlBnqBlCJ6c1f5jU2e7Foco5gFNvBJn9iocLq2tGf3hNWYbgqpk35Jl0dDYKPTgDtmoTxW2M//aPGWsDxfdLaOz5NUgwx2G9uMWydfGxQA3QYzC6FLq58YLF4SzDCXASvT2Zlvy2KcAR/loFCITOpjtP5O1W50nWZepTprhIZAqpBC5Tvq9TKcj+Lb2IJAqrJkKliFzYxR2nu+tsfXoyME37VtNaj1WFY8sGbrzU9PNdL2lm/H94IUFM2mSRu1lc77lDOysxZwLEiyN8mQq2LgRrPlTyMQ3SHRvrB9joIA1kx91FFPsU6PqgTD8augO9g==",
+                "description": "IPhone 12 5G White",
+                "pay_method_id": "Alipay+",
+                "trans_amount": 1,
+                "version": "1.0",
+                "merchant_order_no": "TEST_1693979057469",
+                "return_url": "https://www.baidu.com",
+                "app_id": "wz9f2a175d0e0ef632",
+                "sign_type": "RSA2",
+                "price_currency": "JPY",
+                "timestamp": "1693979057656"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "string",
+                      "description": "状态代码，0 表示请求成功，其他表示失败",
+                      "maxLength": 32,
+                      "examples": [
+                        "0"
+                      ]
+                    },
+                    "msg": {
+                      "type": "string",
+                      "description": "当发生错误时，该 msg 包含错误信息",
+                      "maxLength": 128,
+                      "examples": [
+                        "success"
+                      ]
+                    },
+                    "sign": {
+                      "type": "string",
+                      "maxLength": 128,
+                      "examples": [
+                        "ARdktgKALtjqOoE9iPBcIt4n9jCz1VDV5q/qTRkmDMzU85xsf4RE4Mhffo4ccq95WBfu9sWQd2JswQKI9Qhln9qH/FzatuddMdfMCkOCO5i4L67A4RZEmF3+32XX6HzKOSPgzsV6syJ56EUu6ivFNPznJn6bt8buG4hljzoEc5ogEl+kn87EhXA+LpEyzJkgLI8ZhH7j6iMQlOeyYRjJ0pVMe7OZfIYOeULp3GfsUamj3ezWVZS/70d2irtxg4c9wsTcBe3dusmQpFfdzAUNuILINWFRj/LEiYWOIeU4DyAU9wBKLWJpyEtok1EUFpWmJJwhEeNQen5mwsJq4Nwv7Q=="
+                      ],
+                      "description": "接口签名标识符，用于确定商家的真实性，以防止篡改消息，有关详细信息，请参阅<a href=\"Sign\" target=\"_blank\">签名规范</a>"
+                    },
+                    "psn": {
+                      "type": "string",
+                      "description": "返回信息序列号，用于跟踪请求链接，当您需要 CodePay 技术人员协助排除故障时，请提供此跟踪号码。",
+                      "maxLength": 16,
+                      "examples": [
+                        "08290344008038160280"
+                      ]
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "trans_no": {
+                          "type": "string",
+                          "description": "唯一标识交易的 CodePay 交易编号",
+                          "maxLength": 32,
+                          "examples": [
+                            "5021000010210602000003"
+                          ]
+                        },
+                        "pay_url": {
+                          "type": "string",
+                          "description": "网络支付链接地址，商户系统前端跳转至该页面，启动支付流程",
+                          "maxLength": 64
+                        },
+                        "trans_amount": {
+                          "type": "number",
+                          "format": "double",
+                          "description": "在大多数情况下，订单金额和交易金额相等。当客户需要支付服务费和消费税时，交易金额会大于订单金额。"
+                        },
+                        "trans_fee_c": {
+                          "type": "number",
+                          "format": "double",
+                          "description": "客户需要支付的服务费"
+                        },
+                        "vat_amount": {
+                          "type": "number",
+                          "description": "VAT：Value added Tax（增值税）的缩写，是一种根据当地政府法律法规向商家收取增值税的支付渠道",
+                          "format": "double"
+                        }
+                      },
+                      "x-apifox-orders": [
+                        "trans_no",
+                        "pay_url",
+                        "trans_amount",
+                        "trans_fee_c",
+                        "vat_amount"
+                      ],
+                      "description": "响应业务数据时，在实际请求中，此参数总是返回一个JSON字符串，本文档中的示例报文没有转换成字符串，为了方便查看，实际返回的报文在签收处理时为了解决JSON无序的问题，会做特殊处理，请以实际响应的报文为准！ \n例如：正确格式数据=\"{\\\"k1\\\":\\\"v1\\\",\\\"k2\\\":\\\"v2\\\"}\"Wrong format: data = {\"k1\"： \"v1\", \"k2\"： \"v2\"}",
+                      "required": [
+                        "trans_no",
+                        "pay_url"
+                      ],
+                      "x-apifox-ignore-properties": []
+                    }
+                  },
+                  "x-apifox-orders": [
+                    "code",
+                    "msg",
+                    "sign",
+                    "psn",
+                    "data"
+                  ],
+                  "required": [
+                    "code",
+                    "msg",
+                    "sign",
+                    "psn",
+                    "data"
+                  ],
+                  "x-apifox-refs": {},
+                  "x-apifox-ignore-properties": []
+                },
+                "examples": {
+                  "1": {
+                    "summary": "Success Example",
+                    "value": {
+                      "code": "0",
+                      "data": {
+                        "pay_url": "https://open-sea-global.alipayplus.com/api/open/v1/ac/cashier/self/codevalue/checkout.htm?codeValue=281666040098XYPf7PzAu8YvSe9gDy32sOYn&loadMode=2"
+                      },
+                      "msg": "success",
+                      "psn": "09060544199400731500",
+                      "sign": "fD/HAMdtVCp0pSdvUrdTZdCMHDXbd4H7pSYnFyDqFADbYtR01RBc3P9IsdQY8WznTd7MC9wBHkXktxrm7wn1sWGE3SCfLXO5JATMoh9f2zjU6vZ0GA8PdYyapVkOZvbFUBj9XRWGBT3zXB3fyGw58FLvKRDaFDCVVhuk06rKvBdr/wV01ZBQ99bCG/ZYbUj1NpwUR67Twk5tnCa5tU75agY8BG8t6fjsgyQnAOY0WhZykxUrvEBlpnorDuMPjRcoQ6ShBCq7QqjIUA2x1DrbuO+YojfM7/RGeoquWTQbceqwPNzrQjReIgDJT1Oviov3Xk4EA54hi5QgBhKR1ascLA=="
+                    }
+                  },
+                  "2": {
+                    "summary": "Failure Example",
+                    "value": {
+                      "code": "SYS013",
+                      "msg": "[SYS013]parameter error:order_amount or trans_amount",
+                      "psn": "09060549451789549845",
+                      "sign": "gDzst6zsmBwcZuoDfmajw2Sc0nQSLqTozVB1zyLt82mITrVIpw0FFa9825bNAdUwqCqeR6EbHtK9gt+ZrNjmMTMVeS0t1sSL6YGjHQdfS8GKxkZ8u4VePRt5+oRTfaSG2iHiuPvxaKtG6A/mB1dVNqI73U5BSuMNgbGMifBcyr2FkFYJwLTcWLxh60T8ypxmcNSO9MnyJo+NQsHv3bel/bMmfUm7izGv176ZHcpwV7DjGCeTzUU+E9ywZ44H6tzZioun1DjjeshpbSkYAOFz8Mo9FlnekQam2wTWmUwgKe9Ez17wyuY3/zq9eJJURRvgKPUxFItRUjoVioNW1mmiAw=="
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "x-run-in-apifox": "https://apifox.com/web/project/3919624/apis/api-142244465-run",
+        "security": []
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "Request common body": {
+        "type": "object",
+        "properties": {
+          "app_id": {
+            "type": "string",
+            "description": "ID assigned by the gateway to the accessing application to identify the developer",
+            "maxLength": 32,
+            "examples": [
+              "wz3c35784c2cbe6f37"
+            ]
+          },
+          "format": {
+            "type": "string",
+            "description": "Request data format, only supports JSON",
+            "maxLength": 4,
+            "const": "JSON",
+            "examples": [
+              "JSON"
+            ]
+          },
+          "charset": {
+            "type": "string",
+            "description": "The encoding format used for the request, only UTF-8 is supported",
+            "maxLength": 8,
+            "const": "UTF-8",
+            "examples": [
+              "UTF-8"
+            ]
+          },
+          "sign_type": {
+            "type": "string",
+            "description": "Signature algorithm, currently only RSA2 is supported",
+            "maxLength": 8,
+            "const": "RSA2",
+            "examples": [
+              "RSA2"
+            ]
+          },
+          "sign": {
+            "type": "string",
+            "description": "Interface signature identifier, used to determine the authenticity of the merchant, to prevent tampering with the message, see <a href=\"sign\" target=\"_blank\">Signature specification</a> for details",
+            "maxLength": 128,
+            "examples": [
+              "VD3AnpSR08BALF7U+A22kVCJOisv9WCCZJ1TGZSmM2lwhixKIi/uUPVYcB6gODbIsBmwJ2Cw9TtI/JiXJFPlJALLncrWTtxKeTxYWhkmnteiih6GhFw1hoFJqxJFgWoLXQI/pvZJr8NognBJjHE56uXBjqIyVanPaXvy3Xb47Cnbt29am7DuQJOyrylfGklbmZQW+kkMjrD4vhrPjvIaebSvkumL5CTOv5uXORYVVijd9UqOMZzTQjilpnH0In2+qZBsY/5if4ZCduFFItf31GRiJOh9WkR0nCiVJjt8y6eSs4Ms2FS9ZiISWgMMSwrkgqYAAJm4GpaP9UUAkmuGVg=="
+            ]
+          },
+          "version": {
+            "type": "string",
+            "description": "Version number, fixed value: 1.0",
+            "maxLength": 16,
+            "const": "1.0",
+            "examples": [
+              "1.0"
+            ]
+          },
+          "timestamp": {
+            "type": "integer",
+            "description": "Timestamp of when the request was sent, 13 digits in length, can't be more than 15 minutes ago or later",
+            "format": "long",
+            "examples": [
+              1693280636972
+            ]
+          }
+        },
+        "title": "Request common body",
+        "x-apifox-orders": [
+          "app_id",
+          "format",
+          "charset",
+          "sign_type",
+          "sign",
+          "version",
+          "timestamp"
+        ],
+        "required": [
+          "app_id",
+          "charset",
+          "sign_type",
+          "sign",
+          "version",
+          "format",
+          "timestamp"
+        ],
+        "x-apifox-folder": "",
+        "x-apifox-ignore-properties": []
+      },
+      "Response common body": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string",
+            "description": "Status code, 0 means the request was successful, other means failure",
+            "maxLength": 32,
+            "examples": [
+              "0"
+            ]
+          },
+          "msg": {
+            "type": "string",
+            "description": "When an error occurs, this msg contains the error message",
+            "maxLength": 128,
+            "examples": [
+              "success"
+            ]
+          },
+          "sign": {
+            "type": "string",
+            "maxLength": 128,
+            "examples": [
+              "ARdktgKALtjqOoE9iPBcIt4n9jCz1VDV5q/qTRkmDMzU85xsf4RE4Mhffo4ccq95WBfu9sWQd2JswQKI9Qhln9qH/FzatuddMdfMCkOCO5i4L67A4RZEmF3+32XX6HzKOSPgzsV6syJ56EUu6ivFNPznJn6bt8buG4hljzoEc5ogEl+kn87EhXA+LpEyzJkgLI8ZhH7j6iMQlOeyYRjJ0pVMe7OZfIYOeULp3GfsUamj3ezWVZS/70d2irtxg4c9wsTcBe3dusmQpFfdzAUNuILINWFRj/LEiYWOIeU4DyAU9wBKLWJpyEtok1EUFpWmJJwhEeNQen5mwsJq4Nwv7Q=="
+            ],
+            "description": "Interface signature identifier, used to determine the authenticity of CodePay and prevent tampering of the message, see <a href=\"sign\" target=\"_blank\">Signature Specification</a> for details"
+          },
+          "psn": {
+            "type": "string",
+            "description": "Return message sequence number, used to trace the request link, when you need CodePay technician's assistance in troubleshooting, please provide this tracking number.",
+            "maxLength": 16,
+            "examples": [
+              "08290344008038160280"
+            ]
+          },
+          "data": {
+            "type": "object",
+            "properties": {},
+            "x-apifox-orders": [],
+            "description": "Response business data, in the actual request, this parameter is always returned to a JSON string, the sample message in this document is not converted to a string, in order to facilitate the view, the actual return message in order to sign the processing to solve the problem of JSON disorder, will do special processing, please take the actual response to the message shall prevail!\n\nFor example:\n\nCorrect format data = \"{\\\\\\\"k1\\\\\\\":\\\\\\\"v1\\\\\\\",\\\\\"k2\\\\\\\":\\\\\"v2\\\\\"}\"\n\nWrong format: data = {\"k1\": \"v1\", \"k2\": \"v2\"}",
+            "x-apifox-ignore-properties": []
+          }
+        },
+        "x-apifox-orders": [
+          "code",
+          "msg",
+          "sign",
+          "psn",
+          "data"
+        ],
+        "required": [
+          "code",
+          "msg",
+          "sign",
+          "psn",
+          "data"
+        ],
+        "x-apifox-folder": "",
+        "x-apifox-ignore-properties": []
+      },
+      "Tag": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int64",
+            "minimum": 1,
+            "description": "标签ID编号"
+          },
+          "name": {
+            "type": "string",
+            "description": "标签名称"
+          }
+        },
+        "xml": {
+          "name": "Tag"
+        },
+        "x-apifox-orders": [
+          "id",
+          "name"
+        ],
+        "x-apifox-ignore-properties": [],
+        "x-apifox-folder": "示例数据模型"
+      },
+      "Category": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int64",
+            "minimum": 1,
+            "description": "分组ID编号"
+          },
+          "name": {
+            "type": "string",
+            "description": "分组名称"
+          }
+        },
+        "xml": {
+          "name": "Category"
+        },
+        "x-apifox-orders": [
+          "id",
+          "name"
+        ],
+        "x-apifox-ignore-properties": [],
+        "x-apifox-folder": "示例数据模型"
+      },
+      "Pet": {
+        "required": [
+          "name",
+          "photoUrls",
+          "id",
+          "category",
+          "tags",
+          "status"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int64",
+            "minimum": 1,
+            "description": "宠物ID编号"
+          },
+          "category": {
+            "$ref": "#/components/schemas/Category",
+            "description": "分组"
+          },
+          "name": {
+            "type": "string",
+            "description": "名称",
+            "examples": [
+              "doggie"
+            ]
+          },
+          "photoUrls": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "照片URL"
+          },
+          "tags": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Tag"
+            },
+            "description": "标签"
+          },
+          "status": {
+            "type": "string",
+            "description": "宠物销售状态",
+            "enum": [
+              "available",
+              "pending",
+              "sold"
+            ]
+          }
+        },
+        "x-apifox-orders": [
+          "id",
+          "category",
+          "name",
+          "photoUrls",
+          "tags",
+          "status"
+        ],
+        "x-apifox-ignore-properties": [],
+        "x-apifox-folder": "示例数据模型"
+      }
+    },
+    "securitySchemes": {}
+  },
+  "servers": [
+    {
+      "url": "https://open.codepay.us",
+      "description": "CodePay Server"
+    }
+  ]
+}

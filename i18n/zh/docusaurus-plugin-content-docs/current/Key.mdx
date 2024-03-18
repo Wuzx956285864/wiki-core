@@ -1,0 +1,38 @@
+import keyToolImg from '@site/static/img/KeyTool.png'
+import ImageZoom from '@site/src/components/ImageZoom'
+
+# 密钥
+
+## 商户API密钥
+
+当商家与CodePay交互，为了确保通信安全，有必要验证通信双方的身份，并确保消息未被第三方篡改。因此，报文上需要签名。签名使用RSA算法。通信双方生成一组RSA密钥并交换公钥。请求时，私钥用于签名，接收请求的一方使用公钥进行验证。只要私钥没有泄露，通信就相对安全。
+
+## 生成密钥对
+
+如果使用Java语言，私钥的格式为PKCS8，而其他语言使用PKCS1。密钥的长度为2048。公钥的格式通常是PEM，一些语言（如C#）需要DER格式的公钥，这些公钥可能需要转换。
+
+- 如果您不知道如何生成RSA2密钥，我们建议您使用以下工具，只需单击一下即可生成密钥、生成签名和验证签名：
+  <a href="https://wise-paycloud.oss-eu-west-1.aliyuncs.com/test/codepayResource/CodePay%20Key%20Tool.zip?OSSAccessKeyId=LTAI5tDS7q4RHauowRMYsUPz&Expires=1796441617&Signature=VlYauMkZJSfLmSyQFN4xJAwdZ9Y%3D" target="_blank">
+    CodePay Key Tool
+  </a>
+
+<ImageZoom src={keyToolImg} />
+
+- 您也可以使用openssl手动生成RSA2密钥，如下所示：
+
+```
+# 1. Generating the private key
+openssl genrsa -out client_private_key_php_dotnet.pem
+
+# 2. If you are a Java developer, convert the private key to PKCS8 format, other development languages use the PKCS1 format
+openssl pkcs8 -topk8 -inform PEM -in client_private_key_php_dotnet.pem -outform PEM -nocrypt -out client_private_key_pkcs8.pem
+
+# 3. Generate the public key
+openssl rsa -in client_private_key_php_dotnet.pem -pubout -out client_public_key_php_dotnet.pem
+
+# 4. Generate the private key that can be used in Java
+cat client_private_key_pkcs8.pem | grep -v "^\-" | tr -d "\n" | sed 's/%$//' > client_private_key_java.pem
+
+# 5. Generate the public key that can be used in Java
+cat client_public_key_php_dotnet.pem | grep -v "^\-" | tr -d "\n" | sed 's/%$//' > client_public_key_java.pem
+```

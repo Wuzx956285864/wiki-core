@@ -1,0 +1,302 @@
+# USB mode API list
+
+## Message structure
+
+### Field format
+
+POS application and CodePay Register communicate in `JSON` format
+
+### Common data
+
+Different aspects of each field are defined in this document according to the following conventions.
+- M: Required parameters
+- C: Required parameters when some conditions are met
+- O: Optional parameters
+- -: Not Present
+The common parameters is as follows:
+
+| Key    \ width:20% \ | Parameter type \ width:10% \ | Request \ width:10% \ | Response \ width:10% \ | Description   \ width:50% \                                                                                                                                                                                                                 |
+|----------------------|------------------------------|-----------------------|------------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| topic                | string                       | M                     | M                      | Message topic identifier. Please refer to the <a href = "SerialAPIList#topic" target = "_blank">topic</a> Example: ecrhub.pay.order                                                                                                                                                               |
+| request_id           | string                       | M                     | M                      | Transaction Request ID, used to receive the corresponding response. The caller needs to remain unique.                                                                                                                                      |
+| timestamp            | string                       | O                     | O                      | Timestamp Example: 1698302992263                                                                                                                                                                                                            |
+| version              | string                       | O                     | O                      | The API version. fixed value:1.0 Example: 1.0                                                                                                                                                                                               |
+| app_id               | string                       | M                     | M                      | The payment app id registered in Codepay Gateway, Please refer to the <a href = "/GatewayOverview" target = "_blank">Payment gateway integration guide</a>                                                                                  |
+| biz_data             | JSONObject                   | M                     | M                      | Business Data. each transaction type has own business data                                                                                                                                                                                  |
+| response_code        | string                       | -                     | M                      | The order payment status code returned by CodePay Register, 000 means the transaction was successful, other means the transaction failed.Please refer to <a href = "PosIntegratesrReference#5-response-code">Response code</a> <br /><br /> |
+| response_msg         | String                       | -                     | C                      | Failed transaction error message returned by CodePay Register                                                                                                                                                                               |
+
+## Topic
+
+Each transaction type has a message topic:
+
+| Key  \ width:50%; \ | Name  \ width:50%; \ |
+|:--------------------|:---------------------|
+| ecrhub.pay.order    | Submit transaction   |
+| ecrhub.pay.query    | Query transaction    |
+| ecrhub.pay.close    | Close transaction    |
+
+
+## Transaction message
+
+### 1. Submit transaction
+
+**Message Topic**
+
+`ecrhub.pay.order`
+
+| Key    \ width:20% \             | Parameter type \ width:10% \ | Request \ width:10% \ | Response \ width:10% \ | Description   \ width:50% \                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 |
+|----------------------------------|------------------------------|-----------------------|------------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| trans_type                       | string                       | M                     | M                      | Transaction type. Please refer to <a href = "PosIntegratesrReference#3-transaction-type" target = "_blank">Transaction type</a> <br /> <br /> <font color = "green">Example: 1</font>                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       |
+| merchant_order_no                | string                       | M                     | M                      | Merchant order number.This field represents the order number for the refund request when refunded, different from the order number of the original consumer transaction. No more than 32 alphanumeric characters. Example: 121775014073233368018                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            |
+| orig_merchant_order_no           | string                       | C                     | -                      | Original merchant order number. If the transaction type is Cancellation, Refund and Pre-Authorization Cancellation, Pre-Authorization Completion, it must be required. (trans_type == 2,3,5,6) Example: 121775014073233368018                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               |
+| orig_pay_channel_trans_no        | string                       | C                     | -                      | Original payment channel transaction number. Required. If the transaction type is Cancellation, Refund and Pre-Authorization Cancellation, Pre-Authorization Completion,  it must be required. (trans_type == 2,3,5,6) Example: 100000009                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   |
+| price_currency                   | string                       | O                     | O                      | Price Currency, compliant with ISO-4217 standard, described with a three-character code  Example：USD                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        |
+| order_amount                     | string                       | M                     | M                      | Order amount.  This field represents the transaction ordered amount,   For example, one USD stands for one dollar, not one cent. Example: 34.50                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             |
+| tip_amount                       | string                       | O                     | O                      | Tip amount. This field represents the transaction tip amount. For example, 1 USD stands for one dollar, not one cent. Example: 34.50                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        |
+| on_screen_tip                    | boolean                      | O                     | -                      | Whether or not to enter tips on the CodePay Register page, default is false, when "trans_type=1, 3, 4", this parameter can be set <br /><br /> <font color = "green">Example: true</font>                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   |
+| cashback_amount                  | string                       | O                     | O                      | Cashback amount.  Expressed in the quoted currency, for example, One USD stands for one dollar, not one cent Example: 10.00                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 |
+| pay_method_id                    | string                       | O                     | O                      | Payment method id. Please Refer to <a href = "PosIntegratesrReference#2-payment-method" target = "_blank">Payment method</a> <br /><br /> If the TransType is 3, this parameter will not required <br /> <br /> <font color = "green">Example:Visa</font>                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   |
+| pay_scenario                     | String                       | O                     | O                      | Payment scene, please refer to Please Refer to <a href = "PosIntegratesrReference#1-payment-scenario" target = "_blank">PayScenario </a> <br /> <br /> <font color = "green">Example: SWIPE_CARD</font>                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     |
+| attach                           | string                       | O                     | O                      | Additional data. Allows merchants to submit additional data, which will be returned as is. Example: abc123                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  |
+| description                      | string                       | O                     | O                      | Description of order goods or services. A brief description of the goods or services purchased by the customer. Example: IPhone White X2                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    |
+| notify_url                       | string                       | O                     | O                      | Callback address for payment notification. Receive payment notifications from the PayCloud gateway to call back the server address, and only when the transaction goes through the PayCloud payment gateway will there be a callback.  Example: http://www.abc.com/callback?id=12345                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        |
+| expires                          | string                       | O                     | O                      | Order expires time, after the expires time is not allowed to be paid, unit: seconds Example: 180                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            |
+| confirm_on_terminal              | boolean                      | O                     | O                      | Do you need terminal confirmation before proceeding with payment operations? The default is false. When set to true, you need to confirm the order first, otherwise you will directly enter the card reading interface                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      |
+| required_terminal_authentication | boolean                      | O                     | O                      | When refund or void a transaction, does the store manager role need to authorize this operation on the terminal? default value: false                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       |
+| on_screen_signature              | boolean                      | O                     | O                      | This parameter controls the display logic of electronic signatures: <br /><ul><li>true: Display the electronic signature page and print the signature information on the purchase order</li><li>false: The electronic signature page will not be displayed, but the signature area needs to be printed on the purchase order</li></ul>  <font color="red">But even if this parameter is set, CodePay Register still processes electronic signatures according to the following logic in the following situations:</font> <br /> <ul><li> Credit card network, APP does not display signature page, fixed on receipt to print signature column</li> <br /> <li>Pin debit transactions do not require a signature, the APP does not display a signature page, and the receipt is not printed either</li></ul> |
+| trans_no                         | string                       | -                     | M                      | Transaction number of PayCloud. which uniquely identifies a transaction. Example: 5021000010210602000003                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    |
+| trans_status                     | string                       | -                     | M                      | Transaction status, please refer to <a href = "PosIntegratesrReference#4-transaction-status" target = "_blank">Transaction status</a>                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       |
+| pay_channel_trans_no             | string                       | -                     | O                      | Payment channel transaction serial number, If trans_status is '2', the returned data will include this parameters. such as Visa, Mastercard and other payment platforms. Example: 000000123                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 |
+| discount_bmopc                   | string                       | -                     | O                      | If trans_status is '2', the returned data will include this parameters. The merchant gives the customer a preferential amount through the payment channel, and this part of the payment channel will not be settled to the merchant.  Example: 3.00                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         |
+| discount_bpc                     | string                       | -                     | O                      | If trans_status is '2', the returned data will include this parameters. Discount the amount of the payment channel to the customer, and this part of the funds will be settled into the merchant account. Example: 5.00                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     |
+| trans_end_time                   | string                       | -                     | O                      | If trans_status is '2', the returned data will include this parameters. Transaction completed time. time zone: Local time zone, the system time zone set by the payment terminal,  format: YYYY-MM-DD HH: mm:ss. Example: 2021-06-03 12:48:51                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               |
+
+
+Request MessageData (JSON)
+
+```json
+{
+        "app_id": "your app id",
+        "biz_data": {
+                "confirm_on_terminal": true,
+                "expires": 0,
+                "merchant_order_no": "12320231220110257",
+                "order_amount": "10",
+                "trans_type": "1"
+        },
+        "request_id": "111111",
+        "topic": "ecrhub.pay.order",
+        "timestamp": "1698302992263"
+}
+```
+
+Request sample message (HEX)
+
+```jsx
+55AA000001007E
+// code-highlight-start
+7B226170705F6964223A22796F757220617070206964222C2262697A5F64617461223A7B22636F6E6669726D5F6F6E5F7465726D696E616C223A747275652C2265787069726573223A302C226D65726368616E745F6F726465725F6E6F223A223132333230323331323230313130323537222C226F726465725F616D6F756E74223A223130222C227472616E735F74797065223A2231227D2C22726571756573745F6964223A22313131313131222C22746F706963223A226563726875622E7061792E6F72646572222C2274696D657374616D70223A2231363938333032393932323633227D
+// code-highlight-end
+7ECC33
+```
+
+:::tip
+The second row is MessageData,This is only for display purposes, actual HEX does not wrap
+:::tip
+
+
+Response sample message (HEX)
+
+```jsx
+55AA0000020061
+// code-highlight-start
+7B226170705F6964223A22796F757220617070206964222C2262697A5F64617461223A7B226D65726368616E745F6F726465725F6E6F223A223132333230323331323230313130323537222C226F726465725F616D6F756E74223A223130222C227472616E735F737461747573223A2232222C2270726963655F63757272656E6379223A22555344222C227472616E735F6E6F223A2235303231303030303130323130363032303030303033222C227061795F7363656E6172696F223A2253574950455F43415244222C227472616E735F74797065223A2231227D2C22726573706F6E73655F636F6465223A22303030222C22726573706F6E73655F6D7367223A22222C22726571756573745F6964223A22313131313131222C22746F706963223A226563726875622E7061792E6F72646572227D
+// code-highlight-end
+05CC33
+```
+
+:::tip
+The second row is MessageData,This is only for display purposes, actual HEX does not wrap
+:::tip
+
+Response MessageData (JSON)
+
+```json
+{
+        "app_id": "your app id",
+        "biz_data": {
+                "merchant_order_no": "12320231220110257",
+                "order_amount": "10",
+                "trans_status": "2",
+                "price_currency": "USD",
+                "trans_no": "5021000010210602000003",
+                "pay_scenario": "SWIPE_CARD",
+                "trans_type": "1"
+        },
+        "response_code": "000",
+        "response_msg": "",
+        "request_id": "111111",
+        "topic": "ecrhub.pay.order"
+}
+```
+
+
+### 2. Query transaction
+
+**Message topic**
+
+`ecrhub.pay.query`
+
+| Key    \ width:20% \ | Parameter type \ width:10% \ | Request \ width:10% \ | Response \ width:10% \ | Description   \ width:50% \                                                                                                                                                                                                                                                                                                       |
+|----------------------|------------------------------|-----------------------|------------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| merchant_order_no    | string                       | M                     | M                      | Merchant order number.This field represents the order number for the refund request when refunded, different from the order number of the original consumer transaction. No more than 32 alphanumeric characters. Example: 121775014073233368018                                                                                  |
+| price_currency       | string                       | -                     | M                      | Price Currency, compliant with ISO-4217 standard, described with a three-character code  Example：USD                                                                                                                                                                                                                              |
+| order_amount         | string                       | -                     | M                      | Order amount.  This field represents the transaction ordered amount,   For example, one USD stands for one dollar, not one cent. Example: 34.50                                                                                                                                                                                   |
+| tip_amount           | string                       | -                     | O                      | Tip amount. This field represents the transaction tip amount. For example, 1 USD stands for one dollar, not one cent. Example: 34.50                                                                                                                                                                                              |
+| cashback_amount      | string                       | -                     | O                      | Cashback amount. This field represents the amount of cash that can be withdrawn from a card transaction. For example, one USD stands for one dollar, not one cent Example: 10.00                                                                                                                                                  |
+| trans_type           | string                       | -                     | M                      | Transaction type. Please refer to <a href = "PosIntegratesrReference#3-transaction-type" target = "_blank">Transaction type</a> <br /> <br /> <font color = "green">Example: 1</font>                                                                                                                                             |
+| attach               | string                       | -                     | O                      | Additional data. This field represents  allows merchants to submit additional data, which will be returned as is. Example: abc123                                                                                                                                                                                                 |
+| trans_no             | string                       | -                     | M                      | Transaction number.This field represents PayCloud transaction number, which uniquely identifies a transaction. Example: 5021000010210602000003                                                                                                                                                                                    |
+| trans_status         | string                       | -                     | M                      | M                                                                                                                                                                                                                                                                                                                                 | Transaction status, please refer to <a href = "PosIntegratesrReference#4-transaction-status" target = "_blank">Transaction status</a>                                                                                                            |
+| pay_scenario         | string                       | -                     | O                      | Payment scene, If trans_status is '2', the returned data will include this parameters. please refer to <a href = "PosIntegratesrReference#1-payment-scenario" target = "_blank">Payment scenario</a> <br /> <br /> <font color = "green">Example: SWIPE_CARD</font>                                                               |
+| pay_method_id        | string                       | -                     | O                      | Payment method id. If trans_status is '2', the returned data will include this parameters. Please Refer to <a href = "PosIntegratesrReference#2-payment-method" target = "_blank">Payment method</a> <br /><br /> If the TransType is 3, this parameter will not required <br /> <br /> <font color = "green">Example:Visa</font> |
+| pay_channel_trans_no | string                       | -                     | O                      | Payment channel transaction number, If trans_status is '2', the returned data will include this parameters.such as RRN for Visa, Mastercard, etc. Example: 000000123                                                                                                                                                              |
+| discount_bmopc       | string                       | -                     | O                      | Payment channel merchant discount amount, If trans_status is '2', the returned data will include this parameters. The merchant gives the customer a preferential amount through the payment channel, and this part of the payment channel will not be settled to the merchant.  Example: 3.00                                     |
+| discount_bpc         | string                       | -                     | O                      | Payment channel discount amount, If trans_status is '2', the returned data will include this parameters. Discount the amount of the payment channel to the customer, and this part of the funds will be settled into the merchant account. Example: 5.00                                                                          |
+| trans_end_time       | string                       | -                     | O                      | Transaction completed time. If trans_status is '2', the returned data will include this parameters. time zone: Local time zone, the system time zone set by the payment terminal,  format: YYYY-MM-DD HH: mm:ss. Example: 2021-06-03 12:48:51                                                                                     |
+
+
+Request MessageData (JSON)
+
+```json
+{
+        "app_id": "your app id",
+        "biz_data": {
+                "merchant_order_no": "12320231220110257"
+        },
+        "request_id": "111111",
+        "topic": "ecrhub.pay.query",
+        "timestamp": "1698302992264"
+}
+```
+
+Request sample message (HEX)
+
+```jsx
+55AA000001006E
+// code-highlight-start
+7B226170705F6964223A22796F757220617070206964222C2262697A5F64617461223A7B226D65726368616E745F6F726465725F6E6F223A223132333230323331323230313130323537227D2C22726571756573745F6964223A22313131313131222C22746F706963223A226563726875622E7061792E7175657279222C2274696D657374616D70223A2231363938333032393932323634227D
+// code-highlight-end
+1ACC33
+```
+
+:::tip
+The second row is MessageData,This is only for display purposes, actual HEX does not wrap
+:::tip
+
+
+Response sample message (HEX)
+
+```jsx
+55AA0000010051
+// code-highlight-start
+7B226170705F6964223A22796F757220617070206964222C2262697A5F64617461223A7B226D65726368616E745F6F726465725F6E6F223A223132333230323331323230313130323537222C226F726465725F616D6F756E74223A223130222C227472616E735F737461747573223A2232222C2270726963655F63757272656E6379223A22555344222C227472616E735F6E6F223A2235303231303030303130323130363032303030303033222C227061795F7363656E6172696F223A2253574950455F43415244222C227472616E735F74797065223A2231227D2C22726573706F6E73655F636F6465223A22303030222C22726573706F6E73655F6D7367223A22222C22726571756573745F6964223A22313131313131222C22746F706963223A226563726875622E7061792E7175657279227D
+// code-highlight-end
+75CC33
+```
+
+:::tip
+The second row is MessageData,This is only for display purposes, actual HEX does not wrap
+:::tip
+
+Response MessageData (JSON)
+
+```json
+{
+        "app_id": "your app id",
+        "biz_data": {
+                "merchant_order_no": "12320231220110257",
+                "order_amount": "10",
+                "trans_status": "2",
+                "price_currency": "USD",
+                "trans_no": "5021000010210602000003",
+                "pay_scenario": "SWIPE_CARD",
+                "trans_type": "1"
+        },
+        "response_code": "000",
+        "response_msg": "",
+        "request_id": "111111",
+        "topic": "ecrhub.pay.query"
+}
+```
+
+### 3. Close transaction
+
+**Message topic**
+
+`ecrhub.pay.close`
+
+| Key    \ width:20% \ | Parameter type \ width:10% \ | Request \ width:10% \ | Response \ width:10% \ | Description   \ width:50% \                                                                                                                                                                                                                      |
+|----------------------|------------------------------|-----------------------|------------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| merchant_order_no    | string                       | M                     | M                      | Merchant order number.This field represents the order number for the refund request when refunded, different from the order number of the original consumer transaction. No more than 32 alphanumeric characters. Example: 121775014073233368018 |
+
+Request MessageData (JSON)
+
+```json
+{
+        "app_id": "your app id",
+        "biz_data": {
+                "merchant_order_no": "12320231220110257"
+        },
+        "request_id": "111111",
+        "topic": "ecrhub.pay.close",
+        "timestamp": "1698302992265"
+}
+```
+
+Request sample message (HEX)
+
+```jsx
+55AA000001006E
+// code-highlight-start
+7B226170705F6964223A22796F757220617070206964222C2262697A5F64617461223A7B226D65726368616E745F6F726465725F6E6F223A223132333230323331323230313130323537227D2C22726571756573745F6964223A22313131313131222C22746F706963223A226563726875622E7061792E636C6F7365222C2274696D657374616D70223A2231363938333032393932323635227D
+// code-highlight-end
+05CC33
+```
+
+:::tip
+The second row is MessageData,This is only for display purposes, actual HEX does not wrap
+:::tip
+
+**Response**
+
+
+Response sample message (HEX)
+
+```jsx
+55AA0000020058
+// code-highlight-start
+7B226170705F6964223A22796F757220617070206964222C2262697A5F64617461223A7B226D65726368616E745F6F726465725F6E6F223A223132333230323331323230313130323537227D2C22726573706F6E73655F636F6465223A22303030222C22726573706F6E73655F6D7367223A22222C22726571756573745F6964223A22313131313131222C22746F706963223A226563726875622E7061792E636C6F7365227D
+// code-highlight-end
+79CC33
+```
+
+:::tip
+The second row is MessageData,This is only for display purposes, actual HEX does not wrap
+:::tip
+
+Response MessageData (JSON)
+
+```json
+{
+        "app_id": "your app id",
+        "biz_data": {
+                "merchant_order_no": "12320231220110257"
+        },
+        "response_code": "000",
+        "response_msg": "",
+        "request_id": "111111",
+        "topic": "ecrhub.pay.close"
+}
+```

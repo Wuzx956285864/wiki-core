@@ -1,0 +1,34 @@
+{
+  "title": {
+    "message": "CodePay Developer",
+    "description": "The title in the navbar"
+  },
+  "logo.alt": {
+    "message": "CodePay Developer",
+    "description": "The alt text of navbar logo"
+  },
+  "item.label.Integration": {
+    "message": "集成",
+    "description": "Navbar item with label Integration"
+  },
+  "item.label.APIs": {
+    "message": "API列表",
+    "description": "Navbar item with label APIs"
+  },
+  "item.label.SDKs & Tools": {
+    "message": "SDK/开发工具",
+    "description": "Navbar item with label SDKs & Tools"
+  },
+  "item.label.News & Updates": {
+    "message": "更新",
+    "description": "Navbar item with label News & Updates"
+  },
+  "item.label.Payment Application": {
+    "message": "支付应用",
+    "description": "Navbar item with label Payment Application"
+  },
+  "item.label.Payment Gateway": {
+    "message": "支付网关",
+    "description": "Navbar item with label Payment Gateway"
+  }
+}

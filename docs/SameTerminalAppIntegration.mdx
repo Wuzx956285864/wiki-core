@@ -1,0 +1,646 @@
+import ImageZoom from "@site/src/components/ImageZoom";
+import sameTermInteImg from "@site/static/img/Same-terminalIntegrationOverview2.png";
+import workflowA from "@site/static/img/WorkflowA.png";
+import integrationMethod from "@site/static/img/IntegrationMethod.png";
+
+# Same-terminal application integration
+
+## 1. Introduction
+
+The merchant's POS application runs at the same POS terminal. It can pull up checkout component to complete payment through the payment integration APIs of **CodePay Register**.
+<ImageZoom src={sameTermInteImg} />
+
+
+### 1.1 Typical process workflow
+
+<ImageZoom src={workflowA} />
+
+1. POS application send order info (include order number, amount) to CodePay Register app to pull payment checkout component.
+2. The checkout component of CodePay Register collects the bank card information/mobile wallet user payment voucher and processes it securely, then merges it and order information in the transaction data, and sends the payment request to CodePay Gateway .
+3. CodePay Gateway processes the transaction packet and sends to payment gateway or acquire system.
+4. Payment gateway or acquire system responses result to CodePay Gateway .
+5. CodePay Gateway responses transaction result to CodePay Register application.
+6. CodePay Register application returns transaction result to POS application.
+
+### 1.2 Integration method
+
+POS application uses <a href = "https://developer.android.com/reference/android/content/Intent">Android Intent</a> to interact with CodePay Register application. The following diagram shows the interactions between this 2 applications.
+
+<ImageZoom src={integrationMethod} />
+
+1. POS application call "startActivityForResult" function to invoke the CodePay Register application .
+2. CodePay Register application parse the bundle data from POS application and then process transaction.
+3. Then CodePay Register application call "setResult" function after the transaction and "finish" own Activity.
+4. POS application received the transaction result by "onActivityResult" event.
+
+
+## 2. Transaction APIs
+
+Different aspects of each field are defined in this document according to the following conventions.
+- M: Required parameters
+- C: Required parameters when some conditions are met
+- O: Optional parameters
+- -: Not Present
+
+### 2.1 Sale
+
+Sale transaction refers to the payment operation performed by the cardholder when purchasing goods or services from a merchant. The transaction amount is deducted from the cardholder's account and transferred to the merchant's account.
+
+#### 2.1.1 Message
+
+| Name  \ width:20%; \ | Type  \ width:10%; \ | Length \ width:10%; \ | Request \ width:10%; \ | Response \ width:10%; \ | Description   \ width:40%; \                                                                                                                               |
+|:---------------------|:---------------------|:----------------------|:-----------------------|:------------------------|:-----------------------------------------------------------------------------------------------------------------------------------------------------------|
+| version              | String               |                       | M                      | M                       | API version, fixed value "1.1"                                                                                                                             |
+| transType            | String               |                       | M                      | M                       | The type code of Sale transaction, Fixed value <font color = "red">**01**</font>                                                                           |
+| appId                | String               | 18                    | M                      | -                       | The payment app id registered in Codepay Gateway, Please refer to the <a href = "/GatewayOverview" target = "_blank">Payment gateway integration guide</a> |
+| transData            | JSON                 |                       | M                      | C                       |                                                                                                                                                            |
+| result               | String               |                       | -                      | M                       | Refer to appendix - <a href = "SameTerminalAppIntegration#31--transaction-result-code">Transaction result code</a>                                         |
+| resultMsg            | String               |                       | -                      | C                       | Failure message                                                                                                                                            |
+
+**transData field**
+
+| Name  \ width:20%; \ | Type  \ width:10%; \ | Length \ width:10%; \ | Request \ width:10%; \ | Response \ width:10%; \ | Description   \ width:40%; \                                                                                                                                                                                         |
+|:---------------------|:---------------------|:----------------------|:-----------------------|:------------------------|:---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| businessOrderNo      | String               |                       | M                      | M                       | The order number of the merchant's point of sale application or business system, it must be unique in its system                                                                                                     |
+| paymentScenario      | String               |                       | M                      | M                       | 1 - card payment <br /> 2 - cash payment <br /> 3 - QR code payment, merchant present code and customers scan it <br /> 4 - QR code payment, customers present code and merchant scan it                             |
+| paymentMethod        | String               |                       | C                      | M                       | Specify a Payment method. This field is mandatory only when "paymentScenario" is set to "3" or "4". <br /> Please refer to <a href = "PosIntegratesrReference#2-payment-method" target = "_blank">Payment method</a> |
+| cardType             | String               |                       | C                      | -                       | When "paymentScenario" field is set to "1", this field is mandatory. <br /> 1 - DEBIT_CARD <br /> 2 - CREDIT_CARD <br /> 3 - EBT_CARD <br /> 4 - GIFT_CARD                                                           |
+| amt                  | String               | 12                    | M                      | M                       | Order amount                                                                                                                                                                                                         |
+| tip                  | String               | 12                    | O                      | O                       | Tip amount                                                                                                                                                                                                           |
+| transDate            | String               | 8                     | -                      | M                       | Transaction date, format: YYYYMMDD                                                                                                                                                                                   |
+| transTime            | String               | 6                     | -                      | M                       | Transaction time, format: HHMMSS                                                                                                                                                                                     |
+| operator             | String               | 4                     | -                      | O                       | operator's work number                                                                                                                                                                                               |
+| authCode             | String               | 6                     | -                      | C                       | Authentication code. This field returns value when card payment transasction.                                                                                                                                        |
+| refNo                | String               | 12                    | -                      | C                       | Retrieval Reference Number .This field returns value when card payment transasction.                                                                                                                                 |
+| cardNo               | String               | 19                    | -                      | C                       | Card PAN number, It has been masked according to PCI specification. example: 430277****5723. This field returns value when card payment transasction.                                                                |
+| entryMode            | String               | 2                     | -                      | O                       | This field returns value when card payment transasction: <br /> 1 - Swipe magnetic stripe card <br /> 2 - Contact chip card <br /> 3 - Contactless chip card <br /> 4 - Manual entry input                           |
+| transactionID        | String               | 32                    | -                      | M                       | The transaction id of CodePay Gateway.                                                                                                                                                                               |
+| note                 | String               | 128                   | O                      | -                       | The order note  information                                                                                                                                                                                          |
+
+#### 2.1.2 Sample code
+
+```java
+Intent intent = new Intent();
+intent.setAction("com.codepay.transaction.call");
+intent.putExtra("version", "1.0");
+intent.putExtra("appId", "{YOUR_APP_ID}");
+intent.putExtra("transType", "01"); // Sale transaction
+JSONObject jsonObject = new JSONObject();
+try {
+   jsonObject.put("businessOrderNo","202202222222");
+   jsonObject.put("paymentScenario","1"); //Card payment
+   jsonObject.put("cardType", "1") //Debit
+   jsonObject.put("amt","2.15");
+   intent.putExtra("transData", jsonObject.toString());
+} catch (JSONException e) {
+   e.printStackTrace();
+}
+startActivityForResult(intent, 1);
+
+@Override
+protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+   String result = data.getStringExtra("result");
+   String resultMsg = data.getStringExtra("resultMsg");
+   String transData = data.getStringExtra("transData");
+   if (result.equals("00")){
+       try {
+           JSONObject jsonObject = new JSONObject(transData);
+           String amount = jsonObject.getString("amt");
+       }catch(JSONException e){
+           e.printStackTrace();
+       }
+   }
+}
+```
+
+### 2.2 Void
+
+Void transaction usually means that within a short period of time after the transaction has been completed, the merchant needs to cancel the transaction for some reason (e.g., merchant error, customer change of mind, etc.).
+- The reversal must usually be done on the same day of the transaction and before the batch settlement.
+- Upon successful reversal, the original transaction amount will be refunded to the cardholder's account as if the transaction never occurred.
+- A reversal usually requires the original transaction voucher or related information for the operation.
+
+#### 2.2.1 Message
+
+| Name  \ width:20%; \ | Type  \ width:10%; \ | Length \ width:10%; \ | Request \ width:10%; \ | Response \ width:10%; \ | Description   \ width:40%; \                                                                                                                               |
+|:---------------------|:---------------------|:----------------------|:-----------------------|:------------------------|:-----------------------------------------------------------------------------------------------------------------------------------------------------------|
+| version              | String               |                       | M                      | M                       | API version, fixed value "1.1"                                                                                                                             |
+| transType            | String               |                       | M                      | M                       | The type code of Void transaction, Fixed value <font color = "red">**02**</font>                                                                           |
+| appId                | String               | 18                    | M                      | -                       | The payment app id registered in Codepay Gateway, Please refer to the <a href = "/GatewayOverview" target = "_blank">Payment gateway integration guide</a> |
+| transData            | JSON                 |                       | M                      | C                       |                                                                                                                                                            |
+| result               | String               |                       | -                      | M                       | Refer to appendix - <a href = "SameTerminalAppIntegration#31--transaction-result-code">Transaction result code</a>                                         |
+| resultMsg            | String               |                       | -                      | C                       | Failure message                                                                                                                                            |
+
+**transData field**
+
+| Name  \ width:20%; \  | Type  \ width:10%; \ | Length \ width:10%; \ | Request \ width:10%; \ | Response \ width:10%; \ | Description   \ width:40%; \                                                                                                                                                               |
+|:----------------------|:---------------------|:----------------------|:-----------------------|:------------------------|:-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| originBusinessOrderNo | String               |                       | M                      | M                       | The order number of the original purchase transaction                                                                                                                                      |
+| businessOrderNo       | String               |                       | M                      | M                       | The order number of the merchant's point of sale application or business system, it must be unique in its system                                                                           |
+| paymentMethod         | String               |                       | -                      | M                       | Please refer to <a href = "PosIntegratesrReference#2-payment-method" target = "_blank">Payment method</a>                                                                                  |
+| amt                   | String               | 12                    | -                      | M                       | Order amount                                                                                                                                                                               |
+| tip                   | String               | 12                    | -                      | O                       | Tip amount                                                                                                                                                                                 |
+| transDate             | String               | 8                     | -                      | M                       | Transaction date, format: YYYYMMDD                                                                                                                                                         |
+| transTime             | String               | 6                     | -                      | M                       | Transaction time, format: HHMMSS                                                                                                                                                           |
+| operator              | String               | 4                     | -                      | O                       | operator's work number                                                                                                                                                                     |
+| authCode              | String               | 6                     | -                      | M                       | Authentication code. This field returns value when card payment transasction.                                                                                                              |
+| refNo                 | String               | 12                    | -                      | M                       | Retrieval Reference Number .This field returns value when card payment transasction.                                                                                                       |
+| cardNo                | String               | 19                    | -                      | M                       | Card PAN number, It has been masked according to PCI specification. example: 430277****5723. This field returns value when card payment transasction.                                      |
+| entryMode             | String               | 2                     | -                      | O                       | This field returns value when card payment transasction: <br /> 1 - Swipe magnetic stripe card <br /> 2 - Contact chip card <br /> 3 - Contactless chip card <br /> 4 - Manual entry input |
+| transactionID         | String               | 32                    | -                      | M                       | The transaction id of CodePay Gateway.                                                                                                                                                     |
+
+#### 2.2.2 Sample code
+
+```java
+Intent intent = new Intent();
+intent.setAction("com.codepay.transaction.call");
+intent.putExtra("version", "1.0");
+intent.putExtra("appId", "{YOUR_APP_ID}");
+intent.putExtra("transType", "02"); // Void transaction
+JSONObject jsonObject = new JSONObject();
+try {
+   jsonObject.put("originBusinessOrderNo","202202222222");
+   jsonObject.put("businessOrderNo","202202222233"); 
+   intent.putExtra("transData", jsonObject.toString());
+} catch (JSONException e) {
+   e.printStackTrace();
+}
+startActivityForResult(intent, 1);
+
+@Override
+protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+   String result = data.getStringExtra("result");
+   String resultMsg = data.getStringExtra("resultMsg");
+   String transData = data.getStringExtra("transData");
+   if (result.equals("00")){
+       try {
+           JSONObject jsonObject = new JSONObject(transData);
+           String amount = jsonObject.getString("amt");
+       }catch(JSONException e){
+           e.printStackTrace();
+       }
+   }
+}
+```
+
+### 2.3 Refund
+
+A refund transaction is a process in which a cardholder needs to return an item or cancel a service for some reason (e.g., a problem with the item, dissatisfaction with the service, etc.) after the transaction has cleared and requests that the amount paid be returned to the card account.
+- The refund may occur on the same day of the transaction, or a few days or more later.
+- Refunds usually require the cardholder to provide proof of purchase and a reason for the refund, and the merchant will refund the appropriate amount to the cardholder's card account after reviewing the refund.
+
+#### 2.3.1 Message
+
+| Name  \ width:20%; \ | Type  \ width:10%; \ | Length \ width:10%; \ | Request \ width:10%; \ | Response \ width:10%; \ | Description   \ width:40%; \                                                                                                                               |
+|:---------------------|:---------------------|:----------------------|:-----------------------|:------------------------|:-----------------------------------------------------------------------------------------------------------------------------------------------------------|
+| version              | String               |                       | M                      | M                       | API version, fixed value "1.1"                                                                                                                             |
+| transType            | String               |                       | M                      | M                       | The type code of Refund transaction, Fixed value <font color = "red">**03**</font>                                                                         |
+| appId                | String               | 18                    | M                      | -                       | The payment app id registered in Codepay Gateway, Please refer to the <a href = "/GatewayOverview" target = "_blank">Payment gateway integration guide</a> |
+| transData            | JSON                 |                       | M                      | C                       |                                                                                                                                                            |
+| result               | String               |                       | -                      | M                       | Refer to appendix - <a href = "SameTerminalAppIntegration#31--transaction-result-code">Transaction result code</a>                                         |
+| resultMsg            | String               |                       | -                      | C                       | Failure message                                                                                                                                            |
+
+**transData field**
+
+| Name  \ width:20%; \  | Type  \ width:10%; \ | Length \ width:10%; \ | Request \ width:10%; \ | Response \ width:10%; \ | Description   \ width:40%; \                                                                                                                                                                  |
+|:----------------------|:---------------------|:----------------------|:-----------------------|:------------------------|:----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| originBusinessOrderNo | String               |                       | C                      | C                       | The order number of the original Sale or Completion transaction.                                                                                                                              |
+| businessOrderNo       | String               |                       | M                      | M                       | The order number of the merchant's point of sale application or business system, it must be unique in its system                                                                              |
+| paymentScenario       | String               |                       | M                      | M                       | 1 - card payment <br /> 2 - cash payment <br /> 3 - QR code payment, merchant present code and customers scan it <br /> 4 - QR code payment, customers present code and merchant scan it      |
+| paymentMethod         | String               |                       | -                      | M                       | Please refer to <a href = "PosIntegratesrReference#2-payment-method" target = "_blank">Payment method</a>                                                                                     |
+| cardType              | String               |                       | C                      | -                       | When "paymentScenario" field is set to "1" and originBusinessOrderNo is empty, this field is mandatory. <br /> 1 - DEBIT_CARD <br /> 2 - CREDIT_CARD <br /> 3 - EBT_CARD <br /> 4 - GIFT_CARD |
+| amt                   | String               | 12                    | M                      | M                       | Refund amount.                                                                                                                                                                                |
+| tip                   | String               | 12                    | O                      | O                       | Tip amount                                                                                                                                                                                    |
+| transDate             | String               | 8                     | -                      | M                       | Transaction date, format: YYYYMMDD                                                                                                                                                            |
+| transTime             | String               | 6                     | -                      | M                       | Transaction time, format: HHMMSS                                                                                                                                                              |
+| operator              | String               | 4                     | -                      | O                       | operator's work number                                                                                                                                                                        |
+| authCode              | String               | 6                     | -                      | C                       | Authentication code. This field returns value when card payment transasction.                                                                                                                 |
+| refNo                 | String               | 12                    | -                      | C                       | Retrieval Reference Number .This field returns value when card payment transasction.                                                                                                          |
+| cardNo                | String               | 19                    | -                      | C                       | Card PAN number, It has been masked according to PCI specification. example: 430277****5723. This field returns value when card payment transasction.                                         |
+| entryMode             | String               | 2                     | -                      | O                       | This field returns value when card payment transasction: <br /> 1 - Swipe magnetic stripe card <br /> 2 - Contact chip card <br /> 3 - Contactless chip card <br /> 4 - Manual entry input    |
+| transactionID         | String               | 32                    | -                      | M                       | The transaction id of CodePay Gateway.                                                                                                                                                        |
+
+#### 2.3.2 Sample code
+
+```java
+Intent intent = new Intent();
+intent.setAction("com.codepay.transaction.call");
+intent.putExtra("version", "1.0");
+intent.putExtra("appId", "{YOUR_APP_ID}");
+intent.putExtra("transType", "03"); // Refund transaction
+JSONObject jsonObject = new JSONObject();
+try {
+   jsonObject.put("originBusinessOrderNo","202202222222");
+   jsonObject.put("businessOrderNo","202202222233");
+   jsonObject.put("paymentScenario","1");//Card payment
+   jsonObject.put("amt","1.2");
+   intent.putExtra("transData", jsonObject.toString());
+} catch (JSONException e) {
+   e.printStackTrace();
+}
+startActivityForResult(intent, 1);
+
+@Override
+protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+   String result = data.getStringExtra("result");
+   String resultMsg = data.getStringExtra("resultMsg");
+   String transData = data.getStringExtra("transData");
+   if (result.equals("00")){
+       try {
+           JSONObject jsonObject = new JSONObject(transData);
+           String amount = jsonObject.getString("amt");
+       }catch(JSONException e){
+           e.printStackTrace();
+       }
+   }
+}
+```
+
+### 2.4 Authorization
+
+Authorization transactions are a type of card transaction authorization by which a merchant can ensure that the transaction amount is frozen or held in the customer's account until the transaction is completed.
+
+During the authorization stage, the merchant requests authorization from the customer's bank for a specific amount, which is temporarily frozen if the customer has a sufficient available balance or credit limit in their account. This means that the amount is not actually deducted yet, but the customer cannot use the funds for other purchases during this time.
+
+Authorization is commonly used in those situations where the final transaction amount is uncertain, common in lodging service, rental service, unattended self-service, etc.
+
+#### 2.4.1 Message
+
+| Name  \ width:20%; \ | Type  \ width:10%; \ | Length \ width:10%; \ | Request \ width:10%; \ | Response \ width:10%; \ | Description   \ width:40%; \                                                                                                                               |
+|:---------------------|:---------------------|:----------------------|:-----------------------|:------------------------|:-----------------------------------------------------------------------------------------------------------------------------------------------------------|
+| version              | String               |                       | M                      | M                       | API version, fixed value "1.1"                                                                                                                             |
+| transType            | String               |                       | M                      | M                       | The type code of Authorizaion transaction, Fixed value <font color = "red">**04**</font>                                                                   |
+| appId                | String               | 18                    | M                      | -                       | The payment app id registered in Codepay Gateway, Please refer to the <a href = "/GatewayOverview" target = "_blank">Payment gateway integration guide</a> |
+| transData            | JSON                 |                       | M                      | C                       |                                                                                                                                                            |
+| result               | String               |                       | -                      | M                       | Refer to appendix - <a href = "SameTerminalAppIntegration#31--transaction-result-code">Transaction result code</a>                                         |
+| resultMsg            | String               |                       | -                      | C                       | Failure message                                                                                                                                            |
+
+**transData field**
+
+| Name  \ width:20%; \ | Type  \ width:10%; \ | Length \ width:10%; \ | Request \ width:10%; \ | Response \ width:10%; \ | Description   \ width:40%; \                                                                                                                                                               |
+|:---------------------|:---------------------|:----------------------|:-----------------------|:------------------------|:-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| businessOrderNo      | String               |                       | M                      | M                       | The order number of the merchant's point of sale application or business system, it must be unique in its system                                                                           |
+| paymentMethod        | String               |                       | -                      | M                       | Please refer to <a href = "PosIntegratesrReference#2-payment-method" target = "_blank">Payment method</a>                                                                                  |
+| cardType             | String               |                       | M                      | -                       | 1 -- DEBIT_CARD <br /> 2 -- CREDIT_CARD <br /> 3 -- EBT_CARD <br /> 4 -- GIFT_CARD                                                                                                         |
+| amt                  | String               | 12                    | M                      | M                       | Order amount                                                                                                                                                                               |
+| transDate            | String               | 8                     | -                      | M                       | Transaction date, format: YYYYMMDD                                                                                                                                                         |
+| transTime            | String               | 6                     | -                      | M                       | Transaction time, format: HHMMSS                                                                                                                                                           |
+| operator             | String               | 4                     | -                      | O                       | operator's work number                                                                                                                                                                     |
+| authCode             | String               | 6                     | -                      | M                       | Authentication code. This field returns value when card payment transasction.                                                                                                              |
+| refNo                | String               | 12                    | -                      | M                       | Retrieval Reference Number .This field returns value when card payment transasction.                                                                                                       |
+| cardNo               | String               | 19                    | -                      | M                       | Card PAN number, It has been masked according to PCI specification. example: 430277****5723. This field returns value when card payment transasction.                                      |
+| entryMode            | String               | 2                     | -                      | O                       | This field returns value when card payment transasction: <br /> 1 - Swipe magnetic stripe card <br /> 2 - Contact chip card <br /> 3 - Contactless chip card <br /> 4 - Manual entry input |
+| transactionID        | String               | 32                    | -                      | M                       | The transaction id of CodePay Gateway.                                                                                                                                                     |
+
+#### 2.4.2 Sample code
+
+```java
+Intent intent = new Intent();
+intent.setAction("com.codepay.transaction.call");
+intent.putExtra("version", "1.0");
+intent.putExtra("appId", "{YOUR_APP_ID}");
+intent.putExtra("transType", "04"); // Authorization transaction
+JSONObject jsonObject = new JSONObject();
+try {
+   jsonObject.put("businessOrderNo","202202222222");
+   jsonObject.put("cardType","1");//DEBIT_CARD
+   jsonObject.put("amt","1.2");
+   intent.putExtra("transData", jsonObject.toString());
+} catch (JSONException e) {
+   e.printStackTrace();
+}
+startActivityForResult(intent, 1);
+
+@Override
+protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+   String result = data.getStringExtra("result");
+   String resultMsg = data.getStringExtra("resultMsg");
+   String transData = data.getStringExtra("transData");
+   if (result.equals("00")){
+       try {
+           JSONObject jsonObject = new JSONObject(transData);
+           String amount = jsonObject.getString("amt");
+       }catch(JSONException e){
+           e.printStackTrace();
+       }
+   }
+}
+```
+
+### 2.5 Completion
+
+Completion transaction is the process of requesting the merchant to formally debit the customer's account for the previously authorized amount after the authorization, when the actual consumption of the service or goods is complete and the final amount is determined. This step is a follow-up to the authorization and ensures that the merchant receives the payment.
+
+For example, when a customer checks out of a hotel at the end of their stay, the hotel will compare the previously authorized amount to the actual amount spent; if the actual amount spent is higher, the hotel will request an additional authorization to cover the difference; if the actual amount spent is lower, only the actual amount spent will be deducted, and the remainder of the authorized amount will be released back to the customer's account.
+
+#### 2.5.1 Message
+
+| Name  \ width:20%; \ | Type  \ width:10%; \ | Length \ width:10%; \ | Request \ width:10%; \ | Response \ width:10%; \ | Description   \ width:40%; \                                                                                                                               |
+|:---------------------|:---------------------|:----------------------|:-----------------------|:------------------------|:-----------------------------------------------------------------------------------------------------------------------------------------------------------|
+| version              | String               |                       | M                      | M                       | API version, fixed value "1.1"                                                                                                                             |
+| transType            | String               |                       | M                      | M                       | The type code of Authorizaion Compleation  transaction, Fixed value <font color = "red">**06**</font>                                                      |
+| appId                | String               | 18                    | M                      | -                       | The payment app id registered in Codepay Gateway, Please refer to the <a href = "/GatewayOverview" target = "_blank">Payment gateway integration guide</a> |
+| transData            | JSON                 |                       | M                      | C                       |                                                                                                                                                            |
+| result               | String               |                       | -                      | M                       | Refer to appendix - <a href = "SameTerminalAppIntegration#31--transaction-result-code">Transaction result code</a>                                         |
+| resultMsg            | String               |                       | -                      | C                       | Failure message                                                                                                                                            |
+
+**transData field**
+
+| Name  \ width:20%; \  | Type  \ width:10%; \ | Length \ width:10%; \ | Request \ width:10%; \ | Response \ width:10%; \ | Description   \ width:40%; \                                                                                                                                                               |
+|:----------------------|:---------------------|:----------------------|:-----------------------|:------------------------|:-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| originBusinessOrderNo | String               | 12                    | M                      | -                       | The order number of the original purchase transaction                                                                                                                                      |
+| businessOrderNo       | String               |                       | M                      | M                       | The order number of the merchant's point of sale application or business system, it must be unique in its system                                                                           |
+| paymentMethod         | String               |                       | -                      | M                       | Please refer to <a href = "PosIntegratesrReference#2-payment-method" target = "_blank">Payment method</a>                                                                                  |
+| amt                   | String               | 12                    | M                      | M                       | Authorization confirmation amount, final payment amount, and any excess amount during authorization will be refunded to the customer's account                                             |
+| transDate             | String               | 8                     | -                      | M                       | Transaction date, format: YYYYMMDD                                                                                                                                                         |
+| transTime             | String               | 6                     | -                      | M                       | Transaction time, format: HHMMSS                                                                                                                                                           |
+| operator              | String               | 4                     | -                      | O                       | operator's work number                                                                                                                                                                     |
+| authCode              | String               | 6                     | -                      | M                       | Authentication code. This field returns value when card payment transasction.                                                                                                              |
+| refNo                 | String               | 12                    | -                      | M                       | Retrieval Reference Number .This field returns value when card payment transasction.                                                                                                       |
+| cardNo                | String               | 19                    | -                      | M                       | Card PAN number, It has been masked according to PCI specification. example: 430277****5723. This field returns value when card payment transasction.                                      |
+| entryMode             | String               | 2                     | -                      | O                       | This field returns value when card payment transasction: <br /> 1 - Swipe magnetic stripe card <br /> 2 - Contact chip card <br /> 3 - Contactless chip card <br /> 4 - Manual entry input |
+| transactionID         | String               | 32                    | -                      | M                       | The transaction id of CodePay Gateway.                                                                                                                                                     |
+
+#### 2.5.2 Sample code
+
+```java
+Intent intent = new Intent();
+intent.setAction("com.codepay.transaction.call");
+intent.putExtra("version", "1.0");
+intent.putExtra("appId", "{YOUR_APP_ID}");
+intent.putExtra("transType", "06"); // Authorization Completion transaction
+JSONObject jsonObject = new JSONObject();
+try {
+   jsonObject.put("originBusinessOrderNo","202202222233");
+   jsonObject.put("businessOrderNo","202202222222");
+   jsonObject.put("amt","1.2");
+   intent.putExtra("transData", jsonObject.toString());
+} catch (JSONException e) {
+   e.printStackTrace();
+}
+startActivityForResult(intent, 1);
+
+@Override
+protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+   String result = data.getStringExtra("result");
+   String resultMsg = data.getStringExtra("resultMsg");
+   String transData = data.getStringExtra("transData");
+   if (result.equals("00")){
+       try {
+           JSONObject jsonObject = new JSONObject(transData);
+           String amount = jsonObject.getString("amt");
+       }catch(JSONException e){
+           e.printStackTrace();
+       }
+   }
+}
+```
+
+### 2.6 Sale with Cashback
+
+"Sale with Cashback" is commonly used in bank card transactions to refer to the ability of a customer to request an additional amount of cash from their bank account in addition to the cost of goods or services when paying for a purchase with a debit card. This service is usually found at the checkout counter of retail stores or supermarkets, where customers can select this option at checkout, thus avoiding the hassle of going to a bank or ATM to withdraw cash.
+
+For example, if you spend $50 on a grocery store purchase and want $20 in cash, you can request a $70 transaction where $50 is paid to the supermarket and the remaining $20 is returned to you as cash. This transaction may appear in your bank account records as "Sale with Cashback" and total $70.
+
+#### 2.6.1 Message
+
+| Name  \ width:20%; \ | Type  \ width:10%; \ | Length \ width:10%; \ | Request \ width:10%; \ | Response \ width:10%; \ | Description   \ width:40%; \                                                                                                                               |
+|:---------------------|:---------------------|:----------------------|:-----------------------|:------------------------|:-----------------------------------------------------------------------------------------------------------------------------------------------------------|
+| version              | String               |                       | M                      | M                       | API version, fixed value "1.1"                                                                                                                             |
+| transType            | String               |                       | M                      | M                       | The type code of Cashback transaction, Fixed value <font color = "red">**11**</font>                                                                       |
+| appId                | String               | 18                    | M                      | -                       | The payment app id registered in Codepay Gateway, Please refer to the <a href = "/GatewayOverview" target = "_blank">Payment gateway integration guide</a> |
+| transData            | JSON                 |                       | M                      | C                       |                                                                                                                                                            |
+| result               | String               |                       | -                      | M                       | Refer to appendix - <a href = "SameTerminalAppIntegration#31--transaction-result-code">Transaction result code</a>                                         |
+| resultMsg            | String               |                       | -                      | C                       | Failure message                                                                                                                                            |
+
+**transData field**
+
+| Name  \ width:20%; \ | Type  \ width:10%; \ | Length \ width:10%; \ | Request \ width:10%; \ | Response \ width:10%; \ | Description   \ width:40%; \                                                                                                                                                               |
+|:---------------------|:---------------------|:----------------------|:-----------------------|:------------------------|:-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| businessOrderNo      | String               |                       | M                      | M                       | The order number of the merchant's point of sale application or business system, it must be unique in its system                                                                           |
+| paymentMethod        | String               |                       | -                      | M                       | Please refer to <a href = "PosIntegratesrReference#2-payment-method" target = "_blank">Payment method</a>                                                                                  |
+| cardType             | String               |                       | M                      | -                       | 1 -- DEBIT_CARD <br /> 2 -- CREDIT_CARD <br /> 3 -- EBT_CARD <br /> 4 -- GIFT_CARD                                                                                                         |
+| amt                  | String               | 12                    | M                      | M                       | Order amount                                                                                                                                                                               |
+| cashAmount           | String               | 12                    | M                      | M                       | Cashback amount                                                                                                                                                                            |
+| tip                  | String               | 12                    | O                      | O                       | Tip amount                                                                                                                                                                                 |
+| transDate            | String               | 8                     | -                      | M                       | Transaction date, format: YYYYMMDD                                                                                                                                                         |
+| transTime            | String               | 6                     | -                      | M                       | Transaction time, format: HHMMSS                                                                                                                                                           |
+| operator             | String               | 4                     | -                      | O                       | operator's work number                                                                                                                                                                     |
+| authCode             | String               | 6                     | -                      | M                       | Authentication code. This field returns value when card payment transasction.                                                                                                              |
+| refNo                | String               | 12                    | -                      | M                       | Retrieval Reference Number .This field returns value when card payment transasction.                                                                                                       |
+| cardNo               | String               | 19                    | -                      | M                       | Card PAN number, It has been masked according to PCI specification. example: 430277****5723. This field returns value when card payment transasction.                                      |
+| entryMode            | String               | 2                     | -                      | O                       | This field returns value when card payment transasction: <br /> 1 - Swipe magnetic stripe card <br /> 2 - Contact chip card <br /> 3 - Contactless chip card <br /> 4 - Manual entry input |
+| transactionID        | String               | 32                    | -                      | M                       | The transaction id of CodePay Gateway.                                                                                                                                                     |
+
+#### 2.6.2 Sample code
+
+```java
+Intent intent = new Intent();
+intent.setAction("com.codepay.transaction.call");
+intent.putExtra("version", "1.0");
+intent.putExtra("appId", "{YOUR_APP_ID}");
+intent.putExtra("transType", "11"); // Cashback transaction
+JSONObject jsonObject = new JSONObject();
+try {
+   jsonObject.put("businessOrderNo","202202222222");
+   jsonObject.put("cardType","1");//Debit
+   jsonObject.put("amt","10.2");
+   jsonObject.put("cashAmount","1.2");
+   intent.putExtra("transData", jsonObject.toString());
+} catch (JSONException e) {
+   e.printStackTrace();
+}
+startActivityForResult(intent, 1);
+
+@Override
+protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+   String result = data.getStringExtra("result");
+   String resultMsg = data.getStringExtra("resultMsg");
+   String transData = data.getStringExtra("transData");
+   if (result.equals("00")){
+       try {
+           JSONObject jsonObject = new JSONObject(transData);
+           String amount = jsonObject.getString("amt");
+       }catch(JSONException e){
+           e.printStackTrace();
+       }
+   }
+}
+```
+
+### 2.7 Query
+
+Query details of a specified transaction
+
+#### 2.7.1 Message
+
+| Name  \ width:20%; \ | Type  \ width:10%; \ | Length \ width:10%; \ | Request \ width:10%; \ | Response \ width:10%; \ | Description   \ width:40%; \                                                                                                                               |
+|:---------------------|:---------------------|:----------------------|:-----------------------|:------------------------|:-----------------------------------------------------------------------------------------------------------------------------------------------------------|
+| version              | String               |                       | M                      | M                       | API version, fixed value "1.1"                                                                                                                             |
+| transType            | String               |                       | M                      | M                       | The type code of Query transaction, Fixed value <font color = "red">**21**</font>                                                                          |
+| appId                | String               | 18                    | M                      | -                       | The payment app id registered in Codepay Gateway, Please refer to the <a href = "/GatewayOverview" target = "_blank">Payment gateway integration guide</a> |
+| transData            | JSON                 |                       | M                      | C                       |                                                                                                                                                            |
+| result               | String               |                       | -                      | M                       | Refer to appendix - <a href = "SameTerminalAppIntegration#31--transaction-result-code">Transaction result code</a>                                         |
+| resultMsg            | String               |                       | -                      | C                       | Failure message                                                                                                                                            |
+
+**transData field**
+
+| Name  \ width:20%; \ | Type  \ width:10%; \ | Length \ width:10%; \ | Request \ width:10%; \ | Response \ width:10%; \ | Description   \ width:40%; \                                                                                                                                                                                         |
+|:---------------------|:---------------------|:----------------------|:-----------------------|:------------------------|:---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| businessOrderNo      | String               |                       | M                      | M                       | The order number of the merchant's point of sale application or business system, it must be unique in its system                                                                                                     |
+| paymentScenario      | String               |                       | -                      | M                       | 1 - card payment <br /> 2 - cash payment <br /> 3 - QR code payment, merchant present code and customers scan it <br /> 4 - QR code payment, customers present code and merchant scan it                             |
+| paymentMethod        | String               |                       | -                      | M                       | Specify a Payment method. This field is mandatory only when "paymentScenario" is set to "3" or "4". <br /> Please refer to <a href = "PosIntegratesrReference#2-payment-method" target = "_blank">Payment method</a> |
+| amt                  | String               | 12                    | -                      | M                       | Order amount                                                                                                                                                                                                         |
+| cashAmount           | String               | 12                    | -                      | O                       | Cashback amount                                                                                                                                                                                                      |
+| tip                  | String               | 12                    | -                      | O                       | Tip amount                                                                                                                                                                                                           |
+| transDate            | String               | 8                     | -                      | M                       | Transaction date, format: YYYYMMDD                                                                                                                                                                                   |
+| transTime            | String               | 6                     | -                      | M                       | Transaction time, format: HHMMSS                                                                                                                                                                                     |
+| operator             | String               | 4                     | -                      | O                       | operator's work number                                                                                                                                                                                               |
+| authCode             | String               | 6                     | -                      | C                       | Authentication code. This field returns value when card payment transasction.                                                                                                                                        |
+| transType            | String               | 2                     | -                      | M                       | Type of transaction queried                                                                                                                                                                                          |
+| refNo                | String               | 12                    | -                      | C                       | Retrieval Reference Number .This field returns value when card payment transasction.                                                                                                                                 |
+| cardNo               | String               | 19                    | -                      | C                       | Card PAN number, It has been masked according to PCI specification. example: 430277****5723. This field returns value when card payment transasction.                                                                |
+| entryMode            | String               | 2                     | -                      | O                       | This field returns value when card payment transasction: <br /> 1 - Swipe magnetic stripe card <br /> 2 - Contact chip card <br /> 3 - Contactless chip card <br /> 4 - Manual entry input                           |
+| transactionID        | String               | 32                    | -                      | M                       | The transaction id of CodePay Gateway.                                                                                                                                                                               |
+
+#### 2.7.2 Sample code
+
+```java
+Intent intent = new Intent();
+intent.setAction("com.codepay.transaction.call");
+intent.putExtra("version", "1.0");
+intent.putExtra("appId", "{YOUR_APP_ID}");
+intent.putExtra("transType", "21");
+JSONObject jsonObject = new JSONObject();
+try {
+   jsonObject.put("businessOrderNo","202202222222");
+   intent.putExtra("transData", jsonObject.toString());
+} catch (JSONException e) {
+   e.printStackTrace();
+}
+startActivityForResult(intent, 1);
+
+@Override
+protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+   String result = data.getStringExtra("result");
+   String resultMsg = data.getStringExtra("resultMsg");
+   String transData = data.getStringExtra("transData");
+   if (result.equals("00")){
+       try {
+           JSONObject jsonObject = new JSONObject(transData);
+           String amount = jsonObject.getString("amt");
+       }catch(JSONException e){
+           e.printStackTrace();
+       }
+   }
+}
+```
+
+### 2.8 Reprint
+
+Reprint the specified transaction. It will be marked "Reprint" in the receipt.
+
+#### 2.8.1 Message
+
+| Name  \ width:20%; \ | Type  \ width:10%; \ | Length \ width:10%; \ | Request \ width:10%; \ | Response \ width:10%; \ | Description   \ width:40%; \                                                                                                                               |
+|:---------------------|:---------------------|:----------------------|:-----------------------|:------------------------|:-----------------------------------------------------------------------------------------------------------------------------------------------------------|
+| version              | String               |                       | M                      | M                       | API version, fixed value "1.1"                                                                                                                             |
+| transType            | String               |                       | M                      | M                       | The type code of Reprint transaction, Fixed value <font color = "red">**22**</font>                                                                        |
+| appId                | String               | 18                    | M                      | -                       | The payment app id registered in Codepay Gateway, Please refer to the <a href = "/GatewayOverview" target = "_blank">Payment gateway integration guide</a> |
+| transData            | JSON                 |                       | M                      | C                       |                                                                                                                                                            |
+| result               | String               |                       | -                      | M                       | Refer to appendix - <a href = "SameTerminalAppIntegration#31--transaction-result-code">Transaction result code</a>                                         |
+| resultMsg            | String               |                       | -                      | C                       | Failure message                                                                                                                                            |
+
+**transData field**
+
+| Name  \ width:20%; \ | Type  \ width:10%; \ | Length \ width:10%; \ | Request \ width:10%; \ | Response \ width:10%; \ | Description   \ width:40%; \                                                                                     |
+|:---------------------|:---------------------|:----------------------|:-----------------------|:------------------------|:-----------------------------------------------------------------------------------------------------------------|
+| businessOrderNo      | String               |                       | M                      | -                       | The order number of the merchant's point of sale application or business system, it must be unique in its system |
+
+#### 2.8.2 Sample code
+
+```java
+Intent intent = new Intent();
+intent.setAction("com.codepay.transaction.call");
+intent.putExtra("version", "1.0");
+intent.putExtra("appId", "{YOUR_APP_ID}");
+intent.putExtra("transType", "22");
+JSONObject jsonObject = new JSONObject();
+try {
+   jsonObject.put("businessOrderNo","202202222222");
+   intent.putExtra("transData", jsonObject.toString());
+} catch (JSONException e) {
+   e.printStackTrace();
+}
+startActivityForResult(intent, 1);
+
+@Override
+protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+   String result = data.getStringExtra("result");
+   String resultMsg = data.getStringExtra("resultMsg");
+   String transData = data.getStringExtra("transData");
+   if (result.equals("00")){
+       try {
+           JSONObject jsonObject = new JSONObject(transData);
+           String amount = jsonObject.getString("amt");
+       }catch(JSONException e){
+           e.printStackTrace();
+       }
+   }
+}
+```
+
+## 3. Appendix
+
+### 3.1  Transaction result code
+
+|         Category \ width:25%; \         | Result Code   \ width:15%; \ | Description   \ width:60%; \                                                 |
+|:---------------------------------------:|------------------------------|------------------------------------------------------------------------------|
+|                 Sucess                  | 00                           | Transaction approved                                                         | 
+|  Terminal kernel exception(rowspan=5)   | A003                         | There is no EMV application in card                                          |
+|                                         | A008                         | Transaction has been rejected                                                |
+|                                         | A020                         | IC command failed                                                            |
+|                                         | A036                         | 2 GAC Failed                                                                 |
+|                                         | A040                         | Init SDK failed                                                              |
+|  Card recognizing exception(rowspan=8)  | C000                         | Read card exception                                                          |
+|                                         | C001                         | Swipe card failed                                                            |
+|                                         | C004                         | Read card failed                                                             |
+|                                         | C006                         | Card conflict                                                                |
+|                                         | C008                         | IC card not allow swipe first                                                |
+|                                         | C009                         | Read card time out                                                           |
+|                                         | C011                         | Track key not found                                                          |
+|                                         | C014                         | Mag-stripe mode contactless transaction not supported                        |
+|      Pin-pad exception(rowspan=4)       | G000                         | PinPad exception                                                             |
+|                                         | G003                         | Enter pin canceled                                                           |
+|                                         | G004                         | Enter pin timeout                                                            |
+|                                         | G005                         | Enter pin failed                                                             |
+|      Package exception(rowspan=2)       | H010                         | Mac Error                                                                    |
+|                                         | H011                         | Signature verification fails                                                 |
+|      Network exception(rowspan=6)       | J000                         | Network exception                                                            |
+|                                         | J002                         | Network connection timeout                                                   |
+|                                         | J003                         | Network connect failed                                                       |
+|                                         | J004                         | Send data failed                                                             |
+|                                         | J005                         | Read data failed                                                             |
+|                                         | J006                         | Read data timeout                                                            |
+|    Transaction exception(rowspan=5)     | K018                         | Use the same card as the original transaction                                |
+|                                         | K019                         | No data to be settled                                                        |
+|                                         | K026                         | Manual cancelation by operator                                               |
+|                                         | K027                         | Transaction timeout                                                          |
+|                                         | K029                         | Low battery!                                                                 |
+| Third app invoking exception(rowspan=9) | M002                         | Parameter error                                                              |
+|                                         | M003                         | Invalid Amount                                                               |
+|                                         | M007                         | This function is not supported now                                           |
+|                                         | M008                         | The invoke version is incorrect                                              |
+|                                         | M009                         | Invalid application invoke                                                   |
+|                                         | M010                         | Can`t find original transaction                                              |
+|                                         | M011                         | The original transaction cannot be void                                      |
+|                                         | M013                         | The original transaction cannot be refund                                    |
+|                                         | M014                         | The original transaction cannot be completion                                |
+|       Server exception(rowspan=2)       | N002                         | CodePay service request exception                                            |
+|                                         | N003                         | Acquire service request exception                                            |
+|       User exception (rowspan=2)        | P001                         | Incorrect account or password, please try again                              |
+|                                         | P002                         | The account is locked and cannot be logged in                                |
+|        Init exception(rowspan=3)        | Q001                         | System time error, please connect the network to get the time automatically! |
+|                                         | Q002                         | AID is not configured                                                        |
+|                                         | Q003                         | Payment is not configured.Please contact support.                            |
+|             Other exception             | Z000                         | Exception occurred. Further investigation required by technical support.     |

@@ -1,0 +1,13 @@
+# Sandbox App
+
+## Sandbox environment
+
+Sandbox environment is CodePay for developers to provide a completely isolated from the production environment and the production environment, the developer in the sandbox environment to complete the interface calls will not have any impact on the production environment of the data.<br />
+Sandboxes provide a limited range of functional support for open products, which can cover the vast majority of the product's core links and docking logic, making it easy for developers to quickly learn, try, develop and debug.<br />
+Sandbox environment will automatically complete or ignore the business threshold of some scenarios, for example: developers do not need to wait for the product to open, you can directly call the interface in the sandbox environment, so that the development and integration work can be done in parallel with the business process, thus improving the overall delivery efficiency of the project.<br />
+
+Attention:
+
+- Because the sandbox environment is not 100% consistent with the production environment, the actual response logic of the interface to the production environment shall prevail, the sandbox environment development and debugging is completed, you still need to test and accept the production environment.
+- Sandbox environment has a completely independent data system, the data returned in the sandbox environment (such as merchant_no, etc.) do not exist in the production environment, developers should not confuse the data returned in the sandbox environment with the data in the production environment.
+- We provide a sandboxed "SandBox CodePay Register" APP, which is an Android application installed on the POS and can be installed through the app market. The APP simulates the transaction process in the production environment, card payments will not be deducted for real, so it is convenient for developers to simulate the transaction during the debugging process, and can be tested for a variety of large-amount payments and anomalies.

@@ -1,0 +1,244 @@
+# Payments Glossary
+
+## Acquirer (or Acquiring bank)
+An acquirer is a bank or a financial institute that receives funds for its merchant from a customer .
+To accept card payments , an acquirer should be licensed by corresponding card networks and either partner with a payment processor , or be a payment processor itself.
+Sometimes, a payment service provider may operate as an acquirer in certain regions.
+
+## Acquirer Reference Number (ARN)
+In credit card transactions, the Acquirer Reference Number (ARN) is a unique number assigned to a transaction when it goes from the merchant's bank ( acquirer ) through the card scheme at the cardholder's bank ( issuer ).
+The ARN can be used to track a payment or refund . customers can contact their banks to do so and the banks can then use the ARN to track the payment or refund. Merchants can retrieve the ARN from the Customer Area or the customer's bank.
+
+## Aggregator merchant
+Aggregator merchants are intermediaries between merchants and an acquirer . They are contracted by an acquirer to perform all or some of the following actions on behalf of the acquirer:
+- Onboard merchants.
+- Process transactions under an aggregated identifier.
+In this case, the merchant interacts with the aggregator instead of the acquirer.
+- Settle transactions and ensure payouts to the merchants.
+The following are types of aggregators:
+- Bill payment providers
+- Digital Wallet operators
+- Marketplaces
+- Payment facilitators
+
+## Bank Identification Number (BIN)
+The first six to eight digits of the card number are called as the Bank Identification Number (BIN) or Issuer Identification Number (IIN). There is no direct way to know if a card number contains a six or an eight-digit BIN.
+If you have business logic based on BIN values, you can either:
+- Use fields from the API response to get the information you need.
+- Check against the BIN ranges from card networks, if you handle raw card data.
+The BIN can be used to determine the:
+- Card network .
+- Financial institution that issued the card .
+The BIN cannot be used to determine:
+- The card type, for example credit or debit card.
+- The country where the card was issued.
+
+## Cancel a payment
+An authorised payment can be either captured (where funds are sent to a merchant 's account) or cancelled (where a merchant decides to reject the payment for some reason like a high risk of fraud ).
+Note that cancelling a payment is not possible for transactions that have already been captured. In this case the merchant should initiate a refund to send funds back to a customer. Captures, cancels, and refunds together are called modifications , because they modify the state of an authorised payment request.
+
+## Capture (or Clearing and settlement)
+A payment that has been authorised by the payment processor must be captured to be completed.  Capturing is the act of transferring the reserved funds from the customer to the merchant .
+By default, payments are captured automatically, immediately after authorisation.
+Many payment methods support separate authorisation and capture.  This means you can set up a capture delay;  capture payments manually (both in the Customer Area and using API calls );  perform partial captures;  or cancel an authorisation.
+Captures, cancels, and refunds together are called modifications , because they modify the state of an authorised payment request.
+
+## Cardholder Verification Method (CVM)
+Type of verification method used to confirm a payment instrument, such as a credit card , being used in a purchase is in the possession of its owner .
+
+## Card networks (or Card schemes)
+Payment networks that set rules and provide infrastructure to issue cards and process payments made with cards . For a payment to be made, both an issuer and an acquirer must be members of the same network as the card. Examples of some popular card networks are Visa, Mastercard, American Express, and UnionPay.
+Card schemes charge fees for processing payments, and also regulate the value of the interchange fee , which depends on many factors for each specific payment.
+
+## Card Not Present (CNP)
+A payment transaction made with a card , where the customer cannot physically present the card to the merchant at the time of the transaction. Examples of CNP transactions include online payments , in-app payments , and MOTO transactions .
+CNP transactions are a common target for card fraud , because it is difficult for the merchant to verify that it is the actual cardholder making the purchase. To reduce the risk of card fraud arising from CNP, use 3D Secure and AVS features.
+
+## Card number (PAN)
+Every payment card (be it a debit, credit, gift, or a similar card) has a unique number associated with it. This number is usually printed on the card and required to uniquely identify this card and to refer to it in every transaction.
+The whole card number is called Primary Account Number (PAN), and the first six or eight digits of it are also called the Bank Identification Number (BIN).
+Also, a card may contain a card security code , which, along with the card number, can be used in card-not-present transactions.
+## Card on File (CoF)
+
+## Cards
+
+## Card security code (CVC, CVV, CID)
+
+## Chargeback
+A customer 's request to their issuer to return funds paid to a merchant . Typically, chargebacks occur after the merchant has refused a refund .
+After a chargeback is initiated, the merchant can dispute it in some cases. If a dispute is allowed, the merchant should provide all necessary documents to either the acquiring bank , or to the payment processor .
+When possible, Adyen helps its merchants to automatically dispute chargebacks, and also provides extensive risk management services ( RevenueProtect ) to analyze fraudulent transactions and minimize chargebacks.
+Contactless payments allow your customers to make payments without inserting or swiping their card. In the context of POS , NFC is the technology used in contactless payments. Apple Pay, Google Pay and Samsung Pay all use the standard NFC protocol and are therefore accepted. These payment methods are considered strongly authenticated and therefore support high-volume transactions.
+
+
+## Dispute
+When a customer for some reason wants funds returned from a merchant , and a payment was already captured , the customer can initiate a refund . If the merchant refuses, the customer may ask their issuer to make a chargeback. If a merchant disagrees, they can dispute the chargeback.
+If disputing a chargeback is allowed (for more information, see Payment methods ), the merchant must provide documents confirming the delivery of a product/service, and send these documents either to the acquiring bank or the payment service provider .
+When possible, Adyen helps its merchants to automatically dispute chargebacks, and also provides extensive risk management services ( Risk management ) to analyze fraudulent transactions and minimize chargebacks.
+
+## Dynamic Currency Conversion (DCC) or Cardholder Preferred Currency (CPC)
+Allows customers to convert the transaction amount to their card's default currency when making a payment abroad.
+The customer is presented with the choice to convert the transaction amount, when the transaction is in a currency other than the default configured on the card and the terminal has been configured to allow DCC.
+Full details on the exchange rate are provided to the customer on the terminal to allow an informed decision, and simultaneously to the POS app for merchant information.
+The customer either accepts or rejects the DCC offer and proceeds with the selected amount and currency. If the customer chooses DCC, related information is shown on the receipt.
+customers can immediately understand the full amount charged for the transaction in a familiar currency.
+
+## Ecommerce payments (or Online payments)
+
+## Europay, Mastercard, Visa (EMV)
+
+## Floor Limit
+Floor Limit is the maximum cash value the terminal allows for a transaction when processed offline. An inclusive limit is configured which applies to each individual transaction. If the amount of the transaction is below the configured Floor Limit and the terminal can not connect to the Adyen host for authorization the terminal will leave the decision up to the card to approve or decline the transaction. Debit cards will typically decline a transaction while most credit cards are configured to approve a relatively small amount offline.
+
+## Fraud
+In payments, this means that there was an attempted transaction made by a criminal. The target of a fraud can either be a merchant or a customer (depending on the approach of the fraudster).
+Fraud defense is an important part of the payment process and is a service that can be provided by the payment provider – as Adyen does with RevenueProtect .
+
+## In-app payments (or Mobile payments)
+
+## Integrated Circuit Card (ICC)/Chip
+In the context of payments, an EMV credit card with an embedded chip which is used to hold card information.
+
+## Interchange fee
+A fee that is paid to the issuer by the acquirer for each payment transaction made via a card network . The interchange fee amount is determined by the corresponding card network, as well as the scheme fee .
+A further fee is then deducted from the total by the acquirer before paying into the merchant 's account.
+
+## Issuer (or Issuing bank)
+A bank that issued a card for a customer to make cashless payments via an ecommerce website , inside a mobile app , or in a physical store .  To be able to issue a card, an issuer must be a member of one or several card networks , or subscribe to one of the card services (for instance, ICS ).
+Sometimes a customer's bank is referred to as an issuer even if there is no card issued.  This is to distinguish between a customer's bank, which sends funds, and a merchant's bank, which acquires funds .
+
+## Know Your Customer (KYC)
+Know Your Customer (KYC) is the process of identifying and verifying the identity of your customers . This is required by the payment industry regulations as a prerequisite to allow individuals or business entities being paid out .
+With Adyen for Platforms and Issuing , you don't need to manually perform KYC checks for your customers. Instead, you send the collected KYC data to Adyen, and we automatically conduct required verification.
+
+## Local payment methods (or Alternative payment methods)
+Payment methods that allow merchants to accept ecommerce and in-app payments without use of cards . These methods include bank transfers, direct debit, e-wallets, mobile payments and so on.
+For merchants that want to sell goods and services globally to customers from all over the world, it is important to support local payment methods that are popular in each specific region.
+With Adyen, merchants have access to all the key local payment methods already via Adyen's unified payments platform. For a list of these payment methods, see Payment Methods .
+
+## Magnetic Stripe Reader (MSR)/Swipe
+Device that reads card data from the magnetic stripe on the reverse of the card.
+
+## Manual Keyed Entry (MKE)/Keyed
+Manual key entry involves manually typing the details from a customer's card into either the POS app or the payment terminal .
+
+## Merchant
+## Merchant back-end
+When the POS app (cash register) has performed product selection and totaled the amount, the order is typically stored in the merchant back-end. The outcome of the payment process will be stored with the order.
+Refunds for existing orders are communicated from the POS app to the merchant back-end where an API call to theAdyen payments platform is made to perform the refund. The merchant back-end receives webhooks from the Adyen payments platform.
+
+## Merchant Category Code
+The Merchant Category Code (MCC) is a four-digit code that the card networks use to categorize a merchant's business based on what goods or services they offer. It is also referred to as the Card Acceptor Business Code . The acquirer usually assigns each merchant an MCC during onboarding, and populates it for all payments. If the merchant is a sub-merchant , the payment facilitator might assign the MCC instead.
+For descriptions of the different MCCs, see Visa's merchant data standards and Mastercard's reference booklet .
+
+## Merchant of Record (MoR)
+## No CVM (Cardholder Verification Method)
+A transaction where there is no owner verification check for a credit card. No CVM payments have a low transaction threshold.
+
+## Offline Enciphered
+A CVM that verifies the cardholder's PIN by encrypting the entered PIN before sending it to the card.
+Terminals that support this method must also support the less secure Offline plain-text PIN method.
+Offline processing
+Adyen payment terminals process transactions online by default. Offline processing is optional and requires configuration.
+
+## Offline transaction
+Offline acceptance of payments in situations where no network connection is currently available. Debit cards will typically decline a transaction while most credit cards are configured to approve a relatively small amount offline.
+
+## Omnichannel payment solution
+A set of services and technical solutions provided by a payment service provider , which allow a merchant to accept cashless payments across all channels ( online , inside a mobile app or on a point of sale ).
+Most PSPs enable merchants to accept payments via specific channels only. Adyen is the only PSP that provides a true omnichannel solution for its customers. This gives merchants a single reporting dashboard from which to view all purchases made across different channels.
+
+## Online PIN
+Where the entered PIN is sent online to the card issuer for verification. The entered PIN is encrypted before it is sent.
+Online PIN is used when the specific card scheme (payment method) and specific card support it.
+
+## Payment gateway
+A service that helps merchants to initiate online , in-app and in-person payments.  It is not directly involved in the money flow;  typically, it is a web server to which a merchant's website or a POS system is connected.
+A payment gateway can be provided by a bank, or can exist as a separate service that connects to one or more payment processors .  Adyen combines the functions both of a payment gateway and a payment processor, as well as a risk management system and an acquirer .  This makes Adyen a full-stack payment service provider .
+
+## Payment facilitator (payfac)
+A payment facilitator is an entity that is authorized to onboard merchants to an acquirer's platform and receive settlement funds for them on behalf of an acquirer. Payfacs are a type of aggregator merchant . Payment facilitators can perform all the of the following actions:
+- Onboard merchants on behalf of an acquirer.
+Merchants onboarded by a payfac are called " sub-merchants ".
+- Process transactions for sub-merchants with the card schemes.
+- Receive settlement funds from the acquirer and pay out sub-merchants.
+
+## Payment modifications
+An authorised payment can be either captured or canceled . If a payment has been already captured, it can be also refunded later. Capture, cancel, and refund actions are called modifications, because they modify the state of a payment.
+Modifications can be done either manually (through the Customer Area interface), or automatically (using the Adyen payments platform API ). If an API call is made, the merchant receives an acknowledgement in the response. After Adyen processes the payment modification, Adyen sends the result asynchronously through webhooks .
+
+## Payment processor
+A system that connects to a customer's bank and a merchant's bank in order to make a payment transaction on behalf of a merchant . Usually, a payment processor obtains the payment information from a payment gateway .
+Adyen combines the functionality of a payment gateway and payment processor, as well as risk management and acquirer. As such it is a full-stack payment service provider .
+
+## Payment Service Provider (PSP)
+A company, which combines the functions of both a payment gateway and a payment processor , can connect to multiple acquiring and payment networks. Additionally it can be an acquirer and provide risk assessments and other financial services.
+For merchants, it is often cheaper and more convenient to use services of a PSP, rather than have different contracts with various payment gateways, processors and acquiring banks.
+Adyen not only operates as a full-stack Payment Service Provider, but also gives its customers a true omnichannel solution to accept payments anywhere in the world.
+
+## Payment terminal (or POS terminal, pin entry device (PED))
+A device that communicates with a customer's card at the point of sale . Usually, a card is tapped, dipped (inserted), or swiped at a payment terminal. The terminal then prompts the customer to enter a PIN or sign (depending on the country, card type, and the transaction amount). It is sometimes referred to as a Pin Entry Device (PED).
+Adyen refers to the payment terminal as "the terminal". The terminal accepts an API request to start a transaction. The terminal displays the amount charged to the customer and allows printing of a receipt. It will also offer DCC if applicable. Once an authorisation is obtained, the resulting data is sent to the Adyen payments platform for further processing. The receipt is sent with this data and you can see it in the Customer Area .
+Adyen uses various types of terminals, optimized for integration with the Adyen payments platform .
+
+## Payout
+This term has multiple definitions in the payments industry and in general means a large amount of money paid at once to either an individual or a business entity. For example, an online marketplace transmits a payout to their sub-merchants for the products/services they provide to the marketplace customers.
+
+## PCI compliance
+Being PCI DSS-compliant means that you meet all applicable requirements of the current Payment Card Industry Data Security Standard (PCI DSS) on a continuous basis. PCI DSS was created by major card networks to increase safety of cardholder data and reduce the risk of fraud . All organizations that deal with payment card processing must be PCI-compliant, which means fulfilling very strict requirements on securing cardholder data.
+Merchants who find it difficult or expensive to fully comply with PCI DSS requirements may consider using encrypted methods (such as Hosting the CSE library ) or outsourcing card processing to a PCI-compliant payment service provider , such as Adyen. This way their PCI DSS-compliance scope can be significantly reduced.
+
+## PIN bypass
+Used by the merchant to bypass the PIN entry for the customer. This option should only be used when the merchant trusts the customer.
+A cardholder is expected to know the PIN for the card issued. Comparing the signature as well as the cardholder name with some form of identification is recommended when bypassing PIN entry.
+
+## Point of sale (POS)
+A point-of-sale solution allows a customer to make a cashless in-person payment in a merchant 's shop or other physical location. This payment is made using cards , NFC wallets (like Apple Pay), QR code wallets (like Alipay), or prepaid and gift cards.
+Adyen provides its own point-of-sale service, including payment terminals and infrastructure. Merchants that also accept payments online or in-app can use Adyen as their omnichannel payment solution . This gives them a single reporting dashboard, where they can view all purchases.
+Often the terms POS app and cash register are used to denote the software collecting point-of-sale payments.
+
+## Point-of-sale Entry Mode
+## Point-of-sale payments (or In-person payments)
+## Point-to-Point Encryption (P2PE)
+Secures card data that is being communicated from point A to point B.
+
+## POS app
+An application used at the point of sale that allows product selection and that calculates the total amount to be charged from a cardholder . Additional functionality can include loyalty handling, stock keeping, and so on. This term is often used interchangeably with cash register .
+The POS app can run on a physical machine, or can be hosted in combination with an interface for the staff or customer (in kiosks). To initiate payments, the POS app communicates with the Adyen Terminal API . The POS app is part of a POS system that includes hardware components like a receipt printer, barcode scanner, cash drawer, and payment terminals.
+
+## Recurring payments
+Adyen, as a PCI-compliant payment processor , can securely store payment details to enable recurring payments. For this, merchants must enable the recurring contract in the first authorisation call to the Adyen payments platform. In response, they get a token that uniquely corresponds to a specific customer and their payment data.
+When recurring payments are enabled, a merchant can use this token in the future. For this, a merchant passes the token along with the authorisation call every time a customer should be charged for a subscription , initiates a card-on-file payment , or initiates an unscheduled card-on-file payment .
+Stored card details become outdated over time as cards expire or are cancelled. To minimize this disruption, use Adyen Account Updater to ensure that you have the most up-to-date card information, enabling you to provide continuous subscription services.
+
+## Refund
+When a customer cancels the purchase of a product or service, after they have paid. When the merchant makes the refund, the funds are sent back from the acquirer to the issuer . If an authorised payment hasn't been captured yet, a merchant can cancel the payment ; in other cases a refund is possible.
+If a merchant refuses to make a refund, a customer can ask their issuer to make a chargeback . In some cases, a merchant is allowed to dispute a chargeback.
+Refunds are also referred to as a modification , because they modify the state of an authorised payment request.
+
+## Sensitive Authentication Data
+Security-related information that is used to authenticate cardholders and/or authorize payment card transactions. This can include card validation codes/values, full track data from the magnetic stripe or chip, PINs, PIN blocks, and more.
+See also: Card security code (CVC, CVV, CID) .
+
+## Signature
+Depending on the Merchant's business model the accepted POS Entry Modes and CVM's can be configured to only consist of a subset of the above.
+
+## Sub-merchant
+A merchant who is onboarded to an acquirer through a payment facilitator . The payment facilitator processes all of the sub-merchant's transactions.
+
+## Tender
+In the context of payment terminals at Adyen, the tender is the entire process for the POS app to start the transaction , receive card information, make optional changes to the amount, await authorization , print the receipt, and receive a final status. This entire process is accompanied by a reference for the tender: the tenderReference .
+
+## Tokenization
+Tokenization is the process of replacing sensitive data with non-sensitive data (known as a token), which can be later used to get access to the initial (tokenized) data. In the payments industry, it is used to safeguard a card number and other payment data by replacing it with a unique string of numbers. This string can be used later to implement recurring payments .
+Together with Client-Side Encryption , tokenization enables merchants to securely pass their customers' data to a payment service provide.
+
+## Transaction (or Tx)
+In the payments industry, the term "transaction" is used to indicate exchanging of a specified amount of funds from a customer for purchasing products or services from a merchant , or for fulfilling any other obligations between the two parties.
+Funds are usually transferred by means of card payments or local payment methods (bank transfers, e-wallets, mobile payments, etc.).
+Tx is a commonly used abbreviation to denote a financial transaction.
+
+## Webhooks
+Webhooks are HTTP callbacks sent to an endpoint on your server. They inform you about authorised , captured and modified payments, as well as other events.
+Webhooks are crucial for a successful integration with Adyen. You can use webhooks to automate business processes, for example order management or downloading reports for accounting.
+For more information, refer to Webhooks .

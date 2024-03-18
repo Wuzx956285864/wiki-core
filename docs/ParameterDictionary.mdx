@@ -1,0 +1,78 @@
+# Reference
+
+## TransStatus {#transstatus}
+
+| Key \ width:25%; \ | Description \ width:75%; \ |
+|--------------------|----------------------------|
+| 9                  | Created                    |
+| 0                  | Processing                 |
+| 1                  | Closed                     |
+| 2                  | Completed                  |
+| 3                  | Cancelled                  |
+
+## PayMethod {#paymethod}
+
+| Key \ width:25%; \ | Description \ width:75%; \                                                                                                                                         |
+|--------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| Visa               | Visa                                                                                                                                                               |
+| MasterCard         | MasterCard                                                                                                                                                         |
+| Amex               | AmericanExpress                                                                                                                                                    |
+| Discover           | Discover Card                                                                                                                                                      |
+| JCB                | Japan Credit Bureau                                                                                                                                                |
+| DinnersClub        | DinnersClub                                                                                                                                                        |
+| Alipay+            | Alipay+, which is not the same product as Alipay, is an aggregated payment product that supports AlipayCN, but also AlipayHK, GCash, TNG and other Alipay wallets. |
+| Alipay             | Alipay(By default, please use Alipay+. To use Alipay, you need to contact the merchant to support a separate subscription)                                         |
+| WeChatPay          | Tencent's mobile payment wallet in Shenzhen, China                                                                                                                 |
+| UnionPay           | China UnionPay bank card and mobile phone payment                                                                                                                  |
+
+## TransType {#transtype}
+
+| Key \ width:25%; \ | Description \ width:75%; \ |
+|--------------------|----------------------------|
+| Key                | Description                |
+| 1                  | Sale                       |
+| 2                  | Void                       |
+| 3                  | Refund                     |
+| 4                  | Authorization              |
+| 6                  | Completion                 |
+| 11                 | Cashback                   |
+
+## TerminalType {#terminaltype}
+
+| Key \ width:25%; \ | Description \ width:75%; \                                                          |
+|--------------------|-------------------------------------------------------------------------------------|
+| Key                | Description                                                                         |
+| WEB                | The type of end-use application on the merchant's end is a computerized website     |
+| WAP                | The type of end-use application on the merchant's end is an H5 page on a cell phone |
+## OsType {#ostype}
+
+| Key \ width:25%; \ | Description \ width:75%; \ |
+|--------------------|----------------------------|
+| ANDROID            | Android                    |
+| IOS                | IOS                        |
+
+## PayScenario {#payscenario}
+
+| Key \ width:25%; \ | Description \ width:75%; \ |
+|--------------------|----------------------------|
+| SWIPE_CARD         | Offline bankcard payment   |
+| BSCANQR_PAY        | QR Pay(Customer-presented) |
+| SCANQR_PAY         | QR Pay(Merchant-presented) |
+| WAP_PAY            | Wap Payment                |
+| WEB_PAY            | PC Web Payment             |
+
+## Language {#language}
+
+| Key \ width:25%; \ | Description \ width:75%; \ |
+|--------------------|----------------------------|
+| en-US              | American English           |
+| zh-CN              | Simplified Chinese         |
+
+## CardType {#cardtype}
+
+| Key \ width:25%; \ | Description \ width:75%; \ |
+|--------------------|----------------------------|
+| 1                  | Debit card                 |
+| 2                  | Credit card                |
+| 3                  | Ebt card                   |
+| 4                  | Gift card                  |

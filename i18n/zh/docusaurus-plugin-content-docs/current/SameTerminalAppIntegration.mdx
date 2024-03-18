@@ -1,0 +1,643 @@
+import ImageZoom from "@site/src/components/ImageZoom";
+import sameTermInteImg from "@site/static/img/Same-terminalIntegrationOverview2.png";
+import workflowA from "@site/static/img/WorkflowA.png";
+import integrationMethod from "@site/static/img/IntegrationMethod.png";
+
+# 终端内应用集成
+
+## 1. 简介
+
+商家的 POS 应用程序运行在同一个支付终端上时，可以通过 **CodePay Register** 的支付集成API 拉起结账组件来完成付款。
+<ImageZoom src={sameTermInteImg} />
+
+
+### 1.1 典型处理流程
+
+<ImageZoom src={workflowA} />
+
+1. POS 应用程序向 CodePay Register 发送订单信息（包括订单号、金额），以拉取支付结账组件。
+2. CodePay Register 的结账组件收集银行卡信息/移动钱包用户支付凭证并安全地进行处理，然后将其与交易数据中的订单信息合并，并向 CodePay Gateway 发送支付请求。
+3. CodePay Gateway 处理交易数据包并发送到Processor的支付平台或收单系统。
+4. Processor的支付平台或收单系统向 CodePay Gateway 响应结果。
+5. CodePay Gateway 向 CodePay Register 应用程序响应交易结果。
+6. CodePay Register 应用程序向 POS 应用程序返回交易结果。
+
+### 1.2 集成方式
+
+POS 应用程序使用 <a href = "https://developer.android.com/reference/android/content/Intent">Android Intent</a> 方式与 CodePay Register 应用程序进行交互。以下图表显示了这两个应用程序之间的交互。
+
+<ImageZoom src={integrationMethod} />
+
+1. 第三方POS应用程序调用 "startActivityForResult" 函数来调用 CodePay Register应用程序。
+2. CodePay Register应用程序解析来自 POS 应用程序的捆绑数据，然后处理交易。
+3. 然后，CodePay Register应用程序在交易完成后调用 "setResult" 函数并 "finish" 自己的 Activity。
+4. POS 应用程序通过 "onActivityResult" 事件接收交易结果。
+
+
+## 2. 交易API
+
+本文根据以下约定每个参数字段的必要性。
+- M：必要参数
+- C：在满足某些条件时，是必要参数
+- O：可选参数
+- -：不存在
+
+### 2.1 消费（Sale）
+
+销售交易指持卡人从商户处购买商品或服务时进行的支付操作。交易金额从持卡人账户中扣除，转入到商户账户。
+
+#### 2.1.1 报文参数
+
+| 参数名  \ width:20%; \ | 类型  \ width:10%; \ | 长度 \ width:10%; \ | 请求 \ width:10%; \ | 响应 \ width:10%; \ | 说明   \ width:40%; \                                                                       |
+|:--------------------|:-------------------|:------------------|:------------------|:------------------|:------------------------------------------------------------------------------------------|
+| version             | String             |                   | M                 | M                 | API 版本，固定值 "1.1"                                                                          |
+| transType           | String             |                   | M                 | M                 | 消费交易的类型代码，固定值 **01**                                                                      |
+| appId               | String             | 18                | M                 | -                 | 在 Codepay 网关中注册的支付应用程序 ID，请参阅 <a href = "/GatewayOverview" target = "_blank">支付网关集成指南</a> |
+| transData           | JSON               |                   | M                 | C                 |                                                                                           |
+| result              | String             |                   | -                 | M                 | 请参阅附录 - <a href = "SameTerminalAppIntegration#31--transaction-result-code">交易结果代码</a>     |
+| resultMsg           | String             |                   | -                 | C                 | 结果消息                                                                                      |
+
+**transData 字段**
+
+| 参数名  \ width:20%; \ | 类型  \ width:10%; \ | 长度 \ width:10%; \ | 请求 \ width:10%; \ | 响应 \ width:10%; \ | 说明   \ width:40%; \                                                                                                                      |
+|:--------------------|:-------------------|:------------------|:------------------|:------------------|:-----------------------------------------------------------------------------------------------------------------------------------------|
+| businessOrderNo     | String             |                   | M                 | M                 | 商家的POS应用程序或业务系统的订单号码，必须在其系统中是唯一的                                                                                                         |
+| paymentScenario     | String             |                   | M                 | M                 | 支付场景 <br />1 -  刷卡支付 <br /> 2 -  现金支付 <br /> 3 - 二维码支付，商家出示二维码，顾客扫描 <br /> 4 - 二维码支付，顾客出示二维码，商家扫描                                        |
+| paymentMethod       | String             |                   | C                 | M                 | 支付方式。仅当“paymentScenario”设置为“3”或“4”时，该字段才是必填项. <br /> 请参考 <a href = "PosIntegratesrReference#2-payment-method" target = "_blank">支付方式</a> |
+| cardType            | String             |                   | C                 | -                 | 当“paymentScenario”字段设置为“1”时，该字段是必填项。 <br /> 1 - DEBIT_CARD <br /> 2 - CREDIT_CARD <br /> 3 - EBT_CARD <br /> 4 - GIFT_CARD               |
+| amt                 | String             | 12                | M                 | M                 | 订单金额                                                                                                                                     |
+| tip                 | String             | 12                | O                 | O                 | 小费金额                                                                                                                                     |
+| transDate           | String             | 8                 | -                 | M                 | 交易日期，格式：YYYYMMDD                                                                                                                         |
+| transTime           | String             | 6                 | -                 | M                 | 交易时间，格式：HHMMSS                                                                                                                           |
+| operator            | String             | 4                 | -                 | O                 | 操作员的工号                                                                                                                                   |
+| authCode            | String             | 6                 | -                 | C                 | 授权码。该字段在信用卡交易时返回值。                                                                                                                       |
+| refNo               | String             | 12                | -                 | C                 | 检索参考号码。该字段在信用卡交易时返回值。                                                                                                                    |
+| cardNo              | String             | 19                | -                 | C                 | 卡号，已根据 PCI 规范进行掩码处理。 <br /> 示例：430277****5723. 该字段在卡付交易时返回值。                                                                             |
+| entryMode           | String             | 2                 | -                 | O                 | 该字段在信用卡交易时返回值： <br /> 1 - 刷卡磁条卡 <br /> 2 - 接触式芯片卡 <br /> 3 - 非接触式芯片卡 <br /> 4 - 手动输入                                                     |
+| transactionID       | String             | 32                | -                 | M                 | CodePay 网关的交易 ID。                                                                                                                        |
+| note                | String             | 128               | O                 | -                 | 订单备注信息                                                                                                                                   |
+
+#### 2.1.2 示例代码
+
+```java
+Intent intent = new Intent();
+intent.setAction("com.codepay.transaction.call");
+intent.putExtra("version", "1.0");
+intent.putExtra("appId", "{YOUR_APP_ID}");
+intent.putExtra("transType", "01"); // Sale transaction
+JSONObject jsonObject = new JSONObject();
+try {
+   jsonObject.put("businessOrderNo","202202222222");
+   jsonObject.put("paymentScenario","1"); //Card payment
+   jsonObject.put("cardType", "1") //Debit
+   jsonObject.put("amt","2.15");
+   intent.putExtra("transData", jsonObject.toString());
+} catch (JSONException e) {
+   e.printStackTrace();
+}
+startActivityForResult(intent, 1);
+
+@Override
+protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+   String result = data.getStringExtra("result");
+   String resultMsg = data.getStringExtra("resultMsg");
+   String transData = data.getStringExtra("transData");
+   if (result.equals("00")){
+       try {
+           JSONObject jsonObject = new JSONObject(transData);
+           String amount = jsonObject.getString("amt");
+       }catch(JSONException e){
+           e.printStackTrace();
+       }
+   }
+}
+```
+
+### 2.2 撤销（Void）
+
+撤销交易通常是指在交易完成后的短时间内，商家因某种原因（例如商家错误、顾客改变主意等）需要取消交易。
+- 撤销通常必须在交易当日且在批结算之前进行。
+- 成功撤销后，原交易金额将退还给持卡人的账户，就像交易从未发生过一样。
+- 撤销通常需要原始交易凭证或相关信息才能进行操作。
+
+#### 2.2.1 Message
+
+| 参数名  \ width:20%; \ | 类型  \ width:10%; \ | 长度 \ width:10%; \ | 请求 \ width:10%; \ | 响应 \ width:10%; \ | 说明   \ width:40%; \                                                                       |
+|:--------------------|:-------------------|:------------------|:------------------|:------------------|:------------------------------------------------------------------------------------------|
+| version             | String             |                   | M                 | M                 | API 版本，固定值“1.1”                                                                           |
+| transType           | String             |                   | M                 | M                 | 撤销交易的类型代码，固定值 <font color = "red">**02**</font>                                           |
+| appId               | String             | 18                | M                 | -                 | 在 Codepay 网关注册的支付应用程序 ID, 请参阅 <a href = "/GatewayOverview" target = "_blank">支付网关集成指南</a> |
+| transData           | JSON               |                   | M                 | C                 |                                                                                           |
+| result              | String             |                   | -                 | M                 | 请参阅附录 - <a href = "SameTerminalAppIntegration#31--transaction-result-code">交易结果代码</a>     |
+| resultMsg           | String             |                   | -                 | C                 | 结果消息                                                                                      |
+
+**transData field**
+
+| 参数名  \ width:20%; \   | 类型  \ width:10%; \ | 长度 \ width:10%; \ | 请求 \ width:10%; \ | 响应 \ width:10%; \ | 说明   \ width:40%; \                                                                   |
+|:----------------------|:-------------------|:------------------|:------------------|:------------------|:--------------------------------------------------------------------------------------|
+| originBusinessOrderNo | String             |                   | M                 | M                 | 原始消费交易的订单号                                                                            |
+| businessOrderNo       | String             |                   | M                 | M                 | 商家的POS应用程序或业务系统的订单号码，必须在其系统中是唯一的                                                      |
+| paymentMethod         | String             |                   | -                 | M                 | 请参考 <a href = "PosIntegratesrReference#2-payment-method" target = "_blank">支付方式</a>   |
+| amt                   | String             | 12                | -                 | M                 | 订单金额                                                                                  |
+| tip                   | String             | 12                | -                 | O                 | 小费金额                                                                                  |
+| transDate             | String             | 8                 | -                 | M                 | 交易日期，格式：YYYYMMDD                                                                      |
+| transTime             | String             | 6                 | -                 | M                 | 交易时间，格式：HHMMSS                                                                        |
+| operator              | String             | 4                 | -                 | O                 | 操作员的工号                                                                                |
+| authCode              | String             | 6                 | -                 | M                 | A授权码，该字段在信用卡交易时返回值                                                                    |
+| refNo                 | String             | 12                | -                 | M                 | 检索参考号码，该字段在信用卡交易时返回值                                                                  |
+| cardNo                | String             | 19                | -                 | M                 | 卡号，已根据 PCI 规范进行掩码处理。 示例：430277****5723. 该字段在卡付交易时返回值                                  |
+| entryMode             | String             | 2                 | -                 | O                 | 该字段在信用卡交易时返回值： <br /> 1 -  刷卡磁条卡 <br /> 2 - 接触式芯片卡 <br /> 3 - 非接触式芯片卡 <br /> 4 - 手动输入 |
+| transactionID         | String             | 32                | -                 | M                 | CodePay 网关的交易 ID                                                                      |
+
+#### 2.2.2 示例代码
+
+```java
+Intent intent = new Intent();
+intent.setAction("com.codepay.transaction.call");
+intent.putExtra("version", "1.0");
+intent.putExtra("appId", "{YOUR_APP_ID}");
+intent.putExtra("transType", "02"); // Void transaction
+JSONObject jsonObject = new JSONObject();
+try {
+   jsonObject.put("originBusinessOrderNo","202202222222");
+   jsonObject.put("businessOrderNo","202202222233"); 
+   intent.putExtra("transData", jsonObject.toString());
+} catch (JSONException e) {
+   e.printStackTrace();
+}
+startActivityForResult(intent, 1);
+
+@Override
+protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+   String result = data.getStringExtra("result");
+   String resultMsg = data.getStringExtra("resultMsg");
+   String transData = data.getStringExtra("transData");
+   if (result.equals("00")){
+       try {
+           JSONObject jsonObject = new JSONObject(transData);
+           String amount = jsonObject.getString("amt");
+       }catch(JSONException e){
+           e.printStackTrace();
+       }
+   }
+}
+```
+
+### 2.3 退款（Refund）
+
+退款交易是指持卡人因某种原因（例如物品有问题、对服务不满意等）需要退回物品或取消服务，在交易清算后要求将支付的金额退回到信用卡账户的过程。
+- 退款可能发生在交易当天，也可能在几天或更久之后。
+- 退款通常需要持卡人提供购买凭证和退款原因，商家审核后退款将适当金额退回到持卡人的信用卡账户。
+
+#### 2.3.1 报文参数
+
+| 参数名  \ width:20%; \ | 类型  \ width:10%; \ | 长度 \ width:10%; \ | 请求 \ width:10%; \ | 响应 \ width:10%; \ | 说明   \ width:40%; \                                                                      |
+|:--------------------|:-------------------|:------------------|:------------------|:------------------|:-----------------------------------------------------------------------------------------|
+| version             | String             |                   | M                 | M                 | API 版本，固定值“1.1”                                                                          |
+| transType           | String             |                   | M                 | M                 | 退款交易的类型代码，固定值 <font color = "red">**03**</font>                                          |
+| appId               | String             | 18                | M                 | -                 | 在 Codepay 网关注册的支付应用程序 ID，请参阅 <a href = "/GatewayOverview" target = "_blank">支付网关集成指南</a> |
+| transData           | JSON               |                   | M                 | C                 |                                                                                          |
+| result              | String             |                   | -                 | M                 | 请参阅附录 - <a href = "SameTerminalAppIntegration#31--transaction-result-code">交易结果代码</a>    |
+| resultMsg           | String             |                   | -                 | C                 | 结果消息                                                                                     |
+
+**transData 字段**
+
+| 参数名  \ width:20%; \   | 类型  \ width:10%; \ | 长度 \ width:10%; \ | 请求 \ width:10%; \ | 响应 \ width:10%; \ | 说明   \ width:40%; \                                                                                                        |
+|:----------------------|:-------------------|:------------------|:------------------|:------------------|:---------------------------------------------------------------------------------------------------------------------------|
+| originBusinessOrderNo | String             |                   | C                 | C                 | 原始消费交易或授权完成交易的订单号                                                                                                          |
+| businessOrderNo       | String             |                   | M                 | M                 | 商家的POS应用程序或业务系统的订单号码，必须在其系统中是唯一的                                                                                           |
+| paymentScenario       | String             |                   | M                 | M                 | 支付场景 <br /> 1 - 刷卡支付 <br /> 2 - 现金支付 <br /> 3 - 二维码支付，商家出示二维码，顾客扫描 <br /> 4 - 二维码支付，顾客出示二维码，商家扫描                           |
+| paymentMethod         | String             |                   | -                 | M                 | 请参考 <a href = "PosIntegratesrReference#2-payment-method" target = "_blank">支付方式</a>                                        |
+| cardType              | String             |                   | C                 | -                 | 当“paymentScenario”字段设置为“1”时，该字段是必填项。 <br /> 1 - DEBIT_CARD <br /> 2 - CREDIT_CARD <br /> 3 - EBT_CARD <br /> 4 - GIFT_CARD |
+| amt                   | String             | 12                | M                 | M                 | 退款订单金额                                                                                                                     |
+| tip                   | String             | 12                | O                 | O                 | 小费金额                                                                                                                       |
+| transDate             | String             | 8                 | -                 | M                 | 交易日期，格式：YYYYMMDD                                                                                                           |
+| transTime             | String             | 6                 | -                 | M                 | 交易时间，格式：HHMMSS                                                                                                             |
+| operator              | String             | 4                 | -                 | O                 | 操作员的工号                                                                                                                     |
+| authCode              | String             | 6                 | -                 | C                 | 授权码，该字段在信用卡交易时返回值                                                                                                          |
+| refNo                 | String             | 12                | -                 | C                 | 检索参考号码，该字段在信用卡交易时返回值                                                                                                       |
+| cardNo                | String             | 19                | -                 | C                 | 卡号，已根据 PCI 规范进行掩码处理。 示例：430277****5723. 该字段在卡付交易时返回值                                                                       |
+| entryMode             | String             | 2                 | -                 | O                 | 该字段在信用卡交易时返回值：<br /> 1 -  刷卡磁条卡 <br /> 2 -  接触式芯片卡 <br /> 3 - 非接触式芯片卡 <br /> 4 - 手动输入                                      |
+| transactionID         | String             | 32                | -                 | M                 | CodePay 网关的交易 ID                                                                                                           |
+
+#### 2.3.2 示例代码
+
+```java
+Intent intent = new Intent();
+intent.setAction("com.codepay.transaction.call");
+intent.putExtra("version", "1.0");
+intent.putExtra("appId", "{YOUR_APP_ID}");
+intent.putExtra("transType", "03"); // Refund transaction
+JSONObject jsonObject = new JSONObject();
+try {
+   jsonObject.put("originBusinessOrderNo","202202222222");
+   jsonObject.put("businessOrderNo","202202222233");
+   jsonObject.put("paymentScenario","1");//Card payment
+   jsonObject.put("amt","1.2");
+   intent.putExtra("transData", jsonObject.toString());
+} catch (JSONException e) {
+   e.printStackTrace();
+}
+startActivityForResult(intent, 1);
+
+@Override
+protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+   String result = data.getStringExtra("result");
+   String resultMsg = data.getStringExtra("resultMsg");
+   String transData = data.getStringExtra("transData");
+   if (result.equals("00")){
+       try {
+           JSONObject jsonObject = new JSONObject(transData);
+           String amount = jsonObject.getString("amt");
+       }catch(JSONException e){
+           e.printStackTrace();
+       }
+   }
+}
+```
+
+### 2.4 授权（Authorization）
+
+授权交易是一种卡片交易授权类型，商家可以通过该授权确保交易金额在客户账户中冻结或保留，直到交易完成。
+在授权阶段，商家向客户的银行请求特定金额的授权，如果客户的账户中有足够的可用余额或信用额度，则会暂时冻结该金额。这意味着该金额尚未实际扣除，但客户在此期间不能将资金用于其他购买。
+授权通常用于最终交易金额不确定的情况，例如住宿服务、租赁服务、无人值守自助服务等。
+
+#### 2.4.1 报文参数
+
+| 参数名  \ width:20%; \ | 类型  \ width:10%; \ | 长度 \ width:10%; \ | 请求 \ width:10%; \ | 响应 \ width:10%; \ | 说明   \ width:40%; \                                                                      |
+|:--------------------|:-------------------|:------------------|:------------------|:------------------|:-----------------------------------------------------------------------------------------|
+| version             | String             |                   | M                 | M                 | API 版本，固定值“1.1”                                                                          |
+| transType           | String             |                   | M                 | M                 | 授权交易的类型代码，固定值 <font color = "red">**04**</font>                                          |
+| appId               | String             | 18                | M                 | -                 | 在 Codepay 网关注册的支付应用程序 ID，请参阅 <a href = "/GatewayOverview" target = "_blank">支付网关集成指南</a> |
+| transData           | JSON               |                   | M                 | C                 |                                                                                          |
+| result              | String             |                   | -                 | M                 | 请参阅附录 - <a href = "SameTerminalAppIntegration#31--transaction-result-code">交易结果代码</a>    |
+| resultMsg           | String             |                   | -                 | C                 | 结果消息                                                                                     |
+
+**transData 字段**
+
+| 参数名  \ width:20%; \ | 类型  \ width:10%; \ | 长度 \ width:10%; \ | 请求 \ width:10%; \ | 响应 \ width:10%; \ | 说明   \ width:40%; \                                                                   |
+|:--------------------|:-------------------|:------------------|:------------------|:------------------|:--------------------------------------------------------------------------------------|
+| businessOrderNo     | String             |                   | M                 | M                 | 商家的POS应用程序或业务系统的订单号码，必须在其系统中是唯一的                                                      |
+| paymentMethod       | String             |                   | -                 | M                 | 请参考 <a href = "PosIntegratesrReference#2-payment-method" target = "_blank">支付方式</a>   |
+| cardType            | String             |                   | M                 | -                 | 1 -- DEBIT_CARD <br /> 2 -- CREDIT_CARD <br /> 3 -- EBT_CARD <br /> 4 -- GIFT_CARD    |
+| amt                 | String             | 12                | M                 | M                 | 订单金额                                                                                  |
+| transDate           | String             | 8                 | -                 | M                 | 交易日期，格式：YYYYMMDD                                                                      |
+| transTime           | String             | 6                 | -                 | M                 | 交易时间，格式：HHMMSS                                                                        |
+| operator            | String             | 4                 | -                 | O                 | 操作员的工号                                                                                |
+| authCode            | String             | 6                 | -                 | M                 | 授权码，该字段在信用卡交易时返回值                                                                     |
+| refNo               | String             | 12                | -                 | M                 | 检索参考号码，该字段在信用卡交易时返回值                                                                  |
+| cardNo              | String             | 19                | -                 | M                 | 卡号，已根据 PCI 规范进行掩码处理。 示例：430277****5723. 该字段在卡付交易时返回值                                  |
+| entryMode           | String             | 2                 | -                 | O                 | 该字段在信用卡交易时返回值： <br /> 1 -  刷卡磁条卡 <br /> 2 - 接触式芯片卡 <br /> 3 - 非接触式芯片卡 <br /> 4 - 手动输入 |
+| transactionID       | String             | 32                | -                 | M                 | CodePay 网关的交易 ID                                                                      |
+
+#### 2.4.2 示例代码
+
+```java
+Intent intent = new Intent();
+intent.setAction("com.codepay.transaction.call");
+intent.putExtra("version", "1.0");
+intent.putExtra("appId", "{YOUR_APP_ID}");
+intent.putExtra("transType", "04"); // Authorization transaction
+JSONObject jsonObject = new JSONObject();
+try {
+   jsonObject.put("businessOrderNo","202202222222");
+   jsonObject.put("cardType","1");//DEBIT_CARD
+   jsonObject.put("amt","1.2");
+   intent.putExtra("transData", jsonObject.toString());
+} catch (JSONException e) {
+   e.printStackTrace();
+}
+startActivityForResult(intent, 1);
+
+@Override
+protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+   String result = data.getStringExtra("result");
+   String resultMsg = data.getStringExtra("resultMsg");
+   String transData = data.getStringExtra("transData");
+   if (result.equals("00")){
+       try {
+           JSONObject jsonObject = new JSONObject(transData);
+           String amount = jsonObject.getString("amt");
+       }catch(JSONException e){
+           e.printStackTrace();
+       }
+   }
+}
+```
+
+### 2.5 完成（Completion）
+
+完成交易是指在授权后，当服务或商品的实际消费完成并最终确定金额时，请求商家正式从客户的账户中扣除先前授权的金额的过程。这一步是对授权的后续行动，确保商家收到付款。
+例如，当顾客在住宿结束时结账离开酒店时，酒店将比较先前授权的金额与实际花费的金额；如果实际花费的金额较高，酒店将请求额外授权以弥补差额；如果实际花费的金额较低，则只会扣除实际花费的金额，授权金额的余额将退回到客户的账户中。
+
+#### 2.5.1 报文参数
+
+| 参数名  \ width:20%; \ | 类型  \ width:10%; \ | 长度 \ width:10%; \ | 请求 \ width:10%; \ | 响应 \ width:10%; \ | 说明   \ width:40%; \                                                                      |
+|:--------------------|:-------------------|:------------------|:------------------|:------------------|:-----------------------------------------------------------------------------------------|
+| version             | String             |                   | M                 | M                 | API 版本，固定值“1.1”                                                                          |
+| transType           | String             |                   | M                 | M                 | 授权完成交易的类型代码，固定值 <font color = "red">**06**</font>                                        |
+| appId               | String             | 18                | M                 | -                 | 在 Codepay 网关注册的支付应用程序 ID，请参阅 <a href = "/GatewayOverview" target = "_blank">支付网关集成指南</a> |
+| transData           | JSON               |                   | M                 | C                 |                                                                                          |
+| result              | String             |                   | -                 | M                 | 请参阅附录 - <a href = "SameTerminalAppIntegration#31--transaction-result-code">交易结果代码</a>    |
+| resultMsg           | String             |                   | -                 | C                 | 结果消息                                                                                     |
+
+**transData 字段**
+
+| 参数名  \ width:20%; \   | 类型  \ width:10%; \ | 长度 \ width:10%; \ | 请求 \ width:10%; \ | 响应 \ width:10%; \ | 说明   \ width:40%; \                                                                   |
+|:----------------------|:-------------------|:------------------|:------------------|:------------------|:--------------------------------------------------------------------------------------|
+| originBusinessOrderNo | String             | 12                | M                 | -                 | 原始授权交易的订单号                                                                            |
+| businessOrderNo       | String             |                   | M                 | M                 | 商家的POS应用程序或业务系统的订单号码，必须在其系统中是唯一的                                                      |
+| paymentMethod         | String             |                   | -                 | M                 | 请参考 <a href = "PosIntegratesrReference#2-payment-method" target = "_blank">支付方式</a>   |
+| amt                   | String             | 12                | M                 | M                 | 授权确认金额。最终支付金额以及授权期间的任何多余金额将退还至客户账户                                                    |
+| transDate             | String             | 8                 | -                 | M                 | 交易日期，格式：YYYYMMDD                                                                      |
+| transTime             | String             | 6                 | -                 | M                 | 交易时间，格式：HHMMSS                                                                        |
+| operator              | String             | 4                 | -                 | O                 | 操作员工号                                                                                 |
+| authCode              | String             | 6                 | -                 | M                 | 授权码，该字段在信用卡交易时返回值                                                                     |
+| refNo                 | String             | 12                | -                 | M                 | 检索参考号码，该字段在信用卡交易时返回值                                                                  |
+| cardNo                | String             | 19                | -                 | M                 | 卡号，已根据 PCI 规范进行掩码处理。 示例：430277****5723.                                               |
+| entryMode             | String             | 2                 | -                 | O                 | 该字段在信用卡交易时返回值： <br /> 1 - 刷卡磁条卡 <br /> 2 - 接触式芯片卡 <br /> 3 - 非接触式芯片卡d <br /> 4 - 手动输入 |
+| transactionID         | String             | 32                | -                 | M                 | CodePay 网关的交易 ID                                                                      |
+
+#### 2.5.2 示例代码
+
+```java
+Intent intent = new Intent();
+intent.setAction("com.codepay.transaction.call");
+intent.putExtra("version", "1.0");
+intent.putExtra("appId", "{YOUR_APP_ID}");
+intent.putExtra("transType", "06"); // Authorization Completion transaction
+JSONObject jsonObject = new JSONObject();
+try {
+   jsonObject.put("originBusinessOrderNo","202202222233");
+   jsonObject.put("businessOrderNo","202202222222");
+   jsonObject.put("amt","1.2");
+   intent.putExtra("transData", jsonObject.toString());
+} catch (JSONException e) {
+   e.printStackTrace();
+}
+startActivityForResult(intent, 1);
+
+@Override
+protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+   String result = data.getStringExtra("result");
+   String resultMsg = data.getStringExtra("resultMsg");
+   String transData = data.getStringExtra("transData");
+   if (result.equals("00")){
+       try {
+           JSONObject jsonObject = new JSONObject(transData);
+           String amount = jsonObject.getString("amt");
+       }catch(JSONException e){
+           e.printStackTrace();
+       }
+   }
+}
+```
+
+### 2.6 返现（Sale with Cashback）
+
+“消费返现”通常用于银行卡交易，指的是客户在使用借记卡支付购买商品或服务的费用时，除了商品或服务的成本外，还可以从银行账户中请求额外的现金。这项服务通常可以在零售店或超市的收银台找到，客户可以在结账时选择此选项，从而避免去银行或自动取款机提取现金的麻烦。
+
+例如，如果你在杂货店花费 50 美元并想要 20 美元现金，你可以请求进行 70 美元的交易，其中 50 美元支付给超市，剩下的 20 美元以现金形式退还给你。此交易可能会在你的银行账户记录中显示为“消费返现”，总额为 70 美元。
+
+#### 2.6.1 报文参数
+
+| 参数名  \ width:20%; \ | 类型  \ width:10%; \ | 长度 \ width:10%; \ | 请求 \ width:10%; \ | 响应 \ width:10%; \ | 说明   \ width:40%; \                                                                      |
+|:--------------------|:-------------------|:------------------|:------------------|:------------------|:-----------------------------------------------------------------------------------------|
+| version             | String             |                   | M                 | M                 | API 版本，固定值“1.1”                                                                          |
+| transType           | String             |                   | M                 | M                 | 消费返现交易的类型代码，固定值 <font color = "red">**11**</font>                                        |
+| appId               | String             | 18                | M                 | -                 | 在 Codepay 网关注册的支付应用程序 ID，请参阅 <a href = "/GatewayOverview" target = "_blank">支付网关集成指南</a> |
+| transData           | JSON               |                   | M                 | C                 |                                                                                          |
+| result              | String             |                   | -                 | M                 | 请参阅附录 - <a href = "SameTerminalAppIntegration#31--transaction-result-code">交易结果代码</a>    |
+| resultMsg           | String             |                   | -                 | C                 | 结果消息                                                                                     |
+
+**transData 字段**
+
+| 参数名  \ width:20%; \ | 类型  \ width:10%; \ | 长度 \ width:10%; \ | 请求 \ width:10%; \ | 响应 \ width:10%; \ | 说明   \ width:40%; \                                                                    |
+|:--------------------|:-------------------|:------------------|:------------------|:------------------|:---------------------------------------------------------------------------------------|
+| businessOrderNo     | String             |                   | M                 | M                 | 商家的POS应用程序或业务系统的订单号码，必须在其系统中是唯一的                                                       |
+| paymentMethod       | String             |                   | -                 | M                 | 请参考 <a href = "PosIntegratesrReference#2-payment-method" target = "_blank">支付方式</a>    |
+| cardType            | String             |                   | M                 | -                 | 卡类型。1 -- DEBIT_CARD <br /> 2 -- CREDIT_CARD <br /> 3 -- EBT_CARD <br /> 4 -- GIFT_CARD |
+| amt                 | String             | 12                | M                 | M                 | 订单金额                                                                                   |
+| cashAmount          | String             | 12                | M                 | M                 | 返现金额                                                                                   |
+| tip                 | String             | 12                | O                 | O                 | 小费金额                                                                                   |
+| transDate           | String             | 8                 | -                 | M                 | 交易日期，格式：YYYYMMDD                                                                       |
+| transTime           | String             | 6                 | -                 | M                 | 交易时间，格式：HHMMSS                                                                         |
+| operator            | String             | 4                 | -                 | O                 | 操作员的工号                                                                                 |
+| authCode            | String             | 6                 | -                 | M                 | 授权码，该字段在信用卡交易时返回值                                                                      |
+| refNo               | String             | 12                | -                 | M                 | 检索参考号码，该字段在信用卡交易时返回值                                                                   |
+| cardNo              | String             | 19                | -                 | M                 | 卡号，已根据 PCI 规范进行掩码处理。 示例：430277****5723. 该字段在卡付交易时返回值                                   |
+| entryMode           | String             | 2                 | -                 | O                 | 该字段在信用卡交易时返回值： <br /> 1 - 刷卡磁条卡 <br /> 2 - 接触式芯片卡 <br /> 3 - 非接触式芯片卡 <br /> 4 - 手动输入   |
+| transactionID       | String             | 32                | -                 | M                 | CodePay 网关的交易 ID                                                                       |
+
+#### 2.6.2 示例代码
+
+```java
+Intent intent = new Intent();
+intent.setAction("com.codepay.transaction.call");
+intent.putExtra("version", "1.0");
+intent.putExtra("appId", "{YOUR_APP_ID}");
+intent.putExtra("transType", "11"); // Cashback transaction
+JSONObject jsonObject = new JSONObject();
+try {
+   jsonObject.put("businessOrderNo","202202222222");
+   jsonObject.put("cardType","1");//Debit
+   jsonObject.put("amt","10.2");
+   jsonObject.put("cashAmount","1.2");
+   intent.putExtra("transData", jsonObject.toString());
+} catch (JSONException e) {
+   e.printStackTrace();
+}
+startActivityForResult(intent, 1);
+
+@Override
+protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+   String result = data.getStringExtra("result");
+   String resultMsg = data.getStringExtra("resultMsg");
+   String transData = data.getStringExtra("transData");
+   if (result.equals("00")){
+       try {
+           JSONObject jsonObject = new JSONObject(transData);
+           String amount = jsonObject.getString("amt");
+       }catch(JSONException e){
+           e.printStackTrace();
+       }
+   }
+}
+```
+
+### 2.7 查询（Query）
+
+查询指定交易的详情
+
+#### 2.7.1 报文参数
+
+| 参数名  \ width:20%; \ | 类型  \ width:10%; \ | 长度 \ width:10%; \ | 请求 \ width:10%; \ | 响应 \ width:10%; \ | 说明   \ width:40%; \                                                                      |
+|:--------------------|:-------------------|:------------------|:------------------|:------------------|:-----------------------------------------------------------------------------------------|
+| version             | String             |                   | M                 | M                 | API 版本，固定值“1.1”                                                                          |
+| transType           | String             |                   | M                 | M                 | 查询交易的类型代码，固定值 <font color = "red">**21**</font>                                          |
+| appId               | String             | 18                | M                 | -                 | 在 Codepay 网关注册的支付应用程序 ID，请参阅 <a href = "/GatewayOverview" target = "_blank">支付网关集成指南</a> |
+| transData           | JSON               |                   | M                 | C                 |                                                                                          |
+| result              | String             |                   | -                 | M                 | 请参阅附录 - <a href = "SameTerminalAppIntegration#31--transaction-result-code">交易结果代码</a>    |
+| resultMsg           | String             |                   | -                 | C                 | 结果消息                                                                                     |
+
+**transData 字段**
+
+| 参数名  \ width:20%; \ | 类型  \ width:10%; \ | 长度 \ width:10%; \ | 请求 \ width:10%; \ | 响应 \ width:10%; \ | 说明   \ width:40%; \                                                                                                                       |
+|:--------------------|:-------------------|:------------------|:------------------|:------------------|:------------------------------------------------------------------------------------------------------------------------------------------|
+| businessOrderNo     | String             |                   | M                 | M                 | 商家的POS应用程序或业务系统的订单号码，必须在其系统中是唯一的                                                                                                          |
+| paymentScenario     | String             |                   | -                 | M                 | 1 - 刷卡支付 <br /> 2 - 现金支付 <br /> 3 -  二维码支付，商家出示二维码，顾客扫描 <br /> 4 -  二维码支付，顾客出示二维码，商家扫描                                                    |
+| paymentMethod       | String             |                   | -                 | M                 | 支付方式。 仅当“paymentScenario”设置为“3”或“4”时，该字段才是必填项， <br /> 请参考 <a href = "PosIntegratesrReference#2-payment-method" target = "_blank">支付方式</a> |
+| amt                 | String             | 12                | -                 | M                 | 订单金额                                                                                                                                      |
+| cashAmount          | String             | 12                | -                 | O                 | 返现金额                                                                                                                                      |
+| tip                 | String             | 12                | -                 | O                 | 小费金额                                                                                                                                      |
+| transDate           | String             | 8                 | -                 | M                 | 交易日期，格式：YYYYMMDD                                                                                                                          |
+| transTime           | String             | 6                 | -                 | M                 | 交易时间，格式：HHMMSS                                                                                                                            |
+| operator            | String             | 4                 | -                 | O                 | 操作员的工号                                                                                                                                    |
+| authCode            | String             | 6                 | -                 | C                 | 授权码。该字段在信用卡交易时返回值                                                                                                                         |
+| transType           | String             | 2                 | -                 | M                 | 查询结果的交易类型                                                                                                                                 |
+| refNo               | String             | 12                | -                 | C                 | 检索参考号码。该字段在信用卡交易时返回值                                                                                                                      |
+| cardNo              | String             | 19                | -                 | C                 | 卡号，已根据 PCI 规范进行掩码处理。 示例：430277****5723. 该字段在卡付交易时返回值                                                                                      |
+| entryMode           | String             | 2                 | -                 | O                 | 该字段在信用卡交易时返回值： <br /> 1 - 刷卡磁条卡 <br /> 2 - 接触式芯片卡 <br /> 3 - 非接触式芯片卡 <br /> 4 - 手动输入                                                      |
+| transactionID       | String             | 32                | -                 | M                 | CodePay 网关的交易 ID                                                                                                                          |
+
+#### 2.7.2 示例代码
+
+```java
+Intent intent = new Intent();
+intent.setAction("com.codepay.transaction.call");
+intent.putExtra("version", "1.0");
+intent.putExtra("appId", "{YOUR_APP_ID}");
+intent.putExtra("transType", "21");
+JSONObject jsonObject = new JSONObject();
+try {
+   jsonObject.put("businessOrderNo","202202222222");
+   intent.putExtra("transData", jsonObject.toString());
+} catch (JSONException e) {
+   e.printStackTrace();
+}
+startActivityForResult(intent, 1);
+
+@Override
+protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+   String result = data.getStringExtra("result");
+   String resultMsg = data.getStringExtra("resultMsg");
+   String transData = data.getStringExtra("transData");
+   if (result.equals("00")){
+       try {
+           JSONObject jsonObject = new JSONObject(transData);
+           String amount = jsonObject.getString("amt");
+       }catch(JSONException e){
+           e.printStackTrace();
+       }
+   }
+}
+```
+
+### 2.8 重打印（Reprint）
+
+重打印指定交易的收据。收据上会标记为“重打印”。
+
+#### 2.8.1 报文参数
+
+| 参数名  \ width:20%; \ | 类型  \ width:10%; \ | 长度 \ width:10%; \ | 请求 \ width:10%; \ | 响应 \ width:10%; \ | 说明   \ width:40%; \                                                                      |
+|:--------------------|:-------------------|:------------------|:------------------|:------------------|:-----------------------------------------------------------------------------------------|
+| version             | String             |                   | M                 | M                 | API 版本，固定值“1.1”                                                                          |
+| transType           | String             |                   | M                 | M                 | 重打印交易的类型代码，固定值 <font color = "red">**22**</font>                                         |
+| appId               | String             | 18                | M                 | -                 | 在 Codepay 网关注册的支付应用程序 ID，请参阅 <a href = "/GatewayOverview" target = "_blank">支付网关集成指南</a> |
+| transData           | JSON               |                   | M                 | C                 |                                                                                          |
+| result              | String             |                   | -                 | M                 | 请参阅附录 - <a href = "SameTerminalAppIntegration#31--transaction-result-code">交易结果代码</a>    |
+| resultMsg           | String             |                   | -                 | C                 | 结果消息                                                                                     |
+
+**transData 字段**
+
+| 参数名  \ width:20%; \ | 类型  \ width:10%; \ | 长度 \ width:10%; \ | 请求 \ width:10%; \ | 响应 \ width:10%; \ | 说明   \ width:40%; \              |
+|:--------------------|:-------------------|:------------------|:------------------|:------------------|:---------------------------------|
+| businessOrderNo     | String             |                   | M                 | -                 | 商家的POS应用程序或业务系统的订单号码，必须在其系统中是唯一的 |
+
+#### 2.8.2 示例代码
+
+```java
+Intent intent = new Intent();
+intent.setAction("com.codepay.transaction.call");
+intent.putExtra("version", "1.0");
+intent.putExtra("appId", "{YOUR_APP_ID}");
+intent.putExtra("transType", "22");
+JSONObject jsonObject = new JSONObject();
+try {
+   jsonObject.put("businessOrderNo","202202222222");
+   intent.putExtra("transData", jsonObject.toString());
+} catch (JSONException e) {
+   e.printStackTrace();
+}
+startActivityForResult(intent, 1);
+
+@Override
+protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+   String result = data.getStringExtra("result");
+   String resultMsg = data.getStringExtra("resultMsg");
+   String transData = data.getStringExtra("transData");
+   if (result.equals("00")){
+       try {
+           JSONObject jsonObject = new JSONObject(transData);
+           String amount = jsonObject.getString("amt");
+       }catch(JSONException e){
+           e.printStackTrace();
+       }
+   }
+}
+```
+
+## 3. 附录
+
+### 3.1  交易结果码
+
+|   类别 \ width:25%; \    | 结果码   \ width:15%; \ | 说明   \ width:60%; \ |
+|:----------------------:|----------------------|---------------------|
+|           成功           | 00                   | 交易已批准               | 
+|  终端交易内核异常(rowspan=5)   | A003                 | 卡片中没有 EMV 应用程序      |
+|                        | A008                 | 交易已被拒绝              |
+|                        | A020                 | IC 命令失败             |
+|                        | A036                 | 二次GAC 失败            |
+|                        | A040                 | 初始化SDK失败            |
+|   卡片识别异常(rowspan=8)    | C000                 | 读卡异常                |
+|                        | C001                 | 刷卡失败                |
+|                        | C004                 | 读卡失败                |
+|                        | C006                 | 卡片冲突                |
+|                        | C008                 | IC 卡不允许先刷卡          |
+|                        | C009                 | 读卡超时                |
+|                        | C011                 | 找不到跟踪键              |
+|                        | C014                 | 磁条卡模式不支持非接触式交易      |
+|   密码键盘异常(rowspan=4)    | G000                 | PinPad 异常           |
+|                        | G003                 | 输入取消                |
+|                        | G004                 | 输入超时                |
+|                        | G005                 | 输入失败                |
+|    包处理异常(rowspan=2)    | H010                 | Mac 错误              |
+|                        | H011                 | 签名验证失败              |
+|    网络异常(rowspan=6)     | J000                 | 网络异常                |
+|                        | J002                 | 网络连接超时              |
+|                        | J003                 | 网络连接失败              |
+|                        | J004                 | 发送数据失败              |
+|                        | J005                 | 读取数据失败              |
+|                        | J006                 | 读取数据超时              |
+|    交易异常(rowspan=5)     | K018                 | 必须使用与原始交易的卡         |
+|                        | K019                 | 无待结算数据              |
+|                        | K026                 | 操作员手动取消             |
+|                        | K027                 | 交易超时                |
+|                        | K029                 | 电池电量低！              |
+| 三方APP调用过程异常(rowspan=9) | M002                 | 参数错误                |
+|                        | M003                 | 无效金额                |
+|                        | M007                 | 此功能暂不支持             |
+|                        | M008                 | 调用版本不正确             |
+|                        | M009                 | 无效的应用程序调用           |
+|                        | M010                 | 找不到原始交易             |
+|                        | M011                 | 无法作废原始交易            |
+|                        | M013                 | 无法退款原始交易            |
+|                        | M014                 | 无法完成原始交易            |
+|    服务端异常(rowspan=2)    | N002                 | 网关服务请求异常            |
+|                        | N003                 | 收单服务请求异常            |
+|    用户端异常(rowspan=2)    | P001                 | 账户或密码错误，请重试         |
+|                        | P002                 | 账户已锁定，无法登录          |
+|   初始化过程异常(rowspan=3)   | Q001                 | 系统时间错误，请连接网络获取自动时间！ |
+|                        | Q002                 | AID 未配置             |
+|                        | Q003                 | 支付功能未配置。请联系技术支持。    |
+|          其它异常          | Z000                 | 出现异常。请联系技术支持。       |

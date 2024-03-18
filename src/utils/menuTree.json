@@ -1,0 +1,234 @@
+[
+    { "id": "CloudAPI", "type": "navbar", "title": "Cloud APIs", "url": "/docs/CloudAPI" },
+    {
+        "id": "register_sdks",
+        "type": "navbar",
+        "title": "Register SDKs",
+        "url": "/docs/clientAndroidSdk",
+        "children": [
+            {
+                "id": "clientAndroidSdk",
+                "type": "doc",
+                "title": "Android SDK",
+                "url": "/docs/clientAndroidSdk"
+            },
+            {
+                "id": "clientJavaSdk",
+                "type": "doc",
+                "title": "Java SDK",
+                "url": "/docs/clientJavaSdk"
+            },
+            { "id": "clientJsSdk", "type": "doc", "title": "JS SDK", "url": "/docs/clientJsSdk" }
+        ]
+    },
+    { "id": "news", "type": "navbar", "title": "News & Updates", "url": "/docs/news" },
+    {
+        "id": "apiruleSidebar",
+        "type": "sidebar",
+        "title": "Api Rules",
+        "url": "/docs/apiruleOverview",
+        "children": [
+            {
+                "id": "Backend-API",
+                "type": "category",
+                "title": "Backend API",
+                "url": "/docs/apiruleOverview",
+                "children": [
+                    {
+                        "id": "apiruleOverview",
+                        "type": "doc",
+                        "title": "Overview",
+                        "url": "/docs/apiruleOverview"
+                    },
+                    {
+                        "id": "sdkTools",
+                        "type": "category",
+                        "title": "SDK & Tools",
+                        "url": "/docs/sdkTools",
+                        "children": [
+                            {
+                                "id": "cloudJavaSdk",
+                                "type": "doc",
+                                "title": "Java SDK",
+                                "url": "/docs/cloudJavaSdk"
+                            },
+                            {
+                                "id": "cloudPhpDemo",
+                                "type": "doc",
+                                "title": "PHP Demo",
+                                "url": "/docs/cloudPhpDemo"
+                            },
+                            {
+                                "id": "cloudCDemo",
+                                "type": "doc",
+                                "title": "C# Demo",
+                                "url": "/docs/cloudCDemo"
+                            },
+                            {
+                                "id": "postmanTestScript",
+                                "type": "doc",
+                                "title": "Postman Test Script",
+                                "url": "/docs/postmanTestScript"
+                            }
+                        ]
+                    },
+                    {
+                        "id": "description-of-rules",
+                        "type": "category",
+                        "title": "Description Of Rules",
+                        "url": "/docs/basicRules",
+                        "children": [
+                            {
+                                "id": "basicRules",
+                                "type": "doc",
+                                "title": "Basic Rules",
+                                "url": "/docs/basicRules",
+                                "children": [
+                                    {
+                                        "id": "RoleRes6523",
+                                        "title": "测试 RoleRes",
+                                        "type": "RoleRes",
+                                        "url": "\\docs\\basicRules\\RoleRes6523"
+                                    }
+                                ]
+                            },
+                            {
+                                "id": "httpStatusCode",
+                                "type": "doc",
+                                "title": "HTTP Status Code",
+                                "url": "/docs/httpStatusCode"
+                            }
+                        ]
+                    },
+                    {
+                        "id": "Key-signature",
+                        "type": "category",
+                        "title": "Key/Signature",
+                        "url": "/docs/key",
+                        "children": [
+                            { "id": "key", "type": "doc", "title": "Key", "url": "/docs/key" },
+                            {
+                                "id": "sign",
+                                "type": "doc",
+                                "title": "Sign And Verify",
+                                "url": "/docs/sign"
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "id": "dictionary",
+                "type": "doc",
+                "title": "Data Dictionary",
+                "url": "/docs/dictionary"
+            }
+        ]
+    },
+    {
+        "id": "integrationSpecificationSidebar",
+        "type": "sidebar",
+        "title": "Integration Specification",
+        "url": "/docs/paymentCallbacksAndChecklistImplGuide",
+        "children": [
+            {
+                "id": "paymentCallbacksAndChecklistImplGuide",
+                "type": "doc",
+                "title": "Payment Callbacks And Checklist Implementation Guidelines",
+                "url": "/docs/paymentCallbacksAndChecklistImplGuide"
+            },
+            {
+                "id": "bestSecurityPractices",
+                "type": "doc",
+                "title": "Best Security Practices",
+                "url": "/docs/bestSecurityPractices"
+            },
+            {
+                "id": "callbackNotificationNotes",
+                "type": "doc",
+                "title": "Callback Notification Guidelines",
+                "url": "/docs/callbackNotificationNotes"
+            },
+            {
+                "id": "reasonableQueryMechanism",
+                "type": "doc",
+                "title": "Effective Query Mechanism",
+                "url": "/docs/reasonableQueryMechanism"
+            }
+        ]
+    },
+    {
+        "id": "developmentGuidelinesSidebar",
+        "type": "sidebar",
+        "title": "Development Guidelines",
+        "url": "/docs/developmentGuidelines",
+        "children": [
+            {
+                "id": "developmentGuidelines",
+                "type": "doc",
+                "title": "Pre-development",
+                "url": "/docs/developmentGuidelines"
+            },
+            {
+                "id": "In-store-Payment",
+                "type": "category",
+                "title": "In-store Payment",
+                "url": "/docs/posDevGuidelines",
+                "children": [
+                    {
+                        "id": "posDevGuidelines",
+                        "type": "doc",
+                        "title": "POS Integration Guidelines",
+                        "url": "/docs/posDevGuidelines"
+                    },
+                    {
+                        "id": "paymentCodePayDevGuidelines",
+                        "type": "doc",
+                        "title": "Guidelines For Integrating QR Code Scanning Device",
+                        "url": "/docs/paymentCodePayDevGuidelines"
+                    },
+                    {
+                        "id": "qrCodePayDevGuidelines",
+                        "type": "doc",
+                        "title": "Display Screen Device Integration Guidelines",
+                        "url": "/docs/qrCodePayDevGuidelines"
+                    }
+                ]
+            },
+            {
+                "id": "Online-Payment",
+                "type": "category",
+                "title": "Online Payment",
+                "url": "/docs/pcWebPayDevGuidelines",
+                "children": [
+                    {
+                        "id": "pcWebPayDevGuidelines",
+                        "type": "doc",
+                        "title": "E-commerce Integration Guidelines",
+                        "url": "/docs/pcWebPayDevGuidelines"
+                    },
+                    {
+                        "id": "mobileWebPayDevGuidelines",
+                        "type": "doc",
+                        "title": "Mobile Web Payment Integration Guidelines",
+                        "url": "/docs/mobileWebPayDevGuidelines"
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "id": "faqSidebar",
+        "type": "sidebar",
+        "title": "FAQ",
+        "url": "/docs/technologyDevelopmentIssues",
+        "children": [
+            {
+                "id": "technologyDevelopmentIssues",
+                "type": "doc",
+                "title": "Technology Development Issues",
+                "url": "/docs/technologyDevelopmentIssues"
+            }
+        ]
+    }
+]

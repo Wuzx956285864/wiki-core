@@ -1,0 +1,104 @@
+import ImageZoom from "@site/src/components/ImageZoom";
+import SerialMessageStructureImg from "@site/static/img/SerialMessageStructure.png";
+import SerialSequenceImg from "@site/static/img/SerialSequence.png";
+import HandshakeMessageImg from "@site/static/img/HandshakeMessage.png";
+import HeartBeatMessageImg from "@site/static/img/HeartBeatMessage.png";
+import ACKMessageImg from "@site/static/img/ACKMessage.png";
+import TransactionMessageImg from "@site/static/img/TransactionMessage.png";
+import DataSerializationImg from "@site/static/img/DataSerialization.png";
+import WorkflowImg from "@site/static/img/Workflow.png";
+
+# Serial communication protocol
+
+In USB mode, serial communication protocol is used between POS and Payment terminal
+
+## Communication parameters
+
+- Baud Rate : 115200
+- Data bits : 8
+- Stop bits : 1
+
+## Message structure
+
+<ImageZoom src={SerialMessageStructureImg} />
+
+| Offset | Field               | Byte Length | Description                                                                                                                                                                                                   |
+|--------|---------------------|-------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| 0x00   | STX                 | 2           | Start text, fixed value: 0x55AA                                                                                                                                                                               |
+| 0x02   | Message type        | 1           | 0x00: normal package 0x01: handshake command 0x02: handshake confirmation command                                                                                                                             |
+| 0x03   | ACK                 | 1           | If the field is 0, it means that the field is invalid; non-0, it represents the id of the last received data packet that passed the verification                                                              |
+| 0x04   | Message ID          | 1           | There is no valid data in the message, the value is 0; the initial value can be 1, and each time a new data packet is sent, it will automatically + 1, greater than 255, and reset to the initial value of 1; |
+| 0x05   | Message Data length | 2           | Represents the sum of the lengths of message data segments, with high bytes first;                                                                                                                            |
+| 0x07   | Message Data        | n           | Valid data, the upper business layer is responsible for parsing the specific Action category;                                                                                                                 |
+| 0x08+n | CRC                 | 1           | Checksum, Byte-by-byte XOR result for data from “message type” to “message data”                                                                                                                              |
+| 0x09+n | ETX                 | 2           | End text, fixed value: 0xCC33                                                                                                                                                                                 |
+
+:::note
+The Message max-length is 1024 Bytes
+:::note
+
+## Communication sequence
+
+<ImageZoom src={SerialSequenceImg} />
+
+## Message type
+
+### 1. Handshake message
+
+POS sends an empty packet to Payment Terminal, the packet type is 1, the ack field is 0, and the data packet id is 0 After receiving it, the Payment Terminal side sets the current state as connection and returns an empty packet of packet type 2 to pos (handshake persuasion) If the Payment Terminal side is connected before receiving the handshake command, the relevant state needs to be cleared.
+
+<ImageZoom src={HandshakeMessageImg} />
+
+Sample message (HEX)
+
+Handshake Message:
+```
+55AA010000000001CC33
+```
+
+Handshake Confirmation Message:
+```
+55AA020000000002CC33
+```
+
+### 2. Heartbeat message
+
+This Payment Terminal sends heartbeat message information every 2 seconds.
+
+<ImageZoom src={HeartBeatMessageImg} />
+
+Sample message (HEX)
+
+```
+55AA000000000000CC33
+```
+
+### 3. ACK message
+
+Due to the unreliability of the serial communication process, the transmitted data will inevitably encounter various situations such as loss, delay, error, repetition, etc. Therefore, this ACK mechanism is used. The core of this mechanism is that after the sender sends data to the receiver, the receiver sends an ACK (receipt) to the sender. If the sender does not receive the correct ACK, it will resend the data until the ACK is received.
+
+<ImageZoom src={ACKMessageImg} />
+
+Sample message (HEX)
+
+```
+55AA000100000001CC33
+```
+
+### 4. Transaction message
+
+#### Send data
+
+For packets with valid data sent by the other party, the receiver should return the ack in time There may be situations where multiple different data packets are received at the same time (with different IDs). In this case, only the ack of the last packet needs to be returned In order to prevent repeated processing of packets retransmitted by the other party, the receiver should record the id of the data packet received last time. If the id is equal, it means that the other party retransmitted it, and the packet is automatically ignored.
+
+#### Resend data
+
+The new data packet at the top of the stack, after sending it, mark it as sent, and record the number of times the packet was sent as 1 To the next 100ms code packet of the released version time, check the packet receipt before the code packet of the released version, and if the corresponding ack of the other party is received, remove the data packet from the stack If it has not been received, retransmit the packet, + 1 the number of times the packet has been sent. If the opposite ack message has not been received after being sent 5 times, set the connection to disconnected and empty.
+
+<ImageZoom src={TransactionMessageImg} />
+
+## Message data field
+
+### Field Format
+
+POS application and CodePay Register communicate in JSON format

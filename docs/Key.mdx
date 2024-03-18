@@ -1,0 +1,38 @@
+import keyToolImg from '@site/static/img/KeyTool.png'
+import ImageZoom from '@site/src/components/ImageZoom'
+
+# key
+
+## Merchant API Key
+
+When merchants interact with CodePay, in order to ensure communication security, it is necessary to verify the identities of both parties to the communication and ensure that the message has not been tampered with by a third party. Therefore, signatures are required on the message. The signature uses the RSA algorithm. Both parties to the communication generate a set of RSA keys and exchange public keys. When requesting, the private key is used for signing, and the party receiving the request uses the public key for verification. As long as the private key is not leaked, the communication is relatively secure.
+
+## Generate key pairs
+
+If you use the Java language, the format of the private key is PKCS8, while other languages use PKCS1. The length of the key is 2048. The format of public keys is generally PEM, and some languages (such as C#) require DER format public keys that may need to be converted.
+
+- If you don't know how to generate RSA2 keys, we recommend the following tools for generating keys, generating signatures, and verifying signatures with just one click:
+  <a href="https://wise-paycloud.oss-eu-west-1.aliyuncs.com/test/codepayResource/CodePay%20Key%20Tool.zip?OSSAccessKeyId=LTAI5tDS7q4RHauowRMYsUPz&Expires=1796441617&Signature=VlYauMkZJSfLmSyQFN4xJAwdZ9Y%3D" target="_blank">
+    CodePay Key Tool
+  </a>
+
+<ImageZoom src={keyToolImg} />
+
+- You can also manually generate RSA2 keys using openssl, as follows:
+
+```
+# 1. Generating the private key
+openssl genrsa -out client_private_key_php_dotnet.pem
+
+# 2. If you are a Java developer, convert the private key to PKCS8 format, other development languages use the PKCS1 format
+openssl pkcs8 -topk8 -inform PEM -in client_private_key_php_dotnet.pem -outform PEM -nocrypt -out client_private_key_pkcs8.pem
+
+# 3. Generate the public key
+openssl rsa -in client_private_key_php_dotnet.pem -pubout -out client_public_key_php_dotnet.pem
+
+# 4. Generate the private key that can be used in Java
+cat client_private_key_pkcs8.pem | grep -v "^\-" | tr -d "\n" | sed 's/%$//' > client_private_key_java.pem
+
+# 5. Generate the public key that can be used in Java
+cat client_public_key_php_dotnet.pem | grep -v "^\-" | tr -d "\n" | sed 's/%$//' > client_public_key_java.pem
+```

@@ -1,0 +1,153 @@
+{
+  "version.label": {
+    "message": "Next",
+    "description": "The label for version current"
+  },
+  "sidebar.PaymentApp.category.Cross-terminal application integration": {
+    "message": "跨终端应用集成",
+    "description": "The label for category Cross-terminal application integration in sidebar PaymentApp"
+  },
+  "sidebar.PaymentApp.category.WLAN/LAN mode": {
+    "message": "无线局域网/局域网模式",
+    "description": "The label for category WLAN/LAN mode in sidebar PaymentApp"
+  },
+  "sidebar.PaymentApp.category.USB mode": {
+    "message": "USB串口模式",
+    "description": "The label for category USB mode in sidebar PaymentApp"
+  },
+  "sidebar.PaymentApp.doc.Overview": {
+    "message": "概述",
+    "description": "The label for the doc item Overview in sidebar PaymentApp, linking to the doc PosIntegratesOverview"
+  },
+  "sidebar.PaymentApp.doc.Same-terminal application integration": {
+    "message": "同一终端应用集成",
+    "description": "The label for the doc item Same-terminal application integration in sidebar PaymentApp, linking to the doc SameTerminalAppIntegration"
+  },
+  "sidebar.PaymentApp.doc.Cloud mode": {
+    "message": "云端模式",
+    "description": "The label for the doc item Cloud mode in sidebar PaymentApp, linking to the doc CloudMode"
+  },
+  "sidebar.PaymentApp.doc.API list": {
+    "message": "接口列表",
+    "description": "The label for the doc item API list in sidebar PaymentApp, linking to the doc SerialAPIList"
+  },
+  "sidebar.PaymentApp.doc.Debug resources": {
+    "message": "调试资源",
+    "description": "The label for the doc item Debug resources in sidebar PaymentApp, linking to the doc WLANDebugResources"
+  },
+  "sidebar.PaymentApp.doc.Communication protocol": {
+    "message": "通信协议",
+    "description": "The label for the doc item Communication protocol in sidebar PaymentApp, linking to the doc SerialCommunicationProtocol"
+  },
+  "sidebar.PaymentApp.doc.Reference": {
+    "message": "参考",
+    "description": "The label for the doc item Reference in sidebar PaymentApp, linking to the doc PosIntegratesrReference"
+  },
+  "sidebar.PaymentApp.doc.Test card numbers": {
+    "message": "测试卡号"
+  },
+  "sidebar.PaymentGateway.category.API rule": {
+    "message": "接口规则",
+    "description": "The label for category API rule in sidebar PaymentGateway"
+  },
+  "sidebar.PaymentGateway.category.Key/signature": {
+    "message": "密钥/签名",
+    "description": "The label for category Key/signature in sidebar PaymentGateway"
+  },
+  "sidebar.PaymentGateway.category.Payment product": {
+    "message": "支付产品",
+    "description": "The label for category Payment product in sidebar PaymentGateway"
+  },
+  "sidebar.PaymentGateway.category.Best Practice": {
+    "message": "最佳实践",
+    "description": "The label for category Best Practice in sidebar PaymentGateway"
+  },
+  "sidebar.PaymentGateway.doc.Overview": {
+    "message": "概述",
+    "description": "The label for the doc item Overview in sidebar PaymentGateway, linking to the doc GatewayOverview"
+  },
+  "sidebar.PaymentGateway.doc.Basic rules": {
+    "message": "基础规则",
+    "description": "The label for the doc item Basic rules in sidebar PaymentGateway, linking to the doc BasicRules"
+  },
+  "sidebar.PaymentGateway.doc.Key": {
+    "message": "密钥",
+    "description": "The label for the doc item Key in sidebar PaymentGateway, linking to the doc Key"
+  },
+  "sidebar.PaymentGateway.doc.Sign and verify": {
+    "message": "签名与验签",
+    "description": "The label for the doc item Sign and verify in sidebar PaymentGateway, linking to the doc Sign"
+  },
+  "sidebar.PaymentGateway.doc.QR Pay(Customer-presented)": {
+    "message": "扫码支付(客户呈现)",
+    "description": "The label for the doc item QR Pay(Customer-presented) in sidebar PaymentGateway, linking to the doc QuickPayDevGuidelines"
+  },
+  "sidebar.PaymentGateway.doc.QR Pay(Merchant-presented)": {
+    "message": "扫码支付(商户呈现)",
+    "description": "The label for the doc item QR Pay(Merchant-presented) in sidebar PaymentGateway, linking to the doc QRCodePayDevGuidelines"
+  },
+  "sidebar.PaymentGateway.doc.Wap payment": {
+    "message": "手机网页支付",
+    "description": "The label for the doc item Wap payment in sidebar PaymentGateway, linking to the doc MobileWebPayDevGuidelines"
+  },
+  "sidebar.PaymentGateway.doc.Online payment": {
+    "message": "在线网页支付",
+    "description": "The label for the doc item Online payment in sidebar PaymentGateway, linking to the doc PCWebPayDevGuidelines"
+  },
+  "sidebar.PaymentGateway.doc.Payment callback and checklist implementation guideline": {
+    "message": "支付回调与检查表实施指南",
+    "description": "The label for the doc item Payment callback and checklist implementation guideline in sidebar PaymentGateway, linking to the doc PaymentCallbacksAndChecklistImplGuide"
+  },
+  "sidebar.PaymentGateway.doc.Best security practice": {
+    "message": "最佳安全实践",
+    "description": "The label for the doc item Best security practice in sidebar PaymentGateway, linking to the doc BestSecurityPractices"
+  },
+  "sidebar.PaymentGateway.doc.Callback notification guideline": {
+    "message": "回调通知处理指南",
+    "description": "The label for the doc item Callback notification guideline in sidebar PaymentGateway, linking to the doc CallbackNotificationNotes"
+  },
+  "sidebar.PaymentGateway.doc.Effective query mechanism": {
+    "message": "订单查询机制",
+    "description": "The label for the doc item Effective query mechanism in sidebar PaymentGateway, linking to the doc ReasonableQueryMechanism"
+  },
+  "sidebar.PaymentGateway.doc.Reference": {
+    "message": "参考",
+    "description": "The label for the doc item Reference in sidebar PaymentGateway, linking to the doc ParameterDictionary"
+  },
+  "sidebar.PaymentGateway.doc.Payment glossary": {
+    "message": "支付行业术语",
+    "description": "The label for the doc item Payment glossary in sidebar PaymentGateway, linking to the doc PaymentsGlossary"
+  },
+  "sidebar.SDKsToolsSidebar.category.Gateway SDKs/Samples": {
+    "message": "网关SDK/示例",
+    "description": "The label for category Gateway SDKs/Samples in sidebar SDKsToolsSidebar"
+  },
+  "sidebar.SDKsToolsSidebar.category.Samples": {
+    "message": "示例",
+    "description": "The label for category Samples in sidebar SDKsToolsSidebar"
+  },
+  "sidebar.SDKsToolsSidebar.category.CodePay Register SDKs": {
+    "message": "CodePay Register SDKs",
+    "description": "The label for category CodePay Register SDKs in sidebar SDKsToolsSidebar"
+  },
+  "sidebar.SDKsToolsSidebar.doc.SDK for JAVA": {
+    "message": "SDK for JAVA",
+    "description": "The label for the doc item SDK for JAVA in sidebar SDKsToolsSidebar, linking to the doc ClientJavaSdk"
+  },
+  "sidebar.SDKsToolsSidebar.doc.C#": {
+    "message": "C#",
+    "description": "The label for the doc item C# in sidebar SDKsToolsSidebar, linking to the doc CloudCDemo"
+  },
+  "sidebar.SDKsToolsSidebar.doc.PHP": {
+    "message": "PHP",
+    "description": "The label for the doc item PHP in sidebar SDKsToolsSidebar, linking to the doc CloudPhpDemo"
+  },
+  "sidebar.SDKsToolsSidebar.doc.Postman": {
+    "message": "Postman",
+    "description": "The label for the doc item Postman in sidebar SDKsToolsSidebar, linking to the doc PostmanTestScript"
+  },
+  "sidebar.SDKsToolsSidebar.doc.SDK for Android": {
+    "message": "SDK for Android",
+    "description": "The label for the doc item SDK for Android in sidebar SDKsToolsSidebar, linking to the doc ClientAndroidSdk"
+  }
+}

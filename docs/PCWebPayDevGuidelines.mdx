@@ -1,0 +1,31 @@
+import pcWebPayFlowImg from '@site/static/img/PcWebPayFlow.jpg'
+import ImageZoom from '@site/src/components/ImageZoom'
+
+# Web Payment Integration
+
+Merchants with online websites (e.g. online shopping malls/ticketing sites/recharge sites, etc.) can refer to the solutions provided in this section to access CodePay payments.
+
+## Integration Instructions
+
+E-commerce/PC Web Payment is a payment product in which a merchant displays goods or services on a web page, and when a user selects a certain payment method on the merchant's page, the browser automatically jumps to CodePay's web cashier to complete the payment. The product can be docked through the API provided by CodePay after signing the contract.
+
+CodePay Web Cashier integrates with a large number of banks/acquirers/third-party payment service providers' web cashier, which includes bank card online payment/mobile wallet account payment/mobile wallet scanning payment and so on.
+
+After the user completes the payment, the merchant can receive the payment notification from CodePay, and the merchant can also take the initiative to call the query order interface to get the payment result. After obtaining the payment result, then synchronize and update the order to complete the payment of goods and services.
+
+**Usage Example**
+
+<ImageZoom src={pcWebPayFlowImg} />
+
+## Development Guidelines
+
+We provide a set of REST APIs, please refer to the following table, the APIs are provided with SDKs for several languages, please visit<a href = "/PaymentGatewaySDKSamples"> SDK Chapter Description</a>.
+
+| Function List \ width:25%; \                                                                                                | Description \ width:75%; \                                                                                                                                                                     |
+|-----------------------------------------------------------------------------------------------------------------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| <a href="./CloudAPI#tag/Online-Payment/paths/~1api~1entry~1payunifiedorder/post" target="_blank">Web Payment Order</a>      | Submit payment orders through this api                                                                                                                                                         |
+| <a href="./CloudAPI#tag/Public-API/paths/~1api~1entry~1orderrevoker/post" target="_blank">Cancel Order</a>                  | Close unpaid orders through this api and refund the user if payment has already occurred                                                                                                       |
+| <a href="./CloudAPI#tag/Public-API/paths/~1api~1entry~1orderrefundsubmit/post" target="_blank">Submit a refund request</a>  | If you submit a refund request through this api and the refund does not arrive immediately, you can call the refund inquiry interface to get the progress of the refund.                       |
+| <a href="./CloudAPI#tag/Public-API/paths/~1api~1entry~1orderquery/post" target="_blank">Query order</a>                     | Query the transaction result (consumption/pre-authorization/pre-authorization completion) of a positive transaction order through this api                                                     |
+| <a href="./CloudAPI#tag/Public-API/paths/~1api~1entry~1orderrefundquery/post" target="_blank">Query refund</a>              | Query the transaction results of negative transaction orders (consumption cancellation/pre-authorization cancellation/consumption refund/pre-authorization completion refund) through this api |
+| <a href="./CloudAPI#tag/Public-API/paths/~1%7Bmerchant_website%7D/post" target="_blank">Transaction result notification</a> | After the transaction, notify the merchant through this webhook to tell the merchant the result of the transaction                                                                             |

@@ -1,0 +1,89 @@
+# 基本规则
+
+## 基本信息
+
+所有API请求都必须使用HTTPS。
+
+:::tip
+请求时不应忽略服务器证书验证中的错误，以避免恶意劫持。
+:::tip
+
+## 数据格式
+
+所有API请求都必须使用JSON。
+
+使用JSON作为消息体的数据交换格式。请求必须设置HTTP标头：
+
+```
+Content-Type: application/json
+Accept: application/json
+```
+
+除了图像上传API。
+
+:::tip
+API响应中的数据可能包含来自商家的传入数据，即它可能是未经检查的用户输入。为了避免XSS（跨站点脚本）攻击，在使用响应数据之前，要求调用方根据场景进行适当的转义或过滤。
+:::
+
+## 参数兼容性
+
+- 请求的成功与请求参数的顺序无关。
+- 请求的成功与键值对在请求JSON中出现的顺序无关。
+- 处理响应时，不应假定响应JSON中键值对的顺序。
+- API的新版本可能会在请求或响应中包含新参数或JSON键值对。
+- 新的API版本不会删除请求和响应中已经存在的所需参数或JSON键值对。
+- 当请求或响应中JSON键值对的值为空（null）时，可以省略。
+
+## 字符编码
+
+只支持UTF-8字符编码的一个子集：使用一到三个字节编码的字符。也就是说，不支持在4到6字节Unicode辅助平面中编码的字符。
+
+## 时间格式
+
+对于所有日期对象，请使用下面定义的格式。示例：
+
+```
+yyyy-MM-DD HH:mm:ss
+yyyy-MM-DD
+```
+
+:::tip
+时间的时区固定为UTC0时区。请求时，您需要将本地时区转换为+00:00时区的时间进行上传。响应时，您将获得+00:00时区的时间，可以根据需要将其转换为本地时区进行记录或显示。
+:::
+
+## 请求的唯一标识
+
+CodePay为每个传入请求分配一个唯一的标识符。请求的唯一标识符包含在响应的HTTP Body “psn” 参数中。当您需要CodePay的帮助时，请提供请求的唯一标识符，以便我们能够更快地定位特定请求。
+
+## 错误信息
+
+CodePay API使用HTTP状态代码来指示请求处理的结果。
+
+如果请求处理成功，则响应消息主体将返回200。HTTP响应码只表示通信状态，不表示业务状态，例如HTTP code=200，只表示HTTP响应正常，不表示支付成功，或其他业务操作成功。
+
+## 错误代码和错误消息
+
+当请求处理失败时，除了指示错误的HTTP状态代码外，API还会在消息主体中返回一个错误，相应地说明错误的具体原因。
+
+- `code`: 详细错误代码。
+- `msg`: 错误的描述，使用易于理解的文本来指示错误的原因。
+
+```json
+{
+    "code":"E07303",
+    "msg":"The API is not authorized or does not exist",
+    "psn":"06100624379047675280",
+    "sign":"Ck2+5+lQ7tVGXEVcwYiZDLXQ1m6VIItlYEogCRtPBwKtIUbW3vRnZznl/cB0u//q8rTRiq+u4UFhOiFB8MWMC3ukzkb35zkDsWNygsftvx3sXSqOnIYBMEVXDKn91BnE/DXxZ3V76E67HCk6Cp5E2ujLwzawonVzWLxT4RLZjocu7U6rywz8UAS37+PAvqJA3v4H1IF3YbgaX62NOQyn2jEuzxe0BnHQKg92uMt0I64RZFBSKpOahwtQNlW0/4Hwv/Nu30vJju6N3ikYXzUfpH0KwTWoZUq/6mS8XaLayQb46WSECUZ+KuCg/GJKAMCIgnqGRS5rFlAex4iCwktlkA=="
+}
+```
+
+## 响应的语言
+
+CodePay API允许调用方声明用于响应中错误描述的自然语言区域设置。如有必要，请设置请求的HTTP标头Accept Language。当前支持的：
+
+- en-US
+- zh-CN
+- ja-JP
+- fr-FR
+
+当未设置或不支持该值时，将使用美式英语（en-US）。

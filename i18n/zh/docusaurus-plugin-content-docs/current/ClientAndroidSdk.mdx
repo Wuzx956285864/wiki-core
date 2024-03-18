@@ -1,0 +1,372 @@
+import rigiserConnect from '@site/static/img/RigiserConnect.png'
+import ImageZoom from '@site/src/components/ImageZoom'
+
+# Register-SDK for Android
+
+Register-SDK Andorid provides a fast connection to CodePay Register via WLAN for POS Application, and provides interfaces for payment, refund, query, etc. for POS Application to call.
+
+Get started with our <a href = "https://github.com/codepay-us/codepay-register-sdk-android">example projects</a>
+
+## Features
+
+- **Quick Connect**: Register-SDK uses mDNS, start the SDK, in the CodePay Register APP can quickly find all the POS Application devices, click on the pairing, realize the automatic connection.
+- **Payment**: This SDK provides a variety of payment methods, including code scanning bank cards, and also provides a lot of medium payment capabilities, such as consumption, revocation, refund, pre-authorization, pre-authorization completion and so on.
+- **Client Manager**: In LAN mode, WiseCashier acts as a Server, and the SDK is capable of connecting to multiple Servers, and the SDK provides methods to manage the Servers.
+
+## Installation
+
+**Requirements**
+
+- Android Studio Giraffe | 2022.3.1 Patch 3
+- kotlin showLineNumbers1.3.41
+- gradle4.2.2
+- Java11
+- Android 8.0 (API level 26) and above
+
+**Configuration**
+
+1. Add codepay-register-sdk-android to your build.gradle dependencies.
+
+```
+dependencies {
+   implementation 'com.github.codepay-us:codepay-register-sdk-android:1.0.0'
+}
+```
+
+2. You can use the ecr_sdk module from GitHub as a library module for your app.
+
+## Function List
+
+### 1 Device discovery and pairing
+:::note
+Only WLAN connection mode requires pairing first, USB connection mode does not require pairing.
+:::note
+
+#### 1.1 Start/Stop Device Discovery Service
+The terminal can only discover your POS application when the device discovery service is started
+- After completing a pairing operation, the terminal and POS application will record each other's network information
+- When pairing and connecting to the network are required, the device discovery service needs to be enabled
+
+```kotlin showLineNumbers showLineNumbers
+import com.codepay.register.sdk.device.ECRHubWebSocketDiscoveryService
+
+private var mService: ECRHubWebSocketDiscoveryService? = null
+mService = ECRHubWebSocketDiscoveryService(this)
+
+//start device discover service
+mService?.start(object :ECRHubPairListener {
+    override fun onDevicePair(data: ECRHubMessageData?, ip: String?) {
+        //When a pairing message is received from CodePayRegister, call back this method
+    }
+})
+
+//stop device discover service
+service.stop();
+```
+
+#### 1.2 Get a list of paired terminals
+- When using POS applications to push orders, you can select a device from the paired device list to push the order;
+- When POS applications need to display paired POS terminals, this function can be used to obtain a list of paired devices for display.
+
+```kotlin showLineNumbers
+import com.codepay.register.sdk.device.ECRHubWebSocketDiscoveryService
+
+private var mService: ECRHubWebSocketDiscoveryService? = null
+private var mPairedList = mutableListOf<ECRHubDevice>()
+mService = ECRHubWebSocketDiscoveryService(this)
+
+mPairedList = mService!!.pairedDeviceList
+for(device in mPairedList) {
+    Log.e(TAG,device.terminal_sn)
+    Log.e(TAG,device.ws_address)
+}
+```
+
+#### 1.3 Remove paired terminals
+When the POS terminal is no longer in use, it can be manually removed from the paired list of the POS application.
+
+```kotlin showLineNumbers
+import com.codepay.register.sdk.device.ECRHubWebSocketDiscoveryService
+
+private var mService: ECRHubWebSocketDiscoveryService? = null
+private var mPairedList = mutableListOf<ECRHubDevice>()
+
+mService?.unPair(mPairedList[0],object :ECRHubResponseCallBack{
+    override fun onError(errorCode: String?, errorMsg: String?) {
+       //upPair error
+    }
+
+    override fun onSuccess(data: PaymentResponseParams?) {
+    // unPair Success
+    }
+
+})
+```
+
+### 2 Connect
+Select a paired terminal to initiate a network connection, and once the connection is established, transaction instructions can be sent.
+
+#### 2.1 Call process
+<ImageZoom src={rigiserConnect}/>
+
+#### 2.2 Create client instance
+
+**WLAN connection mode**
+When a POS application connects to a POS terminal using WLAN, use the following method to create a client
+
+```kotlin showLineNumbers
+import com.codepay.register.sdk.client.ECRHubClient
+import com.codepay.register.sdk.client.ECRHubConfig
+
+val config = ECRHubConfig()
+mClient = ECRHubClient.getInstance()
+mClient.init(config, this)
+```
+
+#### 2.3 Connection
+Establish a connection between the POS application and the POS terminal.
+
+```kotlin showLineNumbers
+/// Connecting to the POS Terminal
+mClient .connect("ws://xxxxxx")
+```
+
+#### 2.4 Disconnect
+Disconnect the POS application from the POS terminal.
+
+```kotlin showLineNumbers
+// This will try disconnect from POS Terminal
+mClient .disconnect();
+```
+
+### 3 Transactions
+
+#### 3.1 Sale
+
+1. <a href="CodePayRegisterSDK#61-sale">Request/Response parameters</a> 
+2. Example:
+
+```kotlin showLineNumbers
+import com.codepay.register.sdk.client.payment.PaymentRequestParams
+import com.codepay.register.sdk.client.payment.PaymentResponseParams
+import com.codepay.register.sdk.listener.ECRHubResponseCallBack
+
+// Build sale request
+val params = PaymentRequestParams()
+params.app_id = "your payment app_id"
+params.merchant_order_no = "12345644"
+params.order_amount = "1.1"
+params.pay_scenario = "SWIPE_CARD"
+params.confirm_on_terminal = false
+
+mClient.payment.sale(params, object :
+    ECRHubResponseCallBack {
+    override fun onError(errorCode: String?, errorMsg: String?) {
+      //sale fail
+    }
+
+    override fun onSuccess(data: PaymentResponseParams?) {
+        //sale success
+    }
+})
+```
+
+#### 3.2 Sale with cashback
+
+1. <a href="CodePayRegisterSDK#62-sale-with-cashback">Request/Response parameters</a> 
+2. Example:
+
+```kotlin showLineNumbers
+import com.codepay.register.sdk.client.payment.PaymentRequestParams
+import com.codepay.register.sdk.client.payment.PaymentResponseParams
+import com.codepay.register.sdk.listener.ECRHubResponseCallBack
+
+// Build cash back request
+val params = PaymentRequestParams()
+params.app_id = "your payment app_id"
+params.merchant_order_no = "12345644"
+params.order_amount = "1.1"
+params.cashback_amount = "1.1"
+params.pay_scenario = "SWIPE_CARD"
+params.confirm_on_terminal = false
+
+mClient.payment.sale(params, object :
+    ECRHubResponseCallBack {
+    override fun onError(errorCode: String?, errorMsg: String?) {
+      //sale fail
+    }
+
+    override fun onSuccess(data: PaymentResponseParams?) {
+        //sale success
+    }
+})
+```
+
+#### 3.3 Authorization
+
+1. <a href="CodePayRegisterSDK#65-authorization">Request/Response parameters</a> 
+2. Example:
+
+```kotlin showLineNumbers
+import com.codepay.register.sdk.client.payment.PaymentRequestParams
+import com.codepay.register.sdk.client.payment.PaymentResponseParams
+import com.codepay.register.sdk.listener.ECRHubResponseCallBack
+
+// Build auth request
+val params = PaymentRequestParams()
+params.app_id = "your payment app_id"
+params.order_amount = "1.1"
+params.merchant_order_no = "12345644"
+params.pay_scenario = "SWIPE_CARD"
+params.confirm_on_terminal = false
+
+mClient.payment.auth(params, object :
+    ECRHubResponseCallBack {
+    override fun onError(errorCode: String?, errorMsg: String?) {
+      //auth fail
+    }
+
+    override fun onSuccess(data: PaymentResponseParams?) {
+        //auth success
+    }
+})
+```
+
+#### 3.4 Completion
+
+1. <a href="CodePayRegisterSDK#66-completion">Request/Response parameters</a> 
+2. Example:
+
+```kotlin showLineNumbers
+import com.codepay.register.sdk.client.payment.PaymentRequestParams
+import com.codepay.register.sdk.client.payment.PaymentResponseParams
+import com.codepay.register.sdk.listener.ECRHubResponseCallBack
+
+// Build completion request
+val params = PaymentRequestParams()
+params.app_id = "your payment app_id"
+params.order_amount = "1.1"
+params.merchant_order_no = "12345644"
+params.orig_merchant_order_no = "123322222"
+params.confirm_on_terminal = false
+
+mClient.payment.completion(params, object :
+    ECRHubResponseCallBack {
+    override fun onError(errorCode: String?, errorMsg: String?) {
+      //completion fail
+    }
+
+    override fun onSuccess(data: PaymentResponseParams?) {
+        //completion success
+    }
+})
+```
+
+#### 3.5 Void
+
+1. <a href="CodePayRegisterSDK#63-void">Request/Response parameters</a> 
+2. Example:
+
+```kotlin showLineNumbers
+import com.codepay.register.sdk.client.payment.PaymentRequestParams
+import com.codepay.register.sdk.client.payment.PaymentResponseParams
+import com.codepay.register.sdk.listener.ECRHubResponseCallBack
+
+// Build void request
+val params = PaymentRequestParams()
+params.app_id = "your payment app_id"
+params.orig_merchant_order_no = "123322222"
+params.merchant_order_no = "12345644"
+params.confirm_on_terminal = false
+
+mClient.payment.cancel(params, object :
+    ECRHubResponseCallBack {
+    override fun onError(errorCode: String?, errorMsg: String?) {
+      //void fail
+    }
+
+    override fun onSuccess(data: PaymentResponseParams?) {
+        //void success
+    }
+})
+```
+
+#### 3.6 Refund
+
+1. <a href="CodePayRegisterSDK#64-refund">Request/Response parameters</a> 
+2. Example:
+
+```kotlin showLineNumbers
+import com.codepay.register.sdk.client.payment.PaymentRequestParams
+import com.codepay.register.sdk.client.payment.PaymentResponseParams
+import com.codepay.register.sdk.listener.ECRHubResponseCallBack
+
+// Build refund request
+val params = PaymentRequestParams()
+params.app_id = "your payment app_id"
+params.orig_merchant_order_no = "123322222"
+params.order_amount = "1.1"
+params.merchant_order_no = "12345644"
+params.confirm_on_terminal = false
+
+mClient.payment.refund(params, object :
+    ECRHubResponseCallBack {
+    override fun onError(errorCode: String?, errorMsg: String?) {
+      //refund fail
+    }
+
+    override fun onSuccess(data: PaymentResponseParams?) {
+        //refund success
+    }
+})
+```
+
+#### 3.7 Query
+
+1. <a href="CodePayRegisterSDK#67-query">Request/Response parameters</a> 
+2. Example:
+
+```kotlin showLineNumbers
+import com.codepay.register.sdk.client.payment.PaymentRequestParams
+import com.codepay.register.sdk.client.payment.PaymentResponseParams
+import com.codepay.register.sdk.listener.ECRHubResponseCallBack
+
+// Build query request
+val params = PaymentRequestParams()
+params.app_id = "your payment app_id"
+params.merchant_order_no = "12345644"
+mClient.payment.query(params, object :
+    ECRHubResponseCallBack {
+    override fun onError(errorCode: String?, errorMsg: String?) {
+      //query fail
+    }
+
+    override fun onSuccess(data: PaymentResponseParams?) {
+        //query success
+    }
+})
+```
+
+#### 3.8 Close
+
+1. <a href="CodePayRegisterSDK#68-close">Request/Response parameters</a> 
+2. Example:
+
+```kotlin showLineNumbers
+// Build close request
+val params = PaymentRequestParams()
+params.app_id = "your payment app_id"
+params.merchant_order_no = "12345644"
+
+mClient.payment.close(params, object :
+    ECRHubResponseCallBack {
+    override fun onError(errorCode: String?, errorMsg: String?) {
+      //close fail
+    }
+
+    override fun onSuccess(data: PaymentResponseParams?) {
+        //close success
+    }
+})
+```
+

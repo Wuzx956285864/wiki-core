@@ -1,0 +1,31 @@
+import mobileWebPayFlowImg from '@site/static/img/MobileWebPayFlow.jpg'
+import ImageZoom from '@site/src/components/ImageZoom'
+
+# Wap Payment Integration
+
+The merchant's application is a mobile H5 web page that requires payment to be completed on handheld terminals such as mobile phones/tablets, refer to the solution provided in this section to access CodePay payments.
+
+## Integration Instructions
+
+Mobile web payment (also known as H5 payment) refers to the merchant displaying goods or services on the mobile web page (typically opened in mobile browsers such as Chrome, Safari, or built-in mobile browsers, as well as some mobile app built-in browsers that can also open the web page). When the user selects a payment method on the merchant page, the browser automatically redirects to the CodePay mobile web cashier to complete the payment. After signing up, the product can be connected through the API provided by CodePay.
+
+CodePay Mobile Web Cashier integrates with a large number of banks/acquirers/third-party payment service providers' H5 web cashier, which includes bank card online payment/mobile wallet account payment/mobile wallet APP payment and so on.
+
+After the user completes the payment, the merchant can receive the payment notification from CodePay, and the merchant can also take the initiative to call the query order interface to get the payment result. After obtaining the payment result, then synchronize and update the order to complete the payment of goods and services.
+
+**Usage Example**
+
+<ImageZoom src={mobileWebPayFlowImg} />
+
+## Development Guidelines
+
+We provide a set of REST APIs, please refer to the following table, the APIs are provided with SDKs for several languages, please visit<a href = "/PaymentGatewaySDKSamples"> SDK Chapter Description</a>.
+
+| Function List \ width:25%; \                                                                                                | Description \ width:75%; \                                                                                                                                                                     |
+|-----------------------------------------------------------------------------------------------------------------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| <a href="./CloudAPI#tag/Mobile-Payment/paths/~1api~1entry~1h5pay/post" target="_blank">Wap Payment Order</a>                | Submit payment orders through this api                                                                                                                                                         |
+| <a href="./CloudAPI#tag/Public-API/paths/~1api~1entry~1orderrevoker/post" target="_blank">Cancel Order</a>                  | Close unpaid orders through this api and refund the user if payment has already occurred                                                                                                       |
+| <a href="./CloudAPI#tag/Public-API/paths/~1api~1entry~1orderrefundsubmit/post" target="_blank">Submit a refund request</a>  | If you submit a refund request through this api and the refund does not arrive immediately, you can call the refund inquiry interface to get the progress of the refund.                       |
+| <a href="./CloudAPI#tag/Public-API/paths/~1api~1entry~1orderquery/post" target="_blank">Query order</a>                     | Query the transaction result (consumption/pre-authorization/pre-authorization completion) of a positive transaction order through this api                                                     |
+| <a href="./CloudAPI#tag/Public-API/paths/~1api~1entry~1orderrefundquery/post" target="_blank">Query refund</a>              | Query the transaction results of negative transaction orders (consumption cancellation/pre-authorization cancellation/consumption refund/pre-authorization completion refund) through this api |
+| <a href="./CloudAPI#tag/Public-API/paths/~1%7Bmerchant_website%7D/post" target="_blank">Transaction result notification</a> | After the transaction, notify the merchant through this webhook to tell the merchant the result of the transaction                                                                             |

@@ -1,0 +1,93 @@
+# Payment Callback And Checklist Implementation Guidelines
+
+## 1. Context
+
+Due to network irregularities or system instabilities, situations may arise where a user's payment succeeds, but the merchant does not receive the corresponding payment notification. This can falsely show that the order remains unpaid. Failure to promptly update this status can lead to user complaints or even multiple payments for a single order.
+
+## 2. Objective
+
+Ensure that merchants can promptly and accurately verify the payment status of orders—even when the payment result notification is missed—enhancing the resilience of the merchant's system and decreasing user grievances caused by order status discrepancies.
+
+## 3. Front-End Payment Processing
+
+### 3.1 Integrated POS Payments
+
+3.1.1 App Calls, USB Connections, and LAN Payments
+
+3.1.1.1 If the front-end indicates "canceled by user", the order remains unpaid. The user should be informed that the payment was not completed.
+
+3.1.1.2 If the front-end shows "Success," "Error," experiences a timeout, or any other unforeseen issue, the merchant should use the order verification interface to confirm order status.
+
+- If the verification shows payment success, display the payment success page to the user.
+- If the order remains unpaid, advise the user to revisit the order management page later for verification, cautioning against repeated payment attempts. For further logic implementation, see [Back-end service processing](#4-back-end-service-processing).
+
+### 3.2 Cloud API Payments
+
+After a successful payment request, the front-end should periodically check the merchant's order verification interface. For instance, check every 2 seconds for a total of 60 seconds (merchants can adjust this timing based on their needs).
+
+- Display the Payment Success page if the order is verified as paid.
+- If the set time lapses without a successful payment verification, inform the user of a transaction timeout.
+
+### 3.3 QR Pay(Customer-presented)
+
+Once the front-end successfully initiates the payment request, if a positive response indicates a successful transaction, the user is directed to the "Payment Success" page. If not, the front-end continuously polls the merchant's verification interface to confirm the order's status.
+
+- Typically, this polling occurs every 2 seconds for a duration of 60 seconds. However, merchants can adjust these parameters based on their unique business needs.
+- Should the merchant's verification interface confirm the payment within this timeframe, the user will see the "Payment Success" page. If no confirmation is received within the designated period, polling ceases, and the user is notified of a transaction timeout.
+
+### 3.4 QR Pay(Merchant-presented)
+
+Upon displaying the payment QR code, the front-end routinely checks with the merchant's order verification interface to ascertain the order's status.
+As a standard, this checking happens every 2 seconds and lasts for a total of 60 seconds. Merchants can customize these settings to fit their operational demands.
+
+- If the verification process acknowledges a successful payment within this period, the user is presented with the "Payment Success" page.
+- If not, the checking process is halted, and the user is alerted that the transaction has timed out.
+
+### 3.5 Wap Payments And PC Web Payments
+
+3.5.1 When users are redirected to the initial payment page or a pre-defined redirect_url, a "Payment Completed" button should be prominently displayed for user interaction.
+
+3.5.2 On pressing the "Payment Completed" button, merchants are required to consult the order verification interface to validate the order's status.
+
+- If this interface verifies a successful transaction, users are then taken to the "Payment Success" page.
+- If the merchant's order checking interface returns an unpaid order, the user needs to be reminded to "enter the order management page later to verify the order status, do not repeat the initiation of payment". Merchant back-end needs to obtain and update the order status in a timely manner, the realization of the logic of reference【[Back-End Service Processing](#4-back-end-service-processing)】. When the user re-enters the order management page and initiates payment again for an unpaid order, the merchant should use the original order number to initiate the payment, and not replace the payment order number to avoid repeated payments by the user.
+
+## 4. Back-End Service Processing
+
+### 4.1 Payment Callback Processing
+
+Merchants' back-end systems should process the asynchronous payment result notifications from CodePay accurately and swiftly. They should then relay the outcome back to CodePay per the interface guidelines. For detailed instructions, refer to:
+
+1、<a href = "/APIRule">API specification</a>.
+
+2、<a href = "/callbackNotificationNotes">Notes</a>.
+
+### 4.2 Regular Polling For Order Verification
+
+Should there be an extended delay in receiving payment notifications, the merchant's back-end must periodically initiate the <a href = "./CloudAPI#tag/Public-Payment-API/paths/~1api~1entry~1orderquery/post" target="_blank">CodePay Query Order API</a> to verify order statuses.
+
+Option 1:
+
+Using the order placement time (or the first unsuccessful call time post a successful payment notification or error report) as a reference, trigger the <a href = "./CloudAPI#tag/Public-Payment-API/paths/~1api~1entry~1orderquery/post" target="_blank">CodePay Query Order API </a> at intervals of 5 seconds, 30 seconds, 1 minute, 3 minutes, 5 minutes, 10 minutes, and 30 minutes. If the final query doesn't confirm successful payment, cease subsequent queries and invoke the <a href = "./CloudAPI/#tag/Public-Payment-API/paths/~1api~1entry~1orderrevoker/post" target="_blank">CodePay Revocation API </a> to close the order. (Merchants can tailor the polling frequency and count based on their operations)
+
+Option 2:
+
+Initiate a timed task every 30 seconds to identify orders from the last 10 minutes that remain unpaid. Use the <a href = "./CloudAPI#tag/Public-Payment-API/paths/~1api~1entry~1orderquery/post" target="_blank">CodePay Query Order API</a> to validate their status. Keep track of how often an order is checked; if after 10 checks the status remains unpaid, halt further queries and utilize the <a href = "./CloudAPI/#tag/Public-Payment-API/paths/~1api~1entry~1orderrevoker/post" target="_blank">CodePay Revocation API</a> to cancel the order. (Polling intervals and counts are adjustable as per merchant preferences)
+
+### 4.3 D+N Day Reconciliation Processing
+
+4.3.1 Post 2:00 pm on D+N days, merchants can either request the <a href = "" target="_blank">CodePay Bill Download API</a> or manually download the D-Day transaction report from the CodePay merchant platform. Next, compare the statement's order details line by line with the merchant's system records.
+
+:::tip
+The D+N statement's availability may vary due to upstream payment channel constraints. Typically, the reconciliation timeframe doesn't exceed two days. For specific timings, please contact us.
+:::tip
+
+4.3.2 Order Verification Scenarios:
+
+(1) Orders align and all statuses indicate Payment Successful: This signifies successful reconciliation.
+
+(2) Orders align but merchant's status isn't Payment Successful: Merchants can either update the status to Payment Successful and dispatch the order or refund the user, contingent on their operational judgment.
+
+(3) Order mismatch, with the merchant's system lacking the statement's specific order records: This anomaly demands a system check by the merchant for data discrepancies.
+
+(4) Order mismatch, where successful orders in the merchant's system aren't found in the statement: This inconsistency indicates potential flaws in the merchant's order processing logic that warrant an investigation.

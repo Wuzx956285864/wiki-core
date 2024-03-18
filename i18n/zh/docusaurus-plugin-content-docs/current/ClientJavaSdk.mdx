@@ -1,0 +1,392 @@
+import rigiserConnect from '@site/static/img/RigiserConnect.png'
+import ImageZoom from '@site/src/components/ImageZoom'
+
+# Register-SDK for JAVA
+
+## 1. Getting Started
+
+### 1.1 Prerequisite
+- JDK version 1.8 and above development environment.
+- Desktop computer or device running Windows, MacOS or Linux operating systems.
+
+### 1.2 Installation & Configuration
+1. Application installation and settings, please refer to <a href="/UsbMode#development-guidelines" target="_blank">USB mode integration</a> and <a href="/WlanMode" target="_blank">WLAN/LAN mode integration</a>.
+
+2. Download the jar package and add it to your project, please refer to the GitHub source code.
+
+| Source code & Library \ width:50%; \                                                |    WLAN Mode \ width:25%; \    | USB Mode \ width:25%; \ |
+|-------------------------------------------------------------------------------------|:------------------------------:|:-----------------------:|
+| https://github.com/codepay-us/codepay-register-sdk-java                             | Windows/Linux/MacOS(rowspan=2) |   Windows(rowspan=2)    |
+| https://github.com/codepay-us/codepay-register-cross-terminal-integration-demo-java |                                |                         |
+
+3. Maven dependencies
+:::note
+The SDK depends on some open-source third-party jars. If these jars are not integrated into your project, you will need to manually add dependencies to your project.
+:::note
+
+```xml
+<!-- Mandatory -->
+<!-- jSerialComm -->
+<dependency>
+    <groupId>com.fazecast</groupId>
+    <artifactId>jSerialComm</artifactId>
+    <version>[2.0.0,3.0.0)</version>
+</dependency>
+<!-- WebSocket -->
+<dependency>
+    <groupId>org.java-websocket</groupId>
+    <artifactId>Java-WebSocket</artifactId>
+    <version>1.5.4</version>
+</dependency>
+<!-- fastjson2 -->
+<dependency>
+    <groupId>com.alibaba.fastjson2</groupId>
+    <artifactId>fastjson2</artifactId>
+    <version>2.0.26</version>
+</dependency>
+<!-- hutool -->
+<dependency>
+    <groupId>cn.hutool</groupId>
+    <artifactId>hutool-all</artifactId>
+    <version>5.8.21</version>
+</dependency>
+<!-- slf4j-api -->
+<dependency>
+    <groupId>org.slf4j</groupId>
+    <artifactId>slf4j-api</artifactId>
+    <version>2.0.9</version>
+</dependency>
+<!-- jmdns -->
+<dependency>
+  <groupId>org.jmdns</groupId>
+  <artifactId>jmdns</artifactId>
+  <version>3.5.8</version>
+</dependency>
+
+<!-- non-mandatory -->
+<!-- logback -->
+<dependency>
+    <groupId>ch.qos.logback</groupId>
+    <artifactId>logback-classic</artifactId>
+    <version>1.3.11</version>
+</dependency>
+<!-- junit -->
+<dependency>
+    <groupId>org.junit.jupiter</groupId>
+    <artifactId>junit-jupiter-engine</artifactId>
+    <version>5.8.1</version>
+    <scope>test</scope>
+</dependency>
+```
+
+## 2. Function List
+
+### 2.1 Device discovery and pairing
+:::note
+Only WLAN connection mode requires pairing first, USB connection mode does not require pairing.
+:::note
+
+#### 2.1.1 Start/Stop Device Discovery Service
+The terminal can only discover your POS application when the device discovery service is started
+- After completing a pairing operation, the terminal and POS application will record each other's network information
+- When pairing and connecting to the network are required, the device discovery service needs to be enabled
+
+```java showLineNumbers
+import com.codepay.register.sdk.device.ECRHubDiscoveryService;
+import com.codepay.register.sdk.device.ECRHubWebSocketDiscoveryService;
+
+ECRHubDiscoveryService service = ECRHubWebSocketDiscoveryService.getInstance();
+//start device discover service
+service.start();
+
+//stop device discover service
+service.stop();
+```
+
+#### 2.1.2 Get a list of paired terminals
+- When using POS applications to push orders, you can select a device from the paired device list to push the order;
+- When POS applications need to display paired POS terminals, this function can be used to obtain a list of paired devices for display.
+
+```java showLineNumbers
+import com.codepay.register.sdk.device.ECRHubDevice;
+import com.codepay.register.sdk.device.ECRHubDiscoveryService;
+import com.codepay.register.sdk.device.ECRHubWebSocketDiscoveryService;
+
+ECRHubDiscoveryService service = ECRHubWebSocketDiscoveryService.getInstance();
+
+List<ECRHubDevice> pairedDeviceList = service.getPairedDeviceList();
+for (ECRHubDevice ecrHubDevice : pairedDeviceList) {
+    System.out.println("terminal_sn:" + ecrHubDevice.getTerminal_sn());
+    System.out.println("ws_address:" + ecrHubDevice.getWs_address());
+    
+    // Create ECRHubClient instance object based on ws_address
+    // ECRHubClient client = ECRHubClientFactory.create(ecrHubDevice.getWs_address());
+}
+```
+
+#### 2.1.3 Remove paired terminals
+When the POS terminal is no longer in use, it can be manually removed from the paired list of the POS application.
+
+```java showLineNumbers
+import com.codepay.register.sdk.device.ECRHubDevice;
+import com.codepay.register.sdk.device.ECRHubDiscoveryService;
+import com.codepay.register.sdk.device.ECRHubWebSocketDiscoveryService;
+
+ECRHubDiscoveryService service = ECRHubWebSocketDiscoveryService.getInstance();
+List<ECRHubDevice> pairedDeviceList = service.getPairedDeviceList();
+
+// Select the device to be removed for removal
+ECRHubDevice device = pairedDeviceList.get(0);
+service.unpair(device);
+```
+
+### 2.2 Connect
+Select a paired terminal to initiate a network connection, and once the connection is established, transaction instructions can be sent.
+
+#### 2.2.1 Call process
+<ImageZoom src={rigiserConnect}/>
+
+#### 2.2.2 Create client instance
+
+**WLAN connection mode**
+> When a POS application connects to a POS terminal using WLAN, use the following method to create a client
+
+```java showLineNumbers
+import com.codepay.register.sdk.ECRHubClient;
+import com.codepay.register.sdk.ECRHubConfig;
+import com.codepay.register.sdk.ECRHubClientFactory;
+
+// Create a client instance
+ECRHubConfig config = new ECRHubConfig();
+// Setting socket timeout
+config.getSocketConfig().setConnTimeout(10 * 1000);
+config.getSocketConfig().setWriteTimeout(10 * 1000);
+config.getSocketConfig().setReadTimeout(120 * 1000);
+
+// Please replace "xxxxxx" with the real host and port
+ECRHubClient client = ECRHubClientFactory.create("ws://xxxxxx", config);
+```
+
+**USB connection mode**
+> When a POS application connects to a POS terminal using a USB cable, use the following method to create a client
+
+```java showLineNumbers
+import com.codepay.register.sdk.ECRHubClient;
+import com.codepay.register.sdk.ECRHubConfig;
+import com.codepay.register.sdk.ECRHubClientFactory;
+
+// Create a client instance By Serial port
+ECRHubConfig config = new ECRHubConfig();
+// Setting Serial Port timeout
+config.getSerialPortConfig().setConnTimeout(10 * 1000);
+config.getSerialPortConfig().setWriteTimeout(10 * 1000);
+config.getSerialPortConfig().setReadTimeout(120 * 1000);
+
+// Method 1: Specify the serial port name. Please replace "xxxxxx" with the real serial port name. For example: COM6
+// ECRHubClient client = ECRHubClientFactory.create("sp://xxxxxx", config);
+
+// Method 2: Do not specify the serial port name. The SDK will automatically find available serial port
+ECRHubClient client = ECRHubClientFactory.create("sp://", config);
+```
+
+#### 2.2.3 Connection
+Establish a connection between the POS application and the POS terminal.
+
+```java showLineNumbers
+// Connecting to the POS Terminal
+client.connect();
+```
+
+#### 2.2.4 Disconnect
+Disconnect the POS application from the POS terminal.
+
+```java showLineNumbers
+// This will try disconnect from POS Terminal
+client.disconnect();
+```
+
+### 2.3 Transactions
+
+#### 2.3.1 Sale
+
+1. <a href="CodePayRegisterSDK#61-sale">Request/Response parameters</a> 
+2. Example:
+
+```java showLineNumbers
+import com.codepay.register.sdk.model.request.SaleRequest;
+import com.codepay.register.sdk.model.response.SaleResponse;
+import com.codepay.register.sdk.enums.EPayScenario;
+
+// Build sale request
+SaleRequest request = new SaleRequest();
+request.setApp_id("Your payment appid"); // Setting your payment application ID
+request.setMerchant_order_no("O123456789");
+request.setOrder_amount("1");
+request.setPay_scenario(EPayScenario.SWIPE_CARD.getVal());
+
+// Setting read timeout,the timeout set here is valid for this request
+ECRHubConfig requestConfig = new ECRHubConfig();
+requestConfig.getSerialPortConfig().setReadTimeout(2 * 60 * 1000);
+request.setConfig(requestConfig);
+        
+// Execute sale request
+System.out.println("Sale Request:" + request);
+SaleResponse response = client.execute(request);
+System.out.println("Sale Response:" + response);
+```
+
+#### 2.3.2 Sale with cashback
+
+1. <a href="CodePayRegisterSDK#62-sale-with-cashback">Request/Response parameters</a> 
+2. Example:
+
+```java showLineNumbers
+import com.codepay.register.sdk.model.request.SaleWithCashbackRequest;
+import com.codepay.register.sdk.model.response.SaleWithCashbackResponse;
+import com.codepay.register.sdk.enums.EPayScenario;
+
+// Build sale with cashback request
+SaleWithCashbackRequest request = new SaleWithCashbackRequest();
+request.setApp_id("Your payment appid"); // Setting your payment application ID
+request.setMerchant_order_no("O123456789");
+request.setOrder_amount("50");
+request.setCashback_amount("20");
+request.setPay_scenario(EPayScenario.SWIPE_CARD.getVal());
+
+// Setting read timeout,the timeout set here is valid for this request
+ECRHubConfig requestConfig = new ECRHubConfig();
+requestConfig.getSerialPortConfig().setReadTimeout(2 * 60 * 1000);
+request.setConfig(requestConfig);
+        
+// Execute sale with cashback request
+System.out.println("SaleWithCashback Request:" + request);
+SaleWithCashbackResponse response = client.execute(request);
+System.out.println("SaleWithCashback Response:" + response);
+```
+
+#### 2.3.3 Authorization
+
+1. <a href="CodePayRegisterSDK#65-authorization">Request/Response parameters</a> 
+2. Example:
+
+```java showLineNumbers
+import com.codepay.register.sdk.model.request.AuthRequest;
+import com.codepay.register.sdk.model.response.AuthResponse;
+import com.codepay.register.sdk.enums.EPayScenario;
+
+// Build authorization request
+AuthRequest request = new AuthRequest();
+request.setApp_id("Your payment appid"); // Setting your payment application ID
+request.setMerchant_order_no("O123456789");
+request.setOrder_amount("1");
+request.setPay_scenario(EPayScenario.SWIPE_CARD.getVal());
+        
+// Execute authorization request
+System.out.println("Authorization Request:" + request);
+AuthResponse response = client.execute(request);
+System.out.println("Authorization Response:" + response);
+```
+
+#### 2.3.4 Completion
+
+1. <a href="CodePayRegisterSDK#66-completion">Request/Response parameters</a> 
+2. Example:
+
+```java showLineNumbers
+import com.codepay.register.sdk.model.request.CompletionRequest;
+import com.codepay.register.sdk.model.response.CompletionResponse;
+
+// Build completion request
+CompletionRequest request = new CompletionRequest();
+request.setApp_id("Your payment appid"); // Setting your payment application ID
+request.setOrig_merchant_order_no("O1695032342508");// The merchant order number of the original Authorization order
+request.setMerchant_order_no("O123456789");
+request.setOrder_amount("1");
+        
+// Execute completion request
+System.out.println("Completion Request:" + request);
+CompletionResponse response = client.execute(request);
+System.out.println("Completion Response:" + response);
+```
+
+#### 2.3.5 Void
+
+1. <a href="CodePayRegisterSDK#63-void">Request/Response parameters</a> 
+2. Example:
+
+```java showLineNumbers
+import com.codepay.register.sdk.model.request.VoidRequest;
+import com.codepay.register.sdk.model.response.VoidResponse;
+
+// Build void request
+VoidRequest request = new VoidRequest();
+request.setApp_id("Your payment appid"); // Setting your payment application ID
+request.setMerchant_order_no("O123456789");
+        
+// Execute void request
+System.out.println("Void Request:" + request);
+VoidResponse response = client.execute(request);
+System.out.println("Void Response:" + response);
+```
+
+#### 2.3.6 Refund
+
+1. <a href="CodePayRegisterSDK#64-refund">Request/Response parameters</a> 
+2. Example:
+
+```java showLineNumbers
+import com.codepay.register.sdk.model.request.RefundRequest;
+import com.codepay.register.sdk.model.response.RefundResponse;
+
+// Build refund request
+RefundRequest request = new RefundRequest();
+request.setApp_id("Your payment appid"); // Setting your payment application ID
+request.setOrig_merchant_order_no("O1695032342508");// The merchant order number of the original order
+request.setMerchant_order_no("O123456789");
+request.setOrder_amount("1");
+        
+// Execute refund request
+System.out.println("Refund Request:" + request);
+RefundResponse response = client.execute(request);
+System.out.println("Refund Response:" + response);
+```
+
+#### 2.3.7 Query
+
+1. <a href="CodePayRegisterSDK#67-query">Request/Response parameters</a> 
+2. Example:
+
+```java showLineNumbers
+import com.codepay.register.sdk.model.request.QueryRequest;
+import com.codepay.register.sdk.model.response.QueryResponse;
+
+// Build query request
+QueryRequest request = new QueryRequest();
+request.setApp_id("Your payment appid"); // Setting your payment application ID
+request.setMerchant_order_no("O123456789");
+
+// Execute query request
+System.out.println("Query Request:" + request);
+QueryResponse response = client.execute(request);
+System.out.println("Query Response:" + response);
+```
+
+#### 2.3.8 Close
+
+1. <a href="CodePayRegisterSDK#68-close">Request/Response parameters</a> 
+2. Example:
+
+```java showLineNumbers
+import com.codepay.register.sdk.model.request.CloseRequest;
+import com.codepay.register.sdk.model.response.CloseResponse;
+
+// Build close request
+CloseRequest request = new CloseRequest();
+request.setApp_id("Your payment appid"); // Setting your payment application ID
+request.setMerchant_order_no("O123456789");
+
+// Execute close request
+System.out.println("Close Request:" + request);
+CloseResponse response = client.execute(request);
+System.out.println("Close Response:" + response);
+```

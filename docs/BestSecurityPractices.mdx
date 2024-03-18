@@ -1,0 +1,124 @@
+# Best Security Practices
+
+## 1. Safe Use Of Merchant Platforms
+
+For the safe use of the merchant platform, we will start from four aspects: applying for the account, receiving the account opening email, logging in to the merchant platform, and the daily use of the merchant platform.
+
+### 1.1 Account Application
+
+     a、Applying to CodePay is free; be wary of potential scams.
+
+     b、After submitting your application, securely store the details to avoid breaches.
+
+### 1.2 Account Activation Email
+
+     a、Keep your activation email, which contains sensitive information like your account ID and initial password, in a secure location.
+
+### 1.3 Logging into the Merchant Platform
+
+     a、Upon first login, change your password. It should be a minimum of 8 characters, using a mix of uppercase, lowercase, numbers, and symbols.
+
+     b、Always ensure you're logging in via https://mp.codepay.us to avoid phishing attacks.
+
+### 1.4 Daily Platform Use
+
+    a、Login Security
+
+    ◆ Update your password every three months.
+    ◆ Safeguard your email account, as it's used for sensitive operations like funding.
+    ◆ Assign unique roles and privileges to operators and limit them as needed.
+    ◆ Revoke privileges when employees leave or change roles.
+    ◆ Each employee should have an individual account—no sharing.
+
+    b、Browser Safety
+
+    ◆ Use updated browsers and enable automatic system and browser updates.
+
+    c、Functionality
+
+    ◆ If using APIs, consider setting up an IP whitelist.
+
+## 2. System Development Guidelines
+
+For merchants who are keen on developing information systems, whether managed in-house or outsourced, security is paramount. We'll outline these considerations under five main sections: requirements, design, coding, testing, and deployment & operations maintenance.
+
+### 2.1 Requirements
+
+    a、When creating marketing campaigns internally, it's crucial to incorporate anti-scratch mechanisms.
+
+### 2.2 Design
+
+    a、Data Acquisition
+    ◆ Avoid capturing data types that are legally restricted, like magnetic track details and credit card CVV codes.
+    ◆ Sensitive client information should always be encrypted before storage.
+
+    b、Data Transmission
+    ◆ Rely on HTTPS protocols to ensure secure online communications.
+    ◆ Avoid outdated protocols. Using updated versions, such as TLS 1.2, is advisable.
+    ◆ Designing and implementing personal encryption strategies should be approached with caution; they often come with pitfalls.
+
+    c、Data Retention
+    ◆ Ensure logs do not display sensitive data. If required, this data should be desensitized.
+    ◆ Encryption or hashing is essential for sensitive data stored in caches or databases.
+    ◆ Store essential authentication details, like passwords, using salted hashes.
+
+    d、Data Access
+    ◆ All external data access requests should undergo authentication.
+    ◆ It's essential to keep internal data access highly restricted to prevent unintended leaks.
+
+    e、Audit Logs
+    ◆ Comprehensive logging is crucial, capturing Who, When, Why, How, and What details.
+
+    f、Handling Finances
+    ◆ Consistently reconcile system and CodePay financial data.
+    ◆ Design data systems like databases or key-value stores to guard against unauthorized data alterations.
+
+### 2.3 Coding
+
+    a、Parameter Handling
+    ◆ Maintain an up-to-date security vulnerability checklist.
+    ◆ Proactively detect and rectify system and web vulnerabilities.
+    ◆ Stay abreast of the newest solutions for security vulnerabilities.
+
+    b、Logic Handling
+    ◆ Ensure that payment confirmation notifications are validated against CodePay signatures.
+    ◆ Backend commodity pricing logic should safeguard against potential front-end price tampering.
+    ◆ Keep sensitive details like merchant API keys or certificates away from public-facing apps or web pages.
+
+    c、App Development Security
+    ◆ For iOS development, adhere to Apple's security best practices.
+    ◆ For Android, follow the recommended security guidelines.
+
+### 2.4 Testing
+
+     a、Conduct rigorous safety testing for both input and output parameters.
+
+     b、Regularly scan the system for vulnerabilities, utilizing in-house resources, crowdsourcing, or third-party security tools, and address identified issues promptly.
+
+### 2.5 Deployment & Operations
+
+     a、Use the latest stable versions for all system components, both commercial and open-source.
+
+     b、Conduct system vulnerability tests periodically and rectify any issues.
+
+     c、Have a disaster recovery plan in place, complete with primary backups. Ideally, distribute deployments across several server rooms or locations.
+
+     d、Utilize major cloud platforms, activating their built-in security measures.
+
+     e、If resources allow, invest in dedicated security monitoring tools or services.
+
+     f、Monitor real-time data with established key metrics.
+
+     g、Have designated staff to oversee and address security incidents.
+
+     h、Keep tabs on the security health of all system frameworks and components.
+
+     i、Regularly patch and upgrade the system to its latest version.
+
+     j、Practice restraint when opening service ports.
+
+     k、Ensure all server login activities are traceable.
+
+     m、The internal management system should mandate authentication and maintain operation logs for audit purposes.
+
+     n、Reduce the system's vulnerability by minimizing offline business operations.

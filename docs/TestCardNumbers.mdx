@@ -1,0 +1,114 @@
+import ImageZoom from "@site/src/components/ImageZoom";
+import newUATContracts from "@site/static/img/NewUATContracts.png";
+import uATOpen from "@site/static/img/UATOpen.png";
+import uATTerminal from "@site/static/img/UATTerminal.png";
+
+# Test card numbers
+
+CodePay provides you with a test card number to trigger specific scenarios in the payment gateway, such as decline and approval transactions. You can:
+
+- Use test card details to test each payment process and ensure that your application processes payments as expected.
+- Before accepting the actual payment, you can use the card details on this page to test your integration.
+- Verify certain cases that are difficult to simulate in real payment scenarios, such as large amount payments.
+
+:::caution
+Never use actual cardholder data to test in the UAT environment.
+:::caution
+
+## Preparation
+
+Before testing UAT integration, you should ensure that you have correctly configured the UAT payment channel. The UAT payment channel is a simulation environment that is completely independent of the real payment channel. You need to configure the payment terminal you are in to set up this UAT channel. The configuration reference interface is as follows:
+
+1. Log in to the ISV platform and click on "Merchants ->Acquiring Contracts ->New Acquiring Contract".
+<ImageZoom src={newUATContracts} />
+2. Select the merchant, select the payment channel "Bankcard Sandbox" and turn on all switches, then click "Submit".
+<ImageZoom src={uATOpen} />
+3. Ensure that your test payment terminal has been added to the merchant account.
+<ImageZoom src={uATTerminal} />
+
+## UAT test card numbers
+
+You can use the following test card data to test the cards present on the CodePay UAT simulator.
+
+- Use any three-digit Card Verification Value (CVV) / Card Verification Code (CVC), for example: 123.
+- Use any future date as the expiry date, for example, 1124.
+- Use any digit sequence of 5-9 length as the cardholder's postal code, for example, 20001 or 20001-1234.
+- Use a maximum of 20 characters for the cardholder's street address, for example, 1234 Main Street.
+- Any card number that meets the following requirements and passes Luhn check validation, except for cards configured for <a href = "./TestCardNumbers#uat-test-card-numbers-for-specific-responses" >specific response</a>, will return an approval response:
+
+:::tip
+The composition rules for card numbers of bank card organizations may change over time and with policy changes. The following list is not exhaustive, and if you enter another card number that complies with the rules, it will also be supported.
+:::tip
+
+| Card Brand \ width:25%; \ | PAN Prefix \ width:75%; \     |
+|---------------------------|-------------------------------|
+| Visa                      | 4*                            |
+| Mastercard                | 51* through 55*               |
+| Amex                      | 34* or 37*                    |
+| Discover                  | 6011*, 622*, 644* through 65* |
+| Diners                    | 300* through 305*             |
+| JCB                       | 35*                           |
+| UnionPay                  | 62*                           |
+
+## UAT test card numbers for specific responses
+
+The following test card returns a specific response on the CodePay UAT emulator:
+
+| Card Brand \ width:10%; \ | Test PAN \ width:20%; \ | Response \ width:20%; \        | Description \ width:50%; \                                                                                                                                                  |
+|---------------------------|-------------------------|--------------------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| Visa                      | 4400 1111 2222 0000     | (rowspan=7) Decline            | (rowspan=7) The transaction has not been approved.                                                                                                                          |
+| Mastercard                | 5100 1111 2222 0000     |                                |                                                                                                                                                                             |
+| Amex                      | 3400 1111 2222 0002     |                                |                                                                                                                                                                             |
+| Discover                  | 6500 1111 2222 0004     |                                |                                                                                                                                                                             |
+| Diners                    | 3000 1111 2222 0006     |                                |                                                                                                                                                                             |
+| JCB                       | 3500 1111 2222 0001     |                                |                                                                                                                                                                             |
+| UnionPay                  | 6200 1111 2222 0007     |                                |                                                                                                                                                                             |
+| Visa                      | 4400 1111 2222 0018     | (rowspan=7) Expired card       | (rowspan=7) This indicates that the card has expired and needs to be updated or replaced.                                                                                   |
+| Mastercard                | 5100 1111 2222 0018     |                                |                                                                                                                                                                             |
+| Amex                      | 3400 1111 2222 0010     |                                |                                                                                                                                                                             |
+| Discover                  | 6500 1111 2222 0012     |                                |                                                                                                                                                                             |
+| Diners                    | 3010 1111 2222 0004     |                                |                                                                                                                                                                             |
+| JCB                       | 3500 1111 2222 0019     |                                |                                                                                                                                                                             |
+| UnionPay                  | 6200 1111 2222 0015     |                                |                                                                                                                                                                             |
+| Visa                      | 4400 1111 2222 0026     | (rowspan=7) Timeout            | (rowspan=7) This indicates that the network timed out while processing the transaction.                                                                                     |
+| Mastercard                | 5100 1111 2222 0026     |                                |                                                                                                                                                                             |
+| Amex                      | 3400 1111 2222 0028     |                                |                                                                                                                                                                             |
+| Discover                  | 6500 1111 2222 0020     |                                |                                                                                                                                                                             |
+| Diners                    | 3020 1111 2222 0002     |                                |                                                                                                                                                                             |
+| JCB                       | 3500 1111 2222 0027     |                                |                                                                                                                                                                             |
+| UnionPay                  | 6200 1111 2222 0023     |                                |                                                                                                                                                                             |
+| Visa                      | 4400 1111 2222 0034     | (rowspan=7) Insufficient funds | (rowspan=7) This indicates that there are insufficient funds in the account to complete the transaction.                                                                    |
+| Mastercard                | 5100 1111 2222 0034     |                                |                                                                                                                                                                             |
+| Amex                      | 3400 1111 2222 0036     |                                |                                                                                                                                                                             |
+| Discover                  | 6500 1111 2222 0038     |                                |                                                                                                                                                                             |
+| Diners                    | 3030 1111 2222 0000     |                                |                                                                                                                                                                             |
+| JCB                       | 3500 1111 2222 0035     |                                |                                                                                                                                                                             |
+| UnionPay                  | 6200 1111 2222 0031     |                                |                                                                                                                                                                             |
+| Visa                      | 4400 1111 2222 0042     | (rowspan=7) Do not honor       | (rowspan=7) This indicates that the bank or financial institution has refused a particular transaction, such as when the system detects it may be a fraudulent transaction. |
+| Mastercard                | 5100 1111 2222 0042     |                                |                                                                                                                                                                             |
+| Amex                      | 3400 1111 2222 0044     |                                |                                                                                                                                                                             |
+| Discover                  | 6500 1111 2222 0046     |                                |                                                                                                                                                                             |
+| Diners                    | 3040 1111 2222 0008     |                                |                                                                                                                                                                             |
+| JCB                       | 3500 1111 2222 0043     |                                |                                                                                                                                                                             |
+| UnionPay                  | 6200 1111 2222 0049     |                                |                                                                                                                                                                             |
+| Visa                      | 4400 1111 2222 0059     | (rowspan=7) Incorrect PIN      | (rowspan=7) This indicates that an incorrect Personal Identification Number (PIN) has been entered.                                                                         |
+| Mastercard                | 5100 1111 2222 0059     |                                |                                                                                                                                                                             |
+| Amex                      | 3400 1111 2222 0051     |                                |                                                                                                                                                                             |
+| Discover                  | 6500 1111 2222 0053     |                                |                                                                                                                                                                             |
+| Diners                    | 3050 1111 2222 0005     |                                |                                                                                                                                                                             |
+| JCB                       | 3500 1111 2222 0050     |                                |                                                                                                                                                                             |
+| UnionPay                  | 6200 1111 2222 0056     |                                |                                                                                                                                                                             |
+| Visa                      | 4400 1111 2222 0067     | (rowspan=7) Exceeded Limit     | (rowspan=7) This indicates that the transaction amount has exceeded the card's credit limit or daily transaction limit.                                                     |
+| Mastercard                | 5100 1111 2222 0067     |                                |                                                                                                                                                                             |
+| Amex                      | 3400 1111 2222 0069     |                                |                                                                                                                                                                             |
+| Discover                  | 6500 1111 2222 0061     |                                |                                                                                                                                                                             |
+| Diners                    | 3051 1111 2222 0004     |                                |                                                                                                                                                                             |
+| JCB                       | 3500 1111 2222 0068     |                                |                                                                                                                                                                             |
+| UnionPay                  | 6200 1111 2222 0064     |                                |                                                                                                                                                                             |
+| Visa                      | 4400 1111 2222 0075     | (rowspan=7) System Error       | (rowspan=7) This indicates that a technical issue occurred while processing the transaction, possibly due to a failure in the bank system or the merchant's payment system. |
+| Mastercard                | 5100 1111 2222 0075     |                                |                                                                                                                                                                             |
+| Amex                      | 3400 1111 2222 0077     |                                |                                                                                                                                                                             |
+| Discover                  | 6500 1111 2222 0079     |                                |                                                                                                                                                                             |
+| Diners                    | 3052 1111 2222 0003     |                                |                                                                                                                                                                             |
+| JCB                       | 3500 1111 2222 0076     |                                |                                                                                                                                                                             |
+| UnionPay                  | 6200 1111 2222 0072     |                                |                                                                                                                                                                             |

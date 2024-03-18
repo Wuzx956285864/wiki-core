@@ -1,0 +1,86 @@
+import ImageZoom from "@site/src/components/ImageZoom";
+import ecrCloudSetImg from "@site/static/img/EcrConnectCloud.jpg";
+import ecrCloudSetSuccessImg from "@site/static/img/EcrConnectCloudSuccess.jpg";
+import ecrCloudSetFailImg from "@site/static/img/EcrConnectCloudFail.jpg";
+import WorkflowDImg from "@site/static/img/WorkflowD.png";
+import PushOrderToTerminalImg from "@site/static/img/PushOrderToTerminal.png";
+import TerminalReceivedAndPaymentImg from "@site/static/img/TerminalReceivedAndPayment.png";
+
+# Cloud mode integration
+
+## Introduction
+
+In the merchant store, if **POS application** is web-based it needs to interact with the cloud server in real time, so it is more convenient to choose the cloud API integration solution. The specific process is as follows:
+
+<ImageZoom src={WorkflowDImg} />
+
+1. **POS application** sends order info (include order id, total amount...) and terminal sn to **POS server**.
+2. **POS server** sends push-order request to **CodePay Gateway** via OpenAPI.
+3. **CodePay Gateway** received order info and precreate a transaction, then send a push-device-message request to **CodePay TMS**.
+4. **CodePay TMS** push message to **Payment terminal** via IoT communication protocol.
+5. **Payment terminal** received message and wake up **CodePay Register** application's checkout component to process transaction info. checkout packs bankcard info/mobile wallet user payment voucher into transaction data and send payment request to **CodePay Gateway**.
+6. **CodePay Gateway** processes the transaction packet and sends to payment gateway/acquire/processor/bank.
+7. Payment gateway/acquire/processor/bank response to **CodePay Gateway**.
+8. **CodePay Gateway** processes simultaneously:
+   - Responses transaction result to **CodePay Register** application.
+   - Sends an asynchronous transaction result request to **POS server**. (if failed, **CodePay Gateway** will retry several times)
+9. **POS server** notifies transaction result to **POS application** and display payment result on the screen.
+
+## Sequence diagram
+
+### 1. Push order to terminal
+
+<ImageZoom src={PushOrderToTerminalImg} />
+
+1. The merchant **POS application** create an order and request payment from the **POS server**.
+2. **POS server** request <a href="CloudAPI#tag/Integration-with-Point-of-Sale/paths/~1api~1entry~1wisehubcloudpayorder/post" target="_blank">Create Order API</a> to push the order to the designated payment terminal.
+3. **CodePay Gateway** create a pre-payment order with transaction status=9, and payment can be cancelled in this status. Please cancel through the <a href="CloudAPI#tag/Integration-with-Point-of-Sale/paths/~1api~1entry~1wisehubcloudpayclose/post" target="_blank">Close Order API</a>.
+4. **CodePay Gateway** request **CodePay TMS** to push the order to the specified payment terminal.
+5. **CodePay TMS** accept order push request and return a successful response.
+6. **CodePay Gateway** will respond to the **POS server** with transaction number, message id, and other information. **POS server** should store this information as a transaction voucher for future reconciliation or other operational needs.
+7. **POS server** start querying the transaction status of the order until it is successful or closed. <a href="CloudAPI#tag/Common-APIs/paths/~1api~1entry~1orderquery/post" target="_blank">Query Order API</a>.
+8. **POS server** respond to **POS application** and redirect to the order waiting for payment result interface.
+
+### 2. Terminal payment
+
+<ImageZoom src={TerminalReceivedAndPaymentImg} />
+
+1. **CodePay TMS** is a cloud service that manages IOT devices for payment terminal. **CodePay TMS** establishes a long connection communication with the terminal through MQTT. After **CodePay TMS** receives the payment order from **CodePay Gateway**, it sends the payment order message to the designated payment terminal and wakes up **CodePay Register** to start the payment processing process and interface.
+2. **CodePay Register** receives payment data from cardholders or mobile wallets and requests **CodePay Gateway** to process payments.
+3. **CodePay Gateway** receives a payment request and changes the order status to pending payment. At this time, the **POS server** can not call the order cancellation API to close the order.
+4. **CodePay Gateway** request payment processing institutions such as payment gateway/acquire/processor/bank to process bank card payments or mobile wallet payments.
+5. Response to transaction results.
+6. Modify the transaction status of the local database to success or failure.
+7. Asynchronous notification of order payment results to the **POS server**. The **POS server** should receive the notification and verify the notification data, and modify the local order transaction status. For detailed processing procedures, please refer to the <a href="CloudAPI/#tag/Common-APIs/paths/~1%7Bmerchant_website%7D/post" target="_blank">Notification of trading results</a>.
+8. **CodePay Gateway** returns the payment result to **CodePay Register**.
+9. **CodePay Register** displays payment results on the screen, prints receipts, sends bills, etc., and the transaction process ends.
+
+## Development guidelines
+
+### Access our APIs
+
+Please refer to the Cloud APIs in the table below, which provide SDKs in multiple languages. For more information, please visit the <a href="/PaymentGatewaySDKSamples" target = "_blank"> SDK section </a>.
+
+Accessing these APIs requires obtaining some parameters in advance, and you also need to understand more rules for API access. Please refer to the <a href = "/GatewayOverview" target = "_blank">Payment gateway integration guide</a>.
+
+| Function List \ width:25%; \                                                                                                           | Type \ width:10%; \ | Description \ width:65%; \                                                                                                                                                                     |
+|----------------------------------------------------------------------------------------------------------------------------------------|---------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| <a href="./CloudAPI#tag/Integration-with-Point-of-Sale/paths/~1api~1entry~1wisehubcloudpayorder/post" target="_blank">Create order</a> | API                 | Submit payment orders through this api                                                                                                                                                         |
+| <a href="./CloudAPI#tag/Integration-with-Point-of-Sale/paths/~1api~1entry~1wisehubcloudpayclose/post" target="_blank">Close order</a>  | API                 | Close unpaid orders through this api                                                                                                                                                           |
+| <a href="./CloudAPI#tag/Public-API/paths/~1api~1entry~1orderquery/post" target="_blank">Query order</a>                                | API                 | Query the transaction result (Purchase/Pre-authorization/Pre-auth Completion) of a positive transaction order through this api                                                                 |
+| <a href="./CloudAPI#tag/Public-API/paths/~1api~1entry~1orderrefundquery/post" target="_blank">Query refund</a>                         | API                 | Query the transaction results of negative transaction orders (Purchase cancellation/Pre-auth Cancellation/Refund/Pre-auth Completion Cancellation/Pre-auth Completion Refund) through this api |
+| <a href="./CloudAPI#tag/Public-API/paths/~1%7Bmerchant_website%7D/post" target="_blank">Transaction result notification</a>            | Webhook             | After the transaction, notify the merchant through this webhook to tell the merchant the result of the transaction                                                                             |
+
+### Application install and setting
+
+Before this, please install the application "**CodePay Register**" on the **Payment terminal**, start the app, and click on "Settings ->General ->ECR Hub" in sequence. Set the connection mode to "Cloud", as shown in the following figure:
+
+<ImageZoom src={ecrCloudSetImg} width={180} height={320} />
+
+Returning to the main interface, the example images of successful and failed connections are as follows:
+
+<div style={{ display: "flex" }}>
+  <ImageZoom src={ecrCloudSetSuccessImg} width={180} height={320} />
+  <ImageZoom width={50} height={320} />
+  <ImageZoom src={ecrCloudSetFailImg} width={180} height={320} />
+</div>

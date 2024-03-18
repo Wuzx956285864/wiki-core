@@ -1,0 +1,19 @@
+# Effective Query Mechanism
+
+## Business Context:
+
+Sometimes, due to transaction errors or network issues, a merchant's system may not receive clear transaction status through regular transaction channels or callback information. In such situations, the merchant should periodically poll the query order interface.
+
+Not having a query interface or lacking an efficient polling strategy can result in discrepancies in accounts, customer grievances, and a high rate of transaction failures.
+
+## Recommended Solutions
+
+### For "Quick Pay" Payment Scenario
+
+When using CodePay's "Quick Pay" method, the system synchronously returns the transaction outcome. If the processing result isn't successful or if there's an interruption due to network instability, merchants should call the query order interface to verify the order's status. The frequency and number of queries can vary based on individual business needs. Typically, a 3-5 second interval between queries is suggested. CodePay will automatically cancel any unpaid orders after a certain timeout. Therefore, it's advised to keep the polling duration within this timeout period.
+
+### For Other Payment Methods
+
+In other payment scenarios, CodePay informs the merchant about the order's payment status via an asynchronous callback. Since CodePay only sends notifications for successful transactions, merchants without an order verification mechanism might find their order status perpetually listed as "unknown". Furthermore, issues like network outages or misconfigured callback URLs can prevent payment callbacks from reaching their intended destination.
+
+It's advisable for merchants to set two distinct business hours. If no callback is received within the first business hour, then the query interface should be used to check the order status. This query should continue throughout the second business hour. Merchants can tailor the duration of these two business periods, the frequency of queries, and the interval between them based on their specific requirements. However, we recommend keeping the first business hour under 1 minute.

@@ -1,0 +1,301 @@
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url(/static/fonts/Inter-Regular.ttf) format('truetype');
+}
+
+body *,
+html {
+  font-family: 'Inter' !important;
+}
+
+/* You can override the default Infima variables here. */
+:root {
+  --ifm-color-primary: #1a71b9;
+  --ifm-color-primary-dark: #1766a7;
+  --ifm-color-primary-darker: #16609d;
+  --ifm-color-primary-darkest: #124f82;
+  --ifm-color-primary-light: #3092e2;
+  --ifm-color-primary-lighter: #1e82d5;
+  --ifm-color-primary-lightest: #1d7ccb;
+  --ifm-code-font-size: 95%;
+  --docusaurus-highlighted-code-line-bg: rgba(0, 0, 0, 0.1);
+}
+
+/* For readability concerns, you should choose a lighter palette in dark mode. */
+[data-theme='dark'] {
+  --ifm-color-primary: #1a71b9;
+  --ifm-color-primary-dark: #1766a7;
+  --ifm-color-primary-darker: #16609d;
+  --ifm-color-primary-darkest: #124f82;
+  --ifm-color-primary-light: #3092e2;
+  --ifm-color-primary-lighter: #1e82d5;
+  --ifm-color-primary-lightest: #1d7ccb;
+  --docusaurus-highlighted-code-line-bg: rgba(0, 0, 0, 0.3);
+  --ifm-navbar-search-input-dark-icon: url('/img/search-input-dark-icon.png')
+}
+
+table {
+  width: 100%;
+  display: table;
+}
+
+table thead {
+  width: 100%;
+  border: none;
+  background: rgba(26, 113, 185, 0.85);
+  color: #fff;
+}
+
+table thead tr {
+  border: none;
+}
+
+table thead th {
+  border: 1px solid #f2f2f2;
+  border-bottom: 1px solid #cbcbcb;
+  font-size: 15px;
+  line-height: 1.2rem;
+}
+
+table td {
+  font-size: 14px;
+  line-height: 1.2rem;
+}
+
+ul li {
+  text-align: left;
+}
+
+@media screen and (max-width: 576px) {
+  main .navbar__search .navbar__search-input:not(:focus) {
+    width: 100%;
+  }
+}
+
+main .navbar__search>span {
+  width: 100%;
+}
+
+main .navbar__search .navbar__search-input {
+  width: 100%;
+  height: 55px;
+  display: inline-block;
+  background: #f0f0f0 var(--ifm-navbar-search-input-icon) no-repeat 1.55rem center / 1.3rem 1.3rem;
+  padding: 0 0.5rem 0 3.75rem;
+  outline:2px solid;
+  outline-color: #e8e8e8;
+  font-size: 20px;
+}
+
+main .navbar__search .navbar__search-input:focus-visible {
+  outline-color:rgba(62, 158, 71, 1);
+}
+
+/* 黑暗模式 */
+
+[data-theme='dark'] main .navbar__search .navbar__search-input {
+  background: rgba(68, 73, 80, 1) var(--ifm-navbar-search-input-dark-icon) no-repeat 1.55rem center / 1.3rem 1.3rem;
+  outline-color: rgba(84, 88, 96, 1);
+}
+[data-theme='dark'] main .navbar__search .navbar__search-input:focus-visible {
+   outline-color:rgba(255, 255, 255, 1);
+
+}
+
+/* End 黑暗模式 */
+
+.alert {
+  border-left-width: 6px;
+}
+
+.dropdown .navbar__link svg,
+.menu__link svg {
+  display: none;
+}
+
+.navbar__items .navbar__search {
+  display: none;
+}
+
+.footer {
+  background: #000;
+}
+
+.footer .container {
+  position: relative;
+}
+
+.footer .footer-logo {
+  margin-left: -22px;
+  width: 142px;
+  height: 24px;
+  margin-bottom: 40px;
+}
+
+.footer .footer__logo {
+  position: absolute;
+  top: 18px;
+  left: 0;
+  margin: 0;
+}
+
+.footer .footer-item {
+  margin-bottom: 0.5em;
+  font-size: 14px;
+}
+
+.footer .icon-main {
+  margin: 0;
+  position: relative;
+}
+
+.footer .icon-main::before {
+  content: '';
+  display: block;
+  background-size: 100%;
+  background-repeat: no-repeat;
+  width: 16px;
+  height: 16px;
+  position: absolute;
+  top: 5px;
+  left: -26px;
+}
+
+.footer .icon-main.email::before {
+  background-image: url('/img/icon-email.png');
+}
+
+.footer .icon-main.phone::before {
+  background-image: url('/img/icon-phone.png');
+}
+
+.footer .icon-main.address::before {
+  background-image: url('/img/icon-address.png');
+}
+
+footer .image-logo {
+  background-image: url('/img/logo.png');
+  background-size: 100%;
+  background-repeat: no-repeat;
+}
+
+footer .image-pci {
+  background-image: url('/img/pic.png');
+  background-size: 100%;
+  background-repeat: no-repeat;
+  width: 180px;
+  height: 55px;
+}
+
+.footer .pci-txt {
+  font-size: 16px;
+  margin-bottom: 24px;
+  color: #ff7c22;
+}
+
+.footer__copyright {
+  text-align: left;
+  font-size: 14px;
+  opacity: 0.62;
+}
+
+@media (max-width: 996px) {
+  .footer {
+    padding-top: 56px;
+  }
+
+  .footer .footer__logo {
+    top: -24px;
+    left: 1.2rem;
+  }
+
+  .footer__col {
+    padding-left: 3rem;
+    margin-bottom: calc(var(--ifm-spacing-vertical) * 1);
+  }
+}
+
+.table-overflow {
+  overflow-x: auto;
+  min-width: 100%;
+}
+
+.table-overflow table {
+  min-width: 800px;
+}
+
+.loader {
+  display: block;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(255, 255, 255, 1);
+  z-index: 9999;
+}
+
+.loader::after {
+  content: '';
+  display: block;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 60px;
+  height: 60px;
+  margin: -30px 0 0 -30px;
+  border-radius: 50%;
+  border: 6px solid #ccc;
+  border-top-color: #1a71b9;
+  animation: spin 1s ease-in-out infinite;
+  -webkit-animation: spin 1s ease-in-out infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+[data-auth='hide'],
+.AuthHide {
+  display: none;
+}
+
+.containerTable {
+  border: var(--ifm-table-border-width) solid var(--ifm-table-border-color);
+  border-top: none;
+  padding: 0;
+}
+
+.containerTable p {
+  margin-bottom: 0.2rem;
+}
+
+.containerTable h6 {
+  margin: 1rem 0 0.3rem;
+}
+
+.containerTable .rowItem .colItem {
+  border-top: var(--ifm-table-border-width) solid var(--ifm-table-border-color);
+  border-right: var(--ifm-table-border-width) solid var(--ifm-table-border-color);
+  height: auto;
+  padding: 20px;
+  vertical-align: top;
+}
+
+.containerTable .rowItem .colItem:last-child {
+  border-right: none;
+}
+
+.code-block-highlight-line {
+  color: red !important;
+  /*background-color: #ff000020;*/
+  /*display: block;*/
+  /*margin: 0 calc(-1 * var(--ifm-pre-padding));*/
+  /*padding: 0 var(--ifm-pre-padding);*/
+  /*border-left: 3px solid #ff000080;*/
+}

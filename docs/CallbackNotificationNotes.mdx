@@ -1,0 +1,38 @@
+# Callback Notification Guidelines
+
+## 1. Guidelines for 'notify_url' Entry:
+
+- Ensure the notify_url is set to the actual address of the merchant's system, and not the sample address provided in the interface documentation or demo.
+
+- The notify_url should be a fully qualified path starting with either "https://" or "http://". It's essential that both the domain name and IP in the URL are externally accessible.
+
+- Avoid using local or internal IP addresses like localhost, 127.0.0.1, or 192.168.x.x for the notify_url.
+
+- It's best practice not to append parameters to the notify_url.
+
+Common Mistakes and Their Descriptions:
+
+| Error \ width:50%; \                                            | Example \width:50%;\              |
+| --------------------------------------------------------------- | --------------------------------- |
+| URL is only a domain without a specific path                    | `https://www.test.com`            |
+| URL lacks "https://" or "http://", or is missing domain name/IP | /payNotify.php                    |
+| Local or intranet IP is used                                    | `http://127.0.0.1/pay/notify.php` |
+| Non-URL formatted strings                                       | xxxxxxx，1234567，test            |
+
+## 2. Callback Logic Considerations:
+
+- The processing logic for notify_url should not involve any login status or permission checks.
+
+- Merchants must validate the signature of the notification to avoid false notifications. Additionally, cross-check the order amount in the notification against the one in the merchant's system.
+
+- Upon receiving a payment notification, the merchant's system should acknowledge within 5 seconds. Failing to do so will lead CodePay to assume the notification attempt failed, prompting future retries.
+
+- Merchants should anticipate the possibility of receiving the same notification multiple times. Therefore, ensure the system can handle repeated notifications without error. If a notification has already been processed, simply send a success acknowledgment to CodePay.
+
+- If there are firewall policies limiting CodePay callback IPs on the merchant's end, be sure to whitelist the following IPs:
+
+```
+127.0.0.1
+127.0.0.2
+127.0.0.3
+```

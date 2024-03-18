@@ -1,0 +1,131 @@
+import addMerchant from "@site/static/img/AddMerchant.png";
+import addApp from "@site/static/img/AddApp.png";
+import getPkAndURL from "@site/static/img/GetPkAndURL.png";
+import mAddApp1 from "@site/static/img/MAddApp1.png";
+import mAddApp2 from "@site/static/img/MAddApp2.png";
+import mkey1 from "@site/static/img/Mkey1.png";
+import mkey2 from "@site/static/img/Mkey2.png";
+import authApp from "@site/static/img/AuthApp.png";
+import ImageZoom from "@site/src/components/ImageZoom";
+
+# 支付网关概述
+
+## 与PayCloud（CodePay提供的Omini支付网关）集成
+
+CodePay支付网关是一项帮助商家发起在线、应用内和面对面支付的服务。它不直接参与资金的流动；通常，它是连接到商家网站或POS系统的网络服务器。CodePay支付网关结合了银行/收单机构的支付网关和支付处理器，以及风险管理系统和收单机构功能。这使得CodePay成为一家全栈支付服务提供商。通过整合CodePay的支付能力，商户可以快速、安全地使用全球支付服务。
+
+## 开发指南
+
+### 开发前准备
+
+这一部分将介绍商家在开发之前需要做什么，包括需要应用哪些参数以及如何配置开发，以及根据自己的业务场景选择什么样的接入产品。
+
+<div className="container containerTable">
+  <div className="row row--no-gutters rowItem">
+    <div className="col col--4 colItem">
+      <h4>需要应用哪些参数</h4>
+      <div>
+        <p>appid</p>
+        <br />
+        <p>gateway_rsa_public_key</p>
+        <br />
+        <p>merchant_no</p>
+        <br />
+        <p>store_no(某些API需要)</p>
+      </div>
+    </div>
+    <div className="col col--4 colItem">
+      <h4>开发配置</h4>
+      <div>
+        <p>上传 app_rsa_public_key</p>
+        <br />
+        <p>获取API的访问权限</p>
+      </div>
+    </div>
+    <div className="col col--4 colItem">
+      <h4>其他准备</h4>
+      <div>
+        <p>
+          申请并激活商户，并在银行/收购/处理机构配置结算账户（如果需要）
+        </p>
+      </div>
+    </div>
+  </div>
+  <div className="row row--no-gutters rowItem">
+    <div className="col col--12 colItem">
+      <h4>选择支付场景</h4>
+      <div className="row">
+        <div className="col col--4">
+          <h6>线下支付</h6>
+          <a href="/QuickPayDevGuidelines">
+            门店有扫描设备，如扫码枪/摄像头
+          </a>
+          <br />
+          <br />
+          <a href="/qrCodePayDevGuidelines">门店有显示屏设备</a>
+          <br />
+        </div>
+        <div className="col col--4">
+          <h6>手机网页支付</h6>
+          <a href="/mobileWebPayDevGuidelines">手机网页支付/H5支付</a>
+          <br />
+          <br />
+          <br />
+        </div>
+        <div className="col col--4">
+          <h6>在线支付</h6>
+          <a href="/pcWebPayDevGuidelines">PC/WEB在线支付</a>
+          <br />
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+### ISV配置
+
+如果您是服务提供商，您可以登录ISV平台创建商户/门店，并创建和配置支付应用程序。以下是操作界面的一些屏幕截图。
+
+#### 1. 注册商户
+
+<ImageZoom src={addMerchant} />
+
+#### 2. 添加支付应用
+
+<ImageZoom src={addApp} />
+
+#### 3. 获取"gateway_rsa_public_key"和"gateway_url"
+
+<ImageZoom src={getPkAndURL} />
+
+### 商户配置
+
+如果您是商户，您可以登录商户平台创建门店，创建和配置支付应用程序。以下是一些操作界面的屏幕截图。
+
+#### 1. 添加支付应用
+
+<ImageZoom src={mAddApp1} />
+
+<ImageZoom src={mAddApp2} />
+
+#### 2. 获取"gateway_rsa_public_key"和上传"app_rsa_public_key"
+
+<ImageZoom src={mkey1} />
+
+<ImageZoom src={mkey2} />
+
+#### 3. 获取API访问授权
+
+<ImageZoom src={authApp} />
+
+### 与我们的云端API进行集成
+
+<a href="/APIRule">阅读API规则</a>
+<br />
+<br />
+
+<a href="/CloudAPI">查看API详细文档</a>
+<br />
+<br />
+
+<a href="/PaymentGatewaySDKSamples">下载SDK或示例</a>

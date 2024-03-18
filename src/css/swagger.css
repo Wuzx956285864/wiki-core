@@ -1,0 +1,219 @@
+/**
+ * Swagger CSS 
+ */
+
+.redocusaurus .property-name {
+    font-size: 18px;
+}
+
+.redocusaurus .sc-fPXMVe .sc-dCFHLb {
+    font-size: 16px;
+    color: #333;
+}
+
+.redocusaurus .sc-eeDRCY blockquote {
+    --ifm-code-background: var(--ifm-alert-background-color-highlight);
+    --ifm-link-color: var(--ifm-alert-foreground-color);
+    --ifm-link-hover-color: var(--ifm-alert-foreground-color);
+    --ifm-link-decoration: underline;
+    --ifm-tabs-color: var(--ifm-alert-foreground-color);
+    --ifm-tabs-color-active: var(--ifm-alert-foreground-color);
+    --ifm-tabs-color-active-border: var(--ifm-alert-border-color);
+    background-color: var(--ifm-alert-background-color);
+    border: var(--ifm-alert-border-width) solid var(--ifm-alert-border-color);
+    border-left-width: 6px;
+    border-radius: var(--ifm-alert-border-radius);
+    box-shadow: var(--ifm-alert-shadow);
+    color: var(--ifm-alert-foreground-color);
+    padding: var(--ifm-alert-padding-vertical) var(--ifm-alert-padding-horizontal);
+    -webkit-border-radius: var(--ifm-alert-border-radius);
+    -moz-border-radius: var(--ifm-alert-border-radius);
+    -ms-border-radius: var(--ifm-alert-border-radius);
+    -o-border-radius: var(--ifm-alert-border-radius);
+    --ifm-alert-background-color: var(--ifm-color-secondary-contrast-background);
+    --ifm-alert-background-color-highlight: rgba(235, 237, 240, 0.15);
+    --ifm-alert-foreground-color: var(--ifm-color-secondary-contrast-foreground);
+    --ifm-alert-border-color: var(--ifm-color-secondary-dark);
+}
+
+.redocusaurus .sc-eeDRCY blockquote > p {
+    font: var(--ifm-heading-font-weight) var(--ifm-h5-font-size) / var(--ifm-heading-line-height)
+        var(--ifm-heading-font-family);
+    text-transform: uppercase;
+    margin-bottom: 0.3rem;
+    line-height: 1.5rem;
+}
+
+.redocusaurus .sc-eeDRCY blockquote ul,
+.redocusaurus .sc-eeDRCY blockquote ol {
+    padding-left: 1.25em;
+    font-size: var(--ifm-font-size-base);
+    margin: 0;
+}
+
+.redocusaurus .menu-content {
+    top: 60px !important;
+    padding: 0.5rem;
+    box-sizing: border-box;
+}
+
+.redocusaurus .menu-content span {
+    font-size: 1rem;
+}
+
+.redocusaurus .menu-content .operation-type {
+    height: 16px;
+    font-size: 8px;
+    line-height: 16px;
+    margin-top: 2px;
+}
+
+.redocusaurus .menu-content li label {
+    line-height: 1.25;
+    padding: var(--ifm-menu-link-padding-vertical) var(--ifm-menu-link-padding-horizontal);
+    border-radius: 0.25rem;
+    -webkit-border-radius: 0.25rem;
+    -moz-border-radius: 0.25rem;
+    -ms-border-radius: 0.25rem;
+    -o-border-radius: 0.25rem;
+}
+
+.redocusaurus .menu-content ul li ul {
+    margin-top: 0.25rem;
+    padding-left: var(--ifm-menu-link-padding-horizontal);
+}
+
+.redocusaurus .menu-content li:not(:first-child) {
+    margin-top: 0.25rem;
+}
+
+.redocusaurus .menu-content li label:hover {
+    color: var(--ifm-menu-color);
+    background: var(--ifm-menu-color-background-hover);
+}
+
+.redocusaurus .menu-content li label.active {
+    background-color: var(--ifm-menu-color-background-active);
+}
+
+.redocusaurus .menu-content input {
+    font-size: 16px;
+}
+
+.redocusaurus .menu-content .deBnOL {
+    padding: 5px;
+}
+
+[data-theme='light'] .redoc-wrap > div:last-child {
+    background-color: #f6f8fa;
+}
+
+[data-theme='light'] .redoc-wrap .sc-iGgWBj {
+    background-color: #f6f8fa;
+}
+
+[data-theme='light'] .redoc-wrap .sc-eZYNyq {
+    background-color: #e3e8ee;
+}
+
+[data-theme='light'] .redoc-wrap .sc-eZYNyq,
+[data-theme='light'] .redoc-wrap .sc-eZYNyq svg * {
+    color: var(--ifm-font-color-base);
+    fill: initial;
+}
+
+[data-theme='light'] .redoc-wrap .sc-eZYNyq:focus {
+    box-shadow: initial;
+}
+
+html:not([data-theme='dark'])
+    .redocusaurus
+    .redoc-wrap
+    .api-content
+    > div
+    > div:nth-child(1)
+    > div:nth-child(2)
+    h3 {
+    color: var(--ifm-font-color-base) !important;
+}
+
+html:not([data-theme='dark']) .redocusaurus .redoc-wrap .api-content .react-tabs__tab-panel {
+    background-color: #e3e8ee;
+}
+
+html:not([data-theme='dark'])
+    .redocusaurus
+    .redoc-wrap
+    .api-content
+    .react-tabs__tab-panel
+    > div
+    > div
+    span {
+    color: var(--ifm-font-color-base);
+}
+
+html:not([data-theme='dark']) .redocusaurus .redoc-wrap .api-content .redoc-json {
+    font-size: 14px !important;
+}
+
+html:not([data-theme='dark']) .redocusaurus div[id^='react-tabs'] {
+    color: var(--ifm-font-color-base);
+}
+
+html:not([data-theme='dark']) .redocusaurus div[id^='react-tabs'] .sc-koXPp > button:hover,
+html:not([data-theme='dark']) .redocusaurus div[id^='react-tabs'] .sc-koXPp > button:focus {
+    background: rgba(255, 255, 255, 0.3);
+}
+
+html:not([data-theme='dark']) .redocusaurus div[id^='react-tabs'] .sc-fjvvzt {
+    background-color: #d5dce5;
+}
+
+html:not([data-theme='dark']) .redocusaurus div[id^='react-tabs'] .sc-kOPcWz {
+    background-color: #d5dce5;
+}
+
+html:not([data-theme='dark']) .redocusaurus div[id^='react-tabs'] .sc-kOPcWz svg *,
+html:not([data-theme='dark']) .redocusaurus div[id^='react-tabs'] .sc-kOPcWz label {
+    color: var(--ifm-font-color-base);
+    fill: initial;
+}
+
+.redocusaurus div[id^='react-tabs'] code,
+.redocusaurus div[id^='react-tabs'] pre {
+    font-size: 15px;
+    color: var(--ifm-font-color-base);
+    border: none;
+}
+
+html:not([data-theme='dark']) .redocusaurus div[id^='react-tabs'] pre .token.string:first-child,
+html:not([data-theme='dark'])
+    .redocusaurus
+    div[id^='react-tabs']
+    code
+    .hoverable
+    .token.string:first-child {
+    color: var(--ifm-font-color-base);
+}
+
+html:not([data-theme='dark']) .redocusaurus div[id^='react-tabs'] pre .token.string,
+html:not([data-theme='dark']) .redocusaurus div[id^='react-tabs'] code .hoverable .token.string {
+    color: #6fb9a4;
+}
+
+.redocusaurus div[id^='react-tabs'] code .collapser {
+    color: var(--ifm-font-color-base);
+}
+.redocusaurus table td .sc-iHbSHJ  {
+    width: min-content;
+    font-size: 14px;
+    margin-top: 4px;
+    padding: 2px 3px;
+    color: rgb(102, 102, 102);
+    border: 1px solid rgb(102, 102, 102);
+    border-radius: 3px;
+    -webkit-border-radius: 3px;
+    -moz-border-radius: 3px;
+    -ms-border-radius: 3px;
+    -o-border-radius: 3px;
+}

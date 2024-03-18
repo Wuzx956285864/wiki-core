@@ -1,0 +1,89 @@
+# Basic rules
+
+## Basic information
+
+All API requests must use HTTPS.
+
+:::tip
+Errors in server certificate validation should not be ignored when requesting to avoid malicious hijacking
+:::tip
+
+## Data format
+
+All API requests must use JSON.
+
+Use JSON as the data exchange format for message bodies. The request must set the HTTP header:
+
+```
+Content-Type: application/json
+Accept: application/json
+```
+
+Except for the image upload API.
+
+:::tip
+The data in the API response may contain incoming data from the merchant, i.e. it may be unchecked user input. In order to avoid XSS (Cross-site scripting) attacks, callers are requested to do appropriate escaping or filtering according to the scenario before using the response data.
+:::
+
+## Parameter compatibility
+
+- The success of the request is independent of the order of the request parameters
+- The success of the request is independent of the order in which the key-value pairs appear in the request JSON
+- When processing the response, you should not assume the order of the key-value pairs in the response JSON
+- New versions of the API may include new parameters or JSON key-value pairs in the request or response
+- The new API version does not remove required parameters or JSON key-value pairs that already exist in requests and responses
+- When the value of a JSON key-value pair in a request or response is empty (null), you can omit the
+
+## Character set
+
+Only a subset of the UTF-8 character encoding is supported: characters encoded using one to three bytes. That is, characters encoded in the four to six byte Unicode helper plane are not supported.
+
+## Date format
+
+For all date objects, use the format defined below. Example:
+
+```
+yyyy-MM-DD HH:mm:ss
+yyyy-MM-DD
+```
+
+:::tip
+The time zone of time is fixed as UTC0 time zone. When requesting, you need to convert your local time zone to the time of the + 00: 00 time zone for uploading. When responding, you also get the time of the + 00: 00 time zone, which can be converted to your local time zone for recording or display, as needed.
+:::
+
+## Unique identification of the request
+
+CodePay assigns a unique identifier to each incoming request. The request's unique identifier is contained in the HTTP Body `psn` parameter of the response. When you need help from CodePay, please provide the request's unique identifier so that we can more quickly locate the specific request.
+
+## Error message
+
+The CodePay API uses HTTP status codes to indicate the result of request processing.
+
+If the request is processed successfully, the response message body will return 200. HTTP response code only expresses the communication status, it does not represent the business status, for example, HTTP Code = 200, it only means that http responds normally, it does not mean that the payment is successful, or other business operations are successful.
+
+## Error code and error message
+
+When request processing fails, in addition to the HTTP status code indicating the error, the API will return an error in the message body stating the specific reason for the error accordingly.
+
+- `code`: Detailed error code
+- `msg`: A description of the error, using easy-to-understand text to indicate the cause of the error.
+
+```JSON
+{
+    "code":"E07303",
+    "msg":"The API is not authorized or does not exist",
+    "psn":"06100624379047675280",
+    "sign":"Ck2+5+lQ7tVGXEVcwYiZDLXQ1m6VIItlYEogCRtPBwKtIUbW3vRnZznl/cB0u//q8rTRiq+u4UFhOiFB8MWMC3ukzkb35zkDsWNygsftvx3sXSqOnIYBMEVXDKn91BnE/DXxZ3V76E67HCk6Cp5E2ujLwzawonVzWLxT4RLZjocu7U6rywz8UAS37+PAvqJA3v4H1IF3YbgaX62NOQyn2jEuzxe0BnHQKg92uMt0I64RZFBSKpOahwtQNlW0/4Hwv/Nu30vJju6N3ikYXzUfpH0KwTWoZUq/6mS8XaLayQb46WSECUZ+KuCg/GJKAMCIgnqGRS5rFlAex4iCwktlkA=="
+}
+```
+
+## Languages responded to
+
+The CodePay API allows the caller to declare the natural language locale used for error descriptions in the response. If necessary, set the request's HTTP header Accept-Language. currently supported:
+
+- en-US
+- zh-CN
+- ja-JP
+- fr-FR
+
+When not set or when the value is not supported, US English (en-US) will be used.

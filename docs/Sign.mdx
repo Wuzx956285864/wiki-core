@@ -1,0 +1,154 @@
+# Signature And Verification
+
+## Signature Request
+
+### program
+
+1. Generate your private key, denoted by `appRsaPrivateKey`, for signing requests, with a length of 2048.
+2. Constructs the content to be signed (`Content_To_Be_Signed`).
+3. Calculate and generate a signature, using the `SHA256WithRSA` encryption algorithm.
+4. Add the generated signature to the request body parameter `sign`.
+
+For more information about each step, refer to the following examples.
+
+### Step
+
+#### 1. Generate key pairs
+
+Please refer to the previous section for the key generation method.
+
+#### 2. Constructing the string to be signed
+
+Step 1: Establish the parameters to be signed
+Parameters to be signed include: API request parameters, response parameters, and asynchronous notification parameters (but excluding sign parameters and parameters with values of NULL or empty strings).
+
+:::tip
+Note: According to HTTP protocol requirements, if there are special characters (such as: &, @, etc.) in the value of the passed parameter when requesting in GET mode, the value needs to be URL Encoding, so that the receiver of the request can receive the correct value of the parameter. In this case, the data to be signed should be the native value and not the value after encoding. For example, a call to an interface needs to digitally sign the request parameter email, 那么待签名数据应该是 email=test@msn.com, instead of email=test%40msn.com.
+:::
+
+An example is the following array of parameters:
+
+```java
+String [] parameters={
+  "app_id=wzxxxxxxxxxx",
+  "method=pay.orderquery",
+  "format=JSON",
+  "charset=UTF-8",
+  "sign_type=RSA2",
+  "version=1.0",
+  "timestamp=1908901287917",
+  "merchant_no=M100001876",
+  "out_trade_no=TB20181030000875",
+  "description="
+  };
+```
+
+The parameters that need to participate in the signature after processing are (according to the rules, an empty ab_no value does not participate in the signature)
+
+```java
+String [] parameters={
+  "app_id=wzxxxxxxxxxx",
+  "method=pay.orderquery",
+  "format=JSON",
+  "charset=UTF-8",
+  "sign_type=RSA2",
+  "version=1.0",
+  "timestamp=1908901287917",
+  "merchant_no=M100001876",
+  "out_trade_no=TB20181030000875"
+  };
+```
+
+:::caution
+Because the Key of JSON object is unordered, this signature rule will only select the Key and Value of the first layer of JSON, for nested JSON objects, please convert the Value of JSON to a string before signature calculation and HTTP message sending.
+:::
+
+<font color="red">
+  This is the wrong JSON message, the value of key3 is a JSONObject and is not converted to a
+  string:
+</font>
+
+```JSON
+{
+    "key1":"value1",
+    "key2":"value2",
+    "key3":{
+        "subkey31":"subvalue31",
+        "subkey32":"subvalue32"
+    }
+}
+```
+
+<font color="green">
+  This is the correct JSON message, the value of key3 is a JSONObject that is converted to a string:
+</font>
+
+```JSON
+{
+    "key1":"value1",
+    "key2":"value2",
+    "key3":"{\"subkey31\":\"subvalue31\",\"subkey32\":\"subvalue32\"}"
+}
+```
+
+Step 2: Parameter ordering
+Parameter name ASCII code sorted from smallest to largest (order from a to z, if you meet the same first letter, then look at the second letter, and so on). JAVA language, for example, can be sorted using the function `Collections.sort(keys)`.
+The array after the first sorting step is:
+
+```java
+String[] parameters={
+    "app_id=wzxxxxxxxxxx",
+    "charset=UTF-8",
+    "format=JSON",
+    "merchant_no=M100001876",
+    "method=pay.orderquery",
+    "out_trade_no=TB20181030000875",
+    "sign_type=RSA2",
+    "timestamp=1908901287917",
+    "version=1.0"
+  };
+```
+
+Step 3: Parameter Splicing
+Use the "&" character to concatenate the sorted parameters, as shown in the previous example:
+
+```java
+app_id=wzxxxxxxxxxx&charset=UTF-8&format=JSON&merchant_no=M100001876&method=pay.orderquery&out_trade_no=TB20181030000875&sign_type=RSA2&timestamp=1908901287917&version=1.0
+```
+
+#### 3. Calculating a signature using the signature function
+
+The signature string obtained in the second step is signed using the RSA2 signature algorithm function in each language. We are using the `SHA256WithRSA` algorithm for the signature computation
+
+```java
+sign=base64UrlEncode(sha256withrsa(<Content_To_Be_Signed>), <appRsaPrivateKey>));
+```
+
+The following example can help you verify that the signature function calculates the correct result
+
+```java
+1. My PKCS8 private key is:MIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQCJ9N8YTm0wEuBye5zSiZKncNIg6WBvTHjg4dYc9BH0zR+LeHd/jVo+InrMiIFgblnf7eYJ/wlPG5cSMMSyQMHj/7o0prc+VZsqi1mjX88InK4qDl6qFBFrg4dRrCAwILLVOP/ppUU3souMmnYnvOSUyuLBnhSno8qTpFSbcFAkPaHRmUmcTtVPWuNNbPaZVlNn81imIIVw8LKzOzCz9CNNcikkvbUlZp/cZ0Fl3s6icqOCjRvamg8KLZJs9D52S20X60ynreEIn8g6lr77byOGCCRwpdMl9Cl89WmbC3A3RKh7GRPtjyx3B5aQqE3sK5sNT8H8/EqcnQe8QoVBs7x1AgMBAAECggEAbE6vB+oqlt97DuY1TKVtWb+dePFAIKEtFYC4FKsZndOcvGaripxzCO0Q85sH16lLLh8bxyVPLag/hqx7AGcO0e1nRwbMPkf/NfuJOFZzuBMqOSJm96ghtQLiLiCwdJh3Ticd41U5bmziWlS6BqCp5JcUR2XQWXyiAh+1vQMEKC56CNPxr7imXITS7BYdY0qiGiOANcoEJhfQXn4BjzEm2FJufdlHW6/IeRYZ874HF3/7aUOyhbnapxYHU9PzicMc9XwerMcXMGvOfTUnCtRVONLn7jiknbpwdZ1d8PoItUZuaXdAyY6wFHZF+KvyrEoOV0eWRYzPgku2oSMD7IckUQKBgQDy+etogil+3F8S/qW1WiG6l2tLx5cwq3Ak9weN1zOo8A43obtXRxW2b4fDeol8y6LmYaIW9kKmK0qHEx5LoUSH7VN3FigNpFSa6muVJUuY+ob4H3Je+h3PaqbwhVFzjDofuIolPiJZW64LaFPZcxxD9vM2tZ6txLeMUmGftPoVSwKBgQCRWeNxbvTs8U5UknrdDZHUwXUmy5Qg2LUzxDXdbZXgolMh0AgDShcEFvaF+G3OFHj9vovytt0HtEXyC9LEc6w/a08mtGHiAJbjyjrJCHRNrcFflEm1xseIqXQXDj5Tw05XkAnlWN+r0w3Ix45+GrNhMOGfDkVyQeYI5Jsxxt0dPwKBgFJwcWr4HtQoOSnctKSffCovDfycL7QXtukT18BMb/611F0TxtiKCdfoZ4vvm454GUFJhxF7ZIm0zoid9/15LiNgZp1VKynVw878Epx8FvZEql6tbMTE4DBr41BgK46k2WPB3T1do5HmBVthfnGdGM4Gj+bUII6c3BoEKZNieCeZAoGAQ3rx5wXWW/KjpQvkUqAsJhQyqXI2MRGq/n+Hamen/4QdCEOmlLBfAx0OEqCFifljOpquKl7POvZsyrTGg0IYo9DUDGoOT3hqlRKcPBzasf2LGy6jEetZU48oQFPyh7zSsEBE999M6F6xtZdABjerM+IXvVpIz4TcoSBRFMj4es0CgYEAiNCbs2YPKBFpJq9EYsSsx0GwXAItXFAM71TogWs/8InGNq0PYRZTn9Lq6mFEyLkFql1zWQkS7CG3uDPBV+V2G4MbvoZeFgiQmly7uMQJwbEiKjJBsOzkYY2ZhFYLjGUpGer2U82XeEU6F/Vh4FLkVEE2iB3nPpVQs0qPZxfFZvM=
+
+2. My PKCS1 private key is:MIIEowIBAAKCAQEAifTfGE5tMBLgcnuc0omSp3DSIOlgb0x44OHWHPQR9M0fi3h3f41aPiJ6zIiBYG5Z3+3mCf8JTxuXEjDEskDB4/+6NKa3PlWbKotZo1/PCJyuKg5eqhQRa4OHUawgMCCy1Tj/6aVFN7KLjJp2J7zklMriwZ4Up6PKk6RUm3BQJD2h0ZlJnE7VT1rjTWz2mVZTZ/NYpiCFcPCyszsws/QjTXIpJL21JWaf3GdBZd7OonKjgo0b2poPCi2SbPQ+dkttF+tMp63hCJ/IOpa++28jhggkcKXTJfQpfPVpmwtwN0SoexkT7Y8sdweWkKhN7CubDU/B/PxKnJ0HvEKFQbO8dQIDAQABAoIBAGxOrwfqKpbfew7mNUylbVm/nXjxQCChLRWAuBSrGZ3TnLxmq4qccwjtEPObB9epSy4fG8clTy2oP4asewBnDtHtZ0cGzD5H/zX7iThWc7gTKjkiZveoIbUC4i4gsHSYd04nHeNVOW5s4lpUugagqeSXFEdl0Fl8ogIftb0DBCguegjT8a+4plyE0uwWHWNKohojgDXKBCYX0F5+AY8xJthSbn3ZR1uvyHkWGfO+Bxd/+2lDsoW52qcWB1PT84nDHPV8HqzHFzBrzn01JwrUVTjS5+44pJ26cHWdXfD6CLVGbml3QMmOsBR2Rfir8qxKDldHlkWMz4JLtqEjA+yHJFECgYEA8vnraIIpftxfEv6ltVohupdrS8eXMKtwJPcHjdczqPAON6G7V0cVtm+Hw3qJfMui5mGiFvZCpitKhxMeS6FEh+1TdxYoDaRUmuprlSVLmPqG+B9yXvodz2qm8IVRc4w6H7iKJT4iWVuuC2hT2XMcQ/bzNrWercS3jFJhn7T6FUsCgYEAkVnjcW707PFOVJJ63Q2R1MF1JsuUINi1M8Q13W2V4KJTIdAIA0oXBBb2hfhtzhR4/b6L8rbdB7RF8gvSxHOsP2tPJrRh4gCW48o6yQh0Ta3BX5RJtcbHiKl0Fw4+U8NOV5AJ5Vjfq9MNyMeOfhqzYTDhnw5FckHmCOSbMcbdHT8CgYBScHFq+B7UKDkp3LSkn3wqLw38nC+0F7bpE9fATG/+tdRdE8bYignX6GeL75uOeBlBSYcRe2SJtM6Inff9eS4jYGadVSsp1cPO/BKcfBb2RKperWzExOAwa+NQYCuOpNljwd09XaOR5gVbYX5xnRjOBo/m1CCOnNwaBCmTYngnmQKBgEN68ecF1lvyo6UL5FKgLCYUMqlyNjERqv5/h2pnp/+EHQhDppSwXwMdDhKghYn5Yzqaripezzr2bMq0xoNCGKPQ1AxqDk94apUSnDwc2rH9ixsuoxHrWVOPKEBT8oe80rBARPffTOhesbWXQAY3qzPiF71aSM+E3KEgURTI+HrNAoGBAIjQm7NmDygRaSavRGLErMdBsFwCLVxQDO9U6IFrP/CJxjatD2EWU5/S6uphRMi5Bapdc1kJEuwht7gzwVfldhuDG76GXhYIkJpcu7jECcGxIioyQbDs5GGNmYRWC4xlKRnq9lPNl3hFOhf1YeBS5FRBNogd5z6VULNKj2cXxWbz
+
+3. The string to be signed is:123456789
+
+4. The result of calculating the signature using SHA256WithRSA is:F1kKldW4u0xdSzMqehHLtrX6ntK6gjlZ1Nu1IwcCYAvGe+K9/+9VZymbyNjw038ZcxGspnDqcz7+UnqqJ8gBPpMZ4yZb/NdS5TNqruuSooj2jgPk/PlM+uFH97NlMDuUdGVaflujhcaG9irkq48PHQ1+swaELq7mKov7NU155k7bRPWjNzIggxF5Sgh3qcOBpeWVxp/WghRsjfO4O0tRohiOK5pdcAPkj5VlunUgW0/Yv/uC9sV8dodLloUNWG6W0c/pEJnsG48pLLmhag5tzKm7nbHHUrRyLv37+qAuG9S5eZvKUaVbuFwxP2ekSLHRRIQVlBeJbuqfHRQXxzZaJw==
+
+5. My public key is:MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAifTfGE5tMBLgcnuc0omSp3DSIOlgb0x44OHWHPQR9M0fi3h3f41aPiJ6zIiBYG5Z3+3mCf8JTxuXEjDEskDB4/+6NKa3PlWbKotZo1/PCJyuKg5eqhQRa4OHUawgMCCy1Tj/6aVFN7KLjJp2J7zklMriwZ4Up6PKk6RUm3BQJD2h0ZlJnE7VT1rjTWz2mVZTZ/NYpiCFcPCyszsws/QjTXIpJL21JWaf3GdBZd7OonKjgo0b2poPCi2SbPQ+dkttF+tMp63hCJ/IOpa++28jhggkcKXTJfQpfPVpmwtwN0SoexkT7Y8sdweWkKhN7CubDU/B/PxKnJ0HvEKFQbO8dQIDAQAB
+
+6. Signature Verification Result:true
+```
+
+#### 4. Add generated signature to HTTP request body parameter `sign`
+
+## Handling response and asynchronous notification
+
+1. Get the public key of the gateway platform, denoted by `gatewayRsaPublicKey`, for verifying signatures.
+2. Constructing the content to be validated (`Content_To_Be_Validated`) is the same as constructing the string to be signed when requesting a gateway API signature, and will not be repeated here.
+3. Extracts a signature from the message body of a response message or the message body of a message received by an asynchronous notification, with the parameter key `sign`.
+4. Verify signatures using native functions for each language.
+
+```java
+sha256withrsa_verify(base64UrlDecode(<sign>), <Content_To_Be_Validated>, <gatewayRsaPublicKey>)};
+```

@@ -1,0 +1,132 @@
+import addMerchant from "@site/static/img/AddMerchant.png";
+import addApp from "@site/static/img/AddApp.png";
+import getPkAndURL from "@site/static/img/GetPkAndURL.png";
+import mAddApp1 from "@site/static/img/MAddApp1.png";
+import mAddApp2 from "@site/static/img/MAddApp2.png";
+import mkey1 from "@site/static/img/Mkey1.png";
+import mkey2 from "@site/static/img/Mkey2.png";
+import authApp from "@site/static/img/AuthApp.png";
+import ImageZoom from "@site/src/components/ImageZoom";
+
+# Payment gateway overview
+
+## Integrate with CodePay (Omini payment gateway provided by CodePay)
+
+CodePay payment gateway is a service that helps merchants initiate online, in app, and face-to-face payments. It does not directly participate in the flow of funds; Typically, it is a network server connected to a merchant's website or POS system. CodePay combines the payment gateway and payment processor of banks/acquirers, as well as the functions of risk management systems and acquirers. This makes CodePay a full stack payment service provider. Merchants can quickly and safely use global payment services by integrating CodePay's payment capabilities.
+
+## Development guidelines
+
+### Pre-development
+
+This part will introduce what merchants need to do before development, including what parameters need to be applied and how to configure the development, as well as what kind of access products to choose according to their own business scenarios.
+
+<div className="container containerTable">
+  <div className="row row--no-gutters rowItem">
+    <div className="col col--4 colItem">
+      <h4>What parameters need to be applied</h4>
+      <div>
+        <p>appid</p>
+        <br />
+        <p>gateway_rsa_public_key</p>
+        <br />
+        <p>merchant_no</p>
+        <br />
+        <p>store_no(if required)</p>
+      </div>
+    </div>
+    <div className="col col--4 colItem">
+      <h4>Development configuration</h4>
+      <div>
+        <p>Upload app_rsa_public_key</p>
+        <br />
+        <p>Getting access authorization for the API</p>
+      </div>
+    </div>
+    <div className="col col--4 colItem">
+      <h4>Other preparations</h4>
+      <div>
+        <p>
+          Apply for payment activation and configure a settlement account at the
+          bank/acquire/processor (if required)
+        </p>
+      </div>
+    </div>
+  </div>
+  <div className="row row--no-gutters rowItem">
+    <div className="col col--12 colItem">
+      <h4>Select Payment Scenario</h4>
+      <div className="row">
+        <div className="col col--4">
+          <h6>Offline store payment</h6>
+          <a href="/QuickPayDevGuidelines">
+            Store have scanning device such as code guns/cameras
+          </a>
+          <br />
+          <br />
+          <a href="/qrCodePayDevGuidelines">Store have display screen device</a>
+          <br />
+        </div>
+        <div className="col col--4">
+          <h6>Wap payment</h6>
+          <a href="/mobileWebPayDevGuidelines">Wap payment</a>
+          <br />
+          <br />
+          <br />
+        </div>
+        <div className="col col--4">
+          <h6>Online payment</h6>
+          <a href="/pcWebPayDevGuidelines">PC online payment</a>
+          <br />
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+### ISV configuration
+
+If you are a service provider, you can log in to your ISV platform to create merchants/stores and create and configure payment applications. The following are some screenshots of the operation interface.
+
+#### 1. Merchant registration
+
+<ImageZoom src={addMerchant} />
+
+#### 2. Add payment application
+
+<ImageZoom src={addApp} />
+
+#### 3. Get "gateway_rsa_public_key" and "gateway_url"
+
+<ImageZoom src={getPkAndURL} />
+
+### Merchant configuration
+
+If you are a merchant, you can log in to the merchant platform to create stores and create and configure payment applications. The following are screenshots of some operation interfaces.
+
+#### 1. Add payment application
+
+<ImageZoom src={mAddApp1} />
+
+<ImageZoom src={mAddApp2} />
+
+#### 2. Get "gateway_rsa_public_key" and Upload "app_rsa_public_key"
+
+<ImageZoom src={mkey1} />
+
+<ImageZoom src={mkey2} />
+
+#### 3. Getting access authorization for the API
+
+<ImageZoom src={authApp} />
+
+### Integrate with our cloud API
+
+<a href="/APIRule">Read API rules</a>
+<br />
+<br />
+
+<a href="/CloudAPI">View detailed API documentation</a>
+<br />
+<br />
+
+<a href="/PaymentGatewaySDKSamples">Download SDK or sample</a>

@@ -1,0 +1,24 @@
+---
+slug: /
+---
+
+import sameTermInteImg from "@site/static/img/Same-terminalIntegrationOverview.png";
+import crossTermInteImg from "@site/static/img/Cross-terminalIntegrationOverview.png";
+import ImageZoom from "@site/src/components/ImageZoom";
+
+# POS application integrates with CodePay Register
+
+**CodePay Register** is a standard android payment application developed by CodePay that runs on payment terminals and can accept various payment methods such as bank cards and mobile wallets.
+
+**CodePay Register** provides merchants with general payment functions, including Sale, Authorization, Void, Refund, Cashback etc. Register application design follows PCI compliance requirements and has passed PCI EMV L3 certifications.
+
+POS application developers can integrate with **CodePay Register**, making it simple, fast, secure, efficient, and cost-effective to obtain payment capabilities.
+
+**CodePay Register** provides two types of integration solutions.
+
+| Same-terminal application integration solution \ width:50%; \                                                                                                  | Cross-terminal application integration solution \ width:50%; \                                                                                                                                                                                                                                                                                                                                                                                                                  |
+|----------------------------------------------------------------------------------------------------------------------------------------------------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| The Merchant Point of Sale (POS) application runs on the same payment terminal and pulls **CodePay Register** to accept payment requests through intent calls. | An application on a merchant's POS or electronic cash register (ECR) that sends payment requests to the payment terminal for processing. There are two communication methods for cross terminal requests:<br/><br/>1. Local network: POS applications are connected to terminals through USB cables, wireless/wired local networks<br/><br/>  2. Cloud network: POS application connects to cloud APIs and push requests to payment terminal through CodePay's IoT service<br/> |
+| \ vertical-align:text-top; \ Transaction processing flow diagram <ImageZoom src={sameTermInteImg} />                                                           | Transaction processing flow diagram <ImageZoom src={crossTermInteImg} />                                                                                                                                                                                                                                                                                                                                                                                                        |
+| Advantages: Simple calls between Android applications, easy integration, fast response, independent of the stability of the transmission link connection       | Advantages: POS applications can run on third-party devices with no restrictions on the size or performance of the terminal                                                                                                                                                                                                                                                                                                                                                     |
+| Disadvantage: POS applications must run on the terminal, which may involve software adaptation and modification work                                           | Disadvantage: Higher requirements for network connection stability between POS devices and payment terminals                                                                                                                                                                                                                                                                                                                                                                    |
