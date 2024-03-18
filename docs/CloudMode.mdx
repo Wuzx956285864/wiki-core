@@ -1,10 +1,10 @@
-import ImageZoom from "@site/src/components/ImageZoom";
-import ecrCloudSetImg from "@site/static/img/EcrConnectCloud.jpg";
-import ecrCloudSetSuccessImg from "@site/static/img/EcrConnectCloudSuccess.jpg";
-import ecrCloudSetFailImg from "@site/static/img/EcrConnectCloudFail.jpg";
-import WorkflowDImg from "@site/static/img/WorkflowD.png";
-import PushOrderToTerminalImg from "@site/static/img/PushOrderToTerminal.png";
-import TerminalReceivedAndPaymentImg from "@site/static/img/TerminalReceivedAndPayment.png";
+import ImageZoom from '@site/src/components/ImageZoom';
+import ecrCloudSetImg from '@site/static/img/EcrConnectCloud.jpg';
+import ecrCloudSetSuccessImg from '@site/static/img/EcrConnectCloudSuccess.jpg';
+import ecrCloudSetFailImg from '@site/static/img/EcrConnectCloudFail.jpg';
+import WorkflowDImg from '@site/static/img/WorkflowD.png';
+import PushOrderToTerminalImg from '@site/static/img/PushOrderToTerminal.png';
+import TerminalReceivedAndPaymentImg from '@site/static/img/TerminalReceivedAndPayment.png';
 
 # Cloud mode integration
 
@@ -22,8 +22,10 @@ In the merchant store, if **POS application** is web-based it needs to interact 
 6. **CodePay Gateway** processes the transaction packet and sends to payment gateway/acquire/processor/bank.
 7. Payment gateway/acquire/processor/bank response to **CodePay Gateway**.
 8. **CodePay Gateway** processes simultaneously:
+
    - Responses transaction result to **CodePay Register** application.
    - Sends an asynchronous transaction result request to **POS server**. (if failed, **CodePay Gateway** will retry several times)
+
 9. **POS server** notifies transaction result to **POS application** and display payment result on the screen.
 
 ## Sequence diagram
@@ -59,17 +61,17 @@ In the merchant store, if **POS application** is web-based it needs to interact 
 
 ### Access our APIs
 
-Please refer to the Cloud APIs in the table below, which provide SDKs in multiple languages. For more information, please visit the <a href="/PaymentGatewaySDKSamples" target = "_blank"> SDK section </a>.
+Please refer to the Cloud APIs in the table below, which provide SDKs in multiple languages. For more information, please visit the <a href="/PaymentGatewaySDKSamples" target="_blank"> SDK section </a>.
 
-Accessing these APIs requires obtaining some parameters in advance, and you also need to understand more rules for API access. Please refer to the <a href = "/GatewayOverview" target = "_blank">Payment gateway integration guide</a>.
+Accessing these APIs requires obtaining some parameters in advance, and you also need to understand more rules for API access. Please refer to the <a href="/GatewayOverview" target="_blank">Payment gateway integration guide</a>.
 
-| Function List \ width:25%; \                                                                                                           | Type \ width:10%; \ | Description \ width:65%; \                                                                                                                                                                     |
-|----------------------------------------------------------------------------------------------------------------------------------------|---------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| <a href="./CloudAPI#tag/Integration-with-Point-of-Sale/paths/~1api~1entry~1wisehubcloudpayorder/post" target="_blank">Create order</a> | API                 | Submit payment orders through this api                                                                                                                                                         |
-| <a href="./CloudAPI#tag/Integration-with-Point-of-Sale/paths/~1api~1entry~1wisehubcloudpayclose/post" target="_blank">Close order</a>  | API                 | Close unpaid orders through this api                                                                                                                                                           |
-| <a href="./CloudAPI#tag/Public-API/paths/~1api~1entry~1orderquery/post" target="_blank">Query order</a>                                | API                 | Query the transaction result (Purchase/Pre-authorization/Pre-auth Completion) of a positive transaction order through this api                                                                 |
-| <a href="./CloudAPI#tag/Public-API/paths/~1api~1entry~1orderrefundquery/post" target="_blank">Query refund</a>                         | API                 | Query the transaction results of negative transaction orders (Purchase cancellation/Pre-auth Cancellation/Refund/Pre-auth Completion Cancellation/Pre-auth Completion Refund) through this api |
-| <a href="./CloudAPI#tag/Public-API/paths/~1%7Bmerchant_website%7D/post" target="_blank">Transaction result notification</a>            | Webhook             | After the transaction, notify the merchant through this webhook to tell the merchant the result of the transaction                                                                             |
+| Function List \ width:25%; \\ | Type \ width:10%; \\ | Description \ width:65%; \\ |
+| --- | --- | --- |
+| <a href="./CloudAPI#tag/Integration-with-Point-of-Sale/paths/~1api~1entry~1wisehubcloudpayorder/post" target="_blank">Create order</a> | API | Submit payment orders through this api |
+| <a href="./CloudAPI#tag/Integration-with-Point-of-Sale/paths/~1api~1entry~1wisehubcloudpayclose/post" target="_blank">Close order</a> | API | Close unpaid orders through this api |
+| <a href="./CloudAPI#tag/Public-API/paths/~1api~1entry~1orderquery/post" target="_blank">Query order</a> | API | Query the transaction result (Purchase/Pre-authorization/Pre-auth Completion) of a positive transaction order through this api |
+| <a href="./CloudAPI#tag/Public-API/paths/~1api~1entry~1orderrefundquery/post" target="_blank">Query refund</a> | API | Query the transaction results of negative transaction orders (Purchase cancellation/Pre-auth Cancellation/Refund/Pre-auth Completion Cancellation/Pre-auth Completion Refund) through this api |
+| <a href="./CloudAPI#tag/Public-API/paths/~1%7Bmerchant_website%7D/post" target="_blank">Transaction result notification</a> | Webhook | After the transaction, notify the merchant through this webhook to tell the merchant the result of the transaction |
 
 ### Application install and setting
 
@@ -81,6 +83,9 @@ Returning to the main interface, the example images of successful and failed con
 
 <div style={{ display: "flex" }}>
   <ImageZoom src={ecrCloudSetSuccessImg} width={180} height={320} />
-  <ImageZoom width={50} height={320} />
+
+{' '}
+<ImageZoom width={50} height={320} />
+
   <ImageZoom src={ecrCloudSetFailImg} width={180} height={320} />
 </div>

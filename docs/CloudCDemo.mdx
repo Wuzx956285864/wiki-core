@@ -8,10 +8,6 @@ Suitable for various Microsoft frameworks that comply with the. Net Standard 2.0
 
 ## Download address
 
--   <a href="https://github.com/codepay-us/gateway-api-demo-csharp" target="_blank">
-        GitHub project home page
-    </a>
-
 ## Usage steps
 
 ### 1. Add dependencies and use tools such as NuGet to download the following package
@@ -57,7 +53,7 @@ Newtonsoft.Json parses and processes JSON packets.
 
     // 5. Send HTTP request
     string jsonString = JsonConvert.SerializeObject(parameters);
-    
+
     Console.WriteLine("Request to gateway[" + gatewayUrl + "] send data  -->> " + jsonString + "\n");
 
     var responseStr = "";

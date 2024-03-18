@@ -19,11 +19,12 @@ Please refer to the previous section for the key generation method.
 
 #### 2. Constructing the string to be signed
 
-Step 1: Establish the parameters to be signed
-Parameters to be signed include: API request parameters, response parameters, and asynchronous notification parameters (but excluding sign parameters and parameters with values of NULL or empty strings).
+Step 1: Establish the parameters to be signed Parameters to be signed include: API request parameters, response parameters, and asynchronous notification parameters (but excluding sign parameters and parameters with values of NULL or empty strings).
 
 :::tip
-Note: According to HTTP protocol requirements, if there are special characters (such as: &, @, etc.) in the value of the passed parameter when requesting in GET mode, the value needs to be URL Encoding, so that the receiver of the request can receive the correct value of the parameter. In this case, the data to be signed should be the native value and not the value after encoding. For example, a call to an interface needs to digitally sign the request parameter email, 那么待签名数据应该是 email=test@msn.com, instead of email=test%40msn.com.
+
+Note: According to HTTP protocol requirements, if there are special characters (such as: &, @, etc.) in the value of the passed parameter when requesting in GET mode, the value needs to be URL Encoding, so that the receiver of the request can receive the correct value of the parameter. In this case, the data to be signed should be the native value and not the value after encoding. For example, a call to an interface needs to digitally sign the request parameter email, 那么待签名数据应该是 email=[test@msn.com](mailto:test@msn.com), instead of email=test%40msn.com.
+
 :::
 
 An example is the following array of parameters:
@@ -60,12 +61,14 @@ String [] parameters={
 ```
 
 :::caution
+
 Because the Key of JSON object is unordered, this signature rule will only select the Key and Value of the first layer of JSON, for nested JSON objects, please convert the Value of JSON to a string before signature calculation and HTTP message sending.
+
 :::
 
 <font color="red">
-  This is the wrong JSON message, the value of key3 is a JSONObject and is not converted to a
-  string:
+  This is the wrong JSON message, the value of key3 is a JSONObject and is not
+  converted to a string:
 </font>
 
 ```JSON
@@ -80,7 +83,8 @@ Because the Key of JSON object is unordered, this signature rule will only selec
 ```
 
 <font color="green">
-  This is the correct JSON message, the value of key3 is a JSONObject that is converted to a string:
+  This is the correct JSON message, the value of key3 is a JSONObject that is
+  converted to a string:
 </font>
 
 ```JSON
@@ -91,9 +95,7 @@ Because the Key of JSON object is unordered, this signature rule will only selec
 }
 ```
 
-Step 2: Parameter ordering
-Parameter name ASCII code sorted from smallest to largest (order from a to z, if you meet the same first letter, then look at the second letter, and so on). JAVA language, for example, can be sorted using the function `Collections.sort(keys)`.
-The array after the first sorting step is:
+Step 2: Parameter ordering Parameter name ASCII code sorted from smallest to largest (order from a to z, if you meet the same first letter, then look at the second letter, and so on). JAVA language, for example, can be sorted using the function `Collections.sort(keys)`. The array after the first sorting step is:
 
 ```java
 String[] parameters={
@@ -109,8 +111,7 @@ String[] parameters={
   };
 ```
 
-Step 3: Parameter Splicing
-Use the "&" character to concatenate the sorted parameters, as shown in the previous example:
+Step 3: Parameter Splicing Use the "&" character to concatenate the sorted parameters, as shown in the previous example:
 
 ```java
 app_id=wzxxxxxxxxxx&charset=UTF-8&format=JSON&merchant_no=M100001876&method=pay.orderquery&out_trade_no=TB20181030000875&sign_type=RSA2&timestamp=1908901287917&version=1.0

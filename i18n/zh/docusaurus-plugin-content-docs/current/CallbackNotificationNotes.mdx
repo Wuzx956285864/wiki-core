@@ -4,7 +4,7 @@
 
 - Ensure the notify_url is set to the actual address of the merchant's system, and not the sample address provided in the interface documentation or demo.
 
-- The notify_url should be a fully qualified path starting with either "https://" or "http://". It's essential that both the domain name and IP in the URL are externally accessible.
+- The notify_url should be a fully qualified path starting with either "https\://" or "http\://". It's essential that both the domain name and IP in the URL are externally accessible.
 
 - Avoid using local or internal IP addresses like localhost, 127.0.0.1, or 192.168.x.x for the notify_url.
 
@@ -12,12 +12,12 @@
 
 Common Mistakes and Their Descriptions:
 
-| Error \ width:50%; \                                            | Example \width:50%;\              |
-| --------------------------------------------------------------- | --------------------------------- |
-| URL is only a domain without a specific path                    | `https://www.test.com`            |
-| URL lacks "https://" or "http://", or is missing domain name/IP | /payNotify.php                    |
-| Local or intranet IP is used                                    | `http://127.0.0.1/pay/notify.php` |
-| Non-URL formatted strings                                       | xxxxxxx，1234567，test            |
+| Error \ width:50%; \\ | Example \width:50%;\\ |
+| --- | --- |
+| URL is only a domain without a specific path | `https://www.test.com` |
+| URL lacks "https\://" or "http\://", or is missing domain name/IP | /payNotify.php |
+| Local or intranet IP is used | `http://127.0.0.1/pay/notify.php` |
+| Non-URL formatted strings | xxxxxxx，1234567，test |
 
 ## 2. Callback Logic Considerations:
 
